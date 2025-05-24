@@ -28,7 +28,7 @@ $actor_db = findActorByTmdbId($db, $tmdb_id);
 $shouldUpdate = !$actor_db || isOutdated($actor_db['last_updated']);
 
 if ($shouldUpdate) {
-    // fetch detalii actor din TMDB 
+    // fetch detalii actor din TMDB
     $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
 
     $actor_name = $tmdb_data['name'] ?? '';
@@ -55,6 +55,7 @@ if ($shouldUpdate) {
 
 $awards = getActorAwards($db, $actor_name);
 $profile_path = getProfileImageUrl($profile_path);
+$consecutive = getConsecutiveNominationYears($db, $actor_name);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,8 +64,10 @@ $profile_path = getProfileImageUrl($profile_path);
     <title><?php echo htmlspecialchars($actor_name); ?> - Actor Profile</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="stylesheet" href="assets/css/actor_profile.css">
+    <link rel="stylesheet" href="assets/css/navbar.css">
 </head>
 <body>
+    <?php include 'includes/navbar.php'; ?>
     <div class="container">
         <div class="profile-header">
             <div class="profile-img" style="<?php echo $profile_path ? "background-image:url('$profile_path');" : ''; ?>">
@@ -75,7 +78,10 @@ $profile_path = getProfileImageUrl($profile_path);
             <div class="profile-info">
                 <h1><?php echo htmlspecialchars($actor_name); ?></h1>
                 <?php if ($bio): ?>
-                    <div class="bio">Department: <?php echo htmlspecialchars($bio); ?></div>
+                    <div class="bio">Known for: <?php echo htmlspecialchars($bio); ?></div>
+                <?php endif; ?>
+                <?php if (!empty($tmdb_data['biography'])): ?>
+                    <div class="biography"><?php echo nl2br(htmlspecialchars($tmdb_data['biography'])); ?></div>
                 <?php endif; ?>
                 <?php if ($popularity): ?>
                     <div class="popularity">Popularity: <?php echo htmlspecialchars(round($popularity, 1)); ?></div>
@@ -103,6 +109,9 @@ $profile_path = getProfileImageUrl($profile_path);
                 <div>No awards found for this actor.</div>
             <?php endif; ?>
         </div>
+        
+        <!-- inca nu merge -->
+        <!-- <div class="vizualizare">Consecutive nomination years: <?php echo $consecutive; ?></div> -->
     </div>
 </body>
 </html>

@@ -9,10 +9,10 @@
             justify-content: center;
         }
         .container {
-            background: rgba(255,255,255,0.10);
+            background: rgba(0, 0, 0, 0.1);
             border-radius: 18px;
             padding: 48px 36px;
-            box-shadow: 0 4px 24px rgba(30,58,138,0.12);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
             text-align: center;
             
         }
@@ -38,5 +38,5 @@
         }
         a:hover {
             background: #fff;
-            color: #1e3a8a;
+            color: #000000;
         }

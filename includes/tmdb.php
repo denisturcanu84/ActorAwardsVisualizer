@@ -16,3 +16,19 @@ function getActorDetailsTmdb($tmdb_id, $api_key) {
 function getProfileImageUrl($profile_path) {
     return $profile_path ? 'https://image.tmdb.org/t/p/w400' . $profile_path : null;
 }
+
+function getActorNews($actor_name) {
+    $rss = @simplexml_load_file('https://news.google.com/rss/search?q=' . urlencode($actor_name));
+    $news = [];
+    if ($rss && isset($rss->channel->item)) {
+        foreach ($rss->channel->item as $item) {
+            $news[] = [
+                'title' => (string)$item->title,
+                'link' => (string)$item->link,
+                'pubDate' => (string)$item->pubDate
+            ];
+            if (count($news) >= 5) break;
+        }
+    }
+    return $news;
+}

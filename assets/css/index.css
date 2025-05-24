@@ -9,13 +9,13 @@
             margin: 100px auto;
             background: #fff;
             border-radius: 14px;
-            box-shadow: 0 2px 16px rgba(30, 58, 138, 0.08);
+            box-shadow: 0 2px 16px #00000067;
             padding: 32px 24px;
             text-align: center;
         }
 
         h1 {
-            color: #1e3a8a;
+            color: #000000;
             margin-bottom: 18px;
         }
 
@@ -46,6 +46,6 @@
 
         button:hover {
             background: #ffb366;
-            color: #1e3a8a;
+            color: #000000;
             transform: translateY(-2px) scale(1.03);
         }
