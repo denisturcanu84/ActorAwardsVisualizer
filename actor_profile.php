@@ -22,7 +22,7 @@
  $actor = $data['results'][0] ?? null;
 
  // Get all awards for this actor from database
- $db = new PDO('sqlite:' . __DIR__ . '/database/awards.db');
+ $db = new PDO('sqlite:' . __DIR__ . '/database/app.db');
  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
  $awards = [];
  $stmt = $db->prepare("SELECT year, category, show FROM awards WHERE UPPER(full_name) = UPPER(?) AND won = 'True'");

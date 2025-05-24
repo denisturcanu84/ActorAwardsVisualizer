@@ -1,5 +1,5 @@
 <?php
-$db = new PDO('sqlite:' . __DIR__ . '/../database/awards.db');
+$db = new PDO('sqlite:' . __DIR__ . '/../database/app.db');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 if (($f = fopen(__DIR__ . '/../csv/screen_actor_guild_awards.csv', 'r')) !== false) {
