@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS actors (
     bio TEXT,
     profile_path TEXT,
     popularity REAL
+    last_updated TEXT,
 );
 
 CREATE TABLE IF NOT EXISTS productions (

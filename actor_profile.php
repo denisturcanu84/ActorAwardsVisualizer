@@ -1,43 +1,61 @@
 <?php
- ini_set('display_errors', 1);
- ini_set('display_startup_errors', 1);
- error_reporting(E_ALL);
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/tmdb.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
- require_once __DIR__ . '/vendor/autoload.php';
- $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
- $dotenv->load();
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+$api_key = $_ENV['TMDB_API_KEY'] ?? '';
 
- $api_key = $_ENV['TMDB_API_KEY'];
+if (!isset($_GET['name']) || trim($_GET['name']) === '') {
+    die('Actor not specified.');
+}
+$actor_name = trim($_GET['name']);
 
- // Get actor name from query
- if (!isset($_GET['name']) || trim($_GET['name']) === '') {
-     die('Actor not specified.');
- }
- $actor_name = trim($_GET['name']);
+$actor = searchActorTmdb($actor_name, $api_key);
 
- // Fetch actor info from TMDB
- $tmdb_url = 'https://api.themoviedb.org/3/search/person?api_key=' . $api_key . '&query=' . urlencode($actor_name);
- $json = @file_get_contents($tmdb_url);
- $data = $json ? json_decode($json, true) : [];
- $actor = $data['results'][0] ?? null;
+if ($actor) {
+    $tmdb_id = $actor['id'];
+} else {
+    die('Actor not found.');
+}
 
- // Get all awards for this actor from database
- $db = new PDO('sqlite:' . __DIR__ . '/database/app.db');
- $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
- $awards = [];
- $stmt = $db->prepare("SELECT year, category, show FROM awards WHERE UPPER(full_name) = UPPER(?) AND won = 'True'");
- $stmt->execute([$actor_name]);
- $awards = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$db = getDbConnection();
+$actor_db = findActorByTmdbId($db, $tmdb_id);
 
- // Actor image
- $profile_path = $actor && !empty($actor['profile_path']) ? 'https://image.tmdb.org/t/p/w400' . $actor['profile_path'] : null;
+// daca ar trebui actualizat actorul in baza de date
+$shouldUpdate = !$actor_db || isOutdated($actor_db['last_updated']);
 
- // Actor bio
- $bio = $actor['known_for_department'] ?? '';
- $popularity = $actor['popularity'] ?? '';
- $tmdb_id = $actor['id'] ?? null;
- $tmdb_link = $tmdb_id ? "https://www.themoviedb.org/person/$tmdb_id" : null;
- ?>
+if ($shouldUpdate) {
+    // fetch detalii actor din TMDB 
+    $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
+
+    $actor_name = $tmdb_data['name'] ?? '';
+    $profile_path = $tmdb_data['profile_path'] ?? '';
+    $bio = $tmdb_data['known_for_department'] ?? '';
+    $popularity = $tmdb_data['popularity'] ?? '';
+    $tmdb_link = "https://www.themoviedb.org/person/$tmdb_id";
+
+    upsertActor($db, [
+    'full_name' => $actor_name,
+    'tmdb_id' => $tmdb_id,
+    'bio' => $bio,
+    'profile_path' => $profile_path,
+    'popularity' => $popularity
+]);
+
+} else {
+    $actor_name = $actor_db['full_name'];
+    $profile_path = $actor_db['profile_path'];
+    $bio = $actor_db['bio'];
+    $popularity = $actor_db['popularity'];
+    $tmdb_link = "https://www.themoviedb.org/person/$tmdb_id";
+}
+
+$awards = getActorAwards($db, $actor_name);
+$profile_path = getProfileImageUrl($profile_path);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
