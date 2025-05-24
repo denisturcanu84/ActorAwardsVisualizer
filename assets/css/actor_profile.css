@@ -88,6 +88,50 @@ body {
     color: #666;
     font-style: italic;
 }
+.movies-section {
+    margin-top: 32px;
+}
+.movies-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+}
+.movie-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+}
+.movie-poster img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+.no-poster {
+    background: #ddd;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: #666;
+}
+.movie-info h3 {
+    margin: 8px 0 4px 0;
+    font-size: 1.1em;
+}
+.movie-year {
+    color: #666;
+    font-size: 0.9em;
+}
+.movie-character {
+    font-style: italic;
+    color: #555;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
 @media (max-width: 600px) {
     .container {
         padding: 12px 2vw;

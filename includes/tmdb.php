@@ -32,3 +32,20 @@ function getActorNews($actor_name) {
     }
     return $news;
 }
+
+function getActorMovies($tmdb_id, $api_key, $limit = 6) {
+    $url = 'https://api.themoviedb.org/3/person/' . $tmdb_id . '/movie_credits?api_key=' . $api_key;
+    $json = @file_get_contents($url);
+    $data = $json ? json_decode($json, true) : [];
+
+    if (!isset($data['cast'])) {
+        return [];
+    }
+
+    // sortează după popularitate și ia primele filme
+    usort($data['cast'], function($a, $b) {
+        return ($b['popularity'] ?? 0) <=> ($a['popularity'] ?? 0);
+    });
+    
+    return array_slice($data['cast'], 0, $limit);
+}

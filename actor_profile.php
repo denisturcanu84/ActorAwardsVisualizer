@@ -56,6 +56,7 @@ if ($shouldUpdate) {
 $awards = getActorAwards($db, $actor_name);
 $profile_path = getProfileImageUrl($profile_path);
 $consecutive = getConsecutiveNominationYears($db, $actor_name);
+$movies = getActorMovies($tmdb_id, $api_key, 6); // Primele 6 filme
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +93,7 @@ $consecutive = getConsecutiveNominationYears($db, $actor_name);
             </div>
         </div>
         <div class="awards-section">
-            <h2>Awards Won</h2>
+            <h2>Screen Actors Guild Awards</h2>
             <?php if (count($awards)): ?>
                 <ul class="awards-list">
                     <?php foreach ($awards as $a): ?>
@@ -110,7 +111,38 @@ $consecutive = getConsecutiveNominationYears($db, $actor_name);
             <?php endif; ?>
         </div>
         
-        <!-- inca nu merge -->
+        <div class="movies-section">
+            <h2>Popular Movies</h2>
+            <?php if (count($movies)): ?>
+                <ul class="movies-list">
+                    <?php foreach ($movies as $movie): ?>
+                        <li class="movie-item">
+                            <div class="movie-poster">
+                                <?php if ($movie['poster_path']): ?>
+                                    <img src="https://image.tmdb.org/t/p/w200<?php echo $movie['poster_path']; ?>" 
+                                         alt="<?php echo htmlspecialchars($movie['title']); ?>">
+                                <?php else: ?>
+                                    <div class="no-poster">No Image</div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="movie-info">
+                                <h3><?php echo htmlspecialchars($movie['title']); ?></h3>
+                                <?php if ($movie['release_date']): ?>
+                                    <span class="movie-year">(<?php echo htmlspecialchars(substr($movie['release_date'], 0, 4)); ?>)</span>
+                                <?php endif; ?>
+                                <?php if ($movie['character']): ?>
+                                    <div class="movie-character">as <?php echo htmlspecialchars($movie['character']); ?></div>
+                                <?php endif; ?>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <div>No movies found for this actor.</div>
+            <?php endif; ?>
+        </div>
+        
+        <!-- Uncomment when consecutive function is working -->
         <!-- <div class="vizualizare">Consecutive nomination years: <?php echo $consecutive; ?></div> -->
     </div>
 </body>
