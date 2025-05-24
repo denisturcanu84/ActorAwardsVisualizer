@@ -1,0 +1,104 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #b8b8b8;
+    margin: 0;
+}
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(30,58,138,0.08);
+    padding: 32px 24px;
+    backdrop-filter: saturate(180%) blur(20px);
+    background-color: rgba(255, 255, 255, 0.7);
+}
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+.profile-img {
+    width: 180px;
+    height: 240px;
+    border-radius: 12px;
+    background: #e0e0e0 center/cover no-repeat;
+    box-shadow: 0 2px 8px rgba(30,58,138,0.07);
+}
+.profile-info {
+    flex: 1;
+}
+.profile-info h1 {
+    margin: 0 0 8px 0;
+    font-size: 2em;
+    color: #1e3a8a;
+}
+.profile-info .bio {
+    color: #444;
+    margin-bottom: 8px;
+}
+.profile-info .popularity {
+    color: #f59e42;
+    font-weight: 600;
+}
+.profile-info .tmdb-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #fff;
+    background: #1e3a8a;
+    padding: 7px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1em;
+}
+.profile-info .tmdb-link:hover {
+    background: #f59e42;
+    color: #1e3a8a;
+}
+.awards-section {
+    margin-top: 36px;
+}
+.awards-section h2 {
+    color: #1e3a8a;
+    font-size: 1.3em;
+    margin-bottom: 18px;
+}
+.awards-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.awards-list li {
+    background: #f5f6fa;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    padding: 14px 18px;
+    box-shadow: 0 1px 4px rgba(30,58,138,0.04);
+}
+.award-year {
+    color: #f59e42;
+    font-weight: bold;
+    margin-right: 10px;
+}
+.award-cat {
+    color: #222;
+    font-weight: 500;
+}
+.award-show {
+    color: #666;
+    font-style: italic;
+}
+@media (max-width: 600px) {
+    .container {
+        padding: 12px 2vw;
+    }
+    .profile-header {
+        flex-direction: column;
+        gap: 18px;
+        align-items: flex-start;
+    }
+    .profile-img {
+        width: 100%;
+        height: 220px;
+    }
+}
