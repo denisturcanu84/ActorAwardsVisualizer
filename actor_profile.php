@@ -56,7 +56,9 @@ if ($shouldUpdate) {
 $awards = getActorAwards($db, $actor_name);
 $profile_path = getProfileImageUrl($profile_path);
 $consecutive = getConsecutiveNominationYears($db, $actor_name);
-$movies = getActorMovies($tmdb_id, $api_key, 6); // Primele 6 filme
+$movies = getActorMovies($tmdb_id, $api_key, 4);
+$news   = getActorNews($actor_name);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,80 +72,107 @@ $movies = getActorMovies($tmdb_id, $api_key, 6); // Primele 6 filme
 <body>
     <?php include 'includes/navbar.php'; ?>
     <div class="container">
-        <div class="profile-header">
-            <div class="profile-img" style="<?php echo $profile_path ? "background-image:url('$profile_path');" : ''; ?>">
-                <?php if (!$profile_path): ?>
-                    <span style="display:block;text-align:center;line-height:240px;color:#aaa;">No Image</span>
-                <?php endif; ?>
-            </div>
-            <div class="profile-info">
-                <h1><?php echo htmlspecialchars($actor_name); ?></h1>
-                <?php if ($bio): ?>
-                    <div class="bio">Known for: <?php echo htmlspecialchars($bio); ?></div>
-                <?php endif; ?>
-                <?php if (!empty($tmdb_data['biography'])): ?>
-                    <div class="biography"><?php echo nl2br(htmlspecialchars($tmdb_data['biography'])); ?></div>
-                <?php endif; ?>
-                <?php if ($popularity): ?>
-                    <div class="popularity">Popularity: <?php echo htmlspecialchars(round($popularity, 1)); ?></div>
-                <?php endif; ?>
-                <?php if ($tmdb_link): ?>
-                    <a class="tmdb-link" href="<?php echo $tmdb_link; ?>" target="_blank">View on TMDB</a>
-                <?php endif; ?>
-            </div>
-        </div>
-        <div class="awards-section">
-            <h2>Screen Actors Guild Awards</h2>
-            <?php if (count($awards)): ?>
-                <ul class="awards-list">
-                    <?php foreach ($awards as $a): ?>
-                        <li>
-                            <span class="award-year"><?php echo htmlspecialchars(substr($a['year'], 0, 4)); ?></span>
-                            <span class="award-cat"><?php echo htmlspecialchars($a['category']); ?></span>
-                            <?php if ($a['show']): ?>
-                                <span class="award-show">for "<?php echo htmlspecialchars($a['show']); ?>"</span>
+        <div class="main-content">
+            <!-- COLOANA STANGA -->
+            <div class="left-col">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-img" style="<?php echo $profile_path ? "background-image:url('$profile_path');" : ''; ?>">
+                            <?php if (!$profile_path): ?>
+                                <span style="display:block;text-align:center;line-height:240px;color:#aaa;">No Image</span>
                             <?php endif; ?>
-                        </li>
+                        </div>
+                        <div class="profile-info">
+                            <h1><?php echo htmlspecialchars($actor_name); ?></h1>
+                            <?php if ($bio): ?>
+                                <div class="bio">Known for: <?php echo htmlspecialchars($bio); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($tmdb_data['biography'])): ?>
+                                <div class="biography"><?php echo nl2br(htmlspecialchars($tmdb_data['biography'])); ?></div>
+                            <?php endif; ?>
+                            <?php if ($popularity): ?>
+                                <div class="popularity">Popularity: <?php echo htmlspecialchars(round($popularity, 1)); ?></div>
+                            <?php endif; ?>
+                            <?php if ($tmdb_link): ?>
+                                <a class="tmdb-link" href="<?php echo $tmdb_link; ?>" target="_blank">View on TMDB</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="awards-section">
+                        <h2>Screen Actors Guild Awards</h2>
+                        <?php if (count($awards)): ?>
+                            <ul class="awards-list">
+                                <?php foreach ($awards as $a): ?>
+                                    <li>
+                                        <span class="award-year"><?php echo htmlspecialchars(substr($a['year'], 0, 4)); ?></span>
+                                        <span class="award-cat"><?php echo htmlspecialchars($a['category']); ?></span>
+                                        <?php if ($a['show']): ?>
+                                            <span class="award-show">for "<?php echo htmlspecialchars($a['show']); ?>"</span>
+                                        <?php endif; ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div>No awards found for this actor.</div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="movies-section">
+                        <h2>Popular Movies</h2>
+                        <?php if (count($movies)): ?>
+                            <ul class="movies-list">
+                                <?php foreach ($movies as $movie): ?>
+                                    <li class="movie-item">
+                                        <a href="https://www.themoviedb.org/movie/<?php echo $movie['id']; ?>" target="_blank" class="movie-link">
+                                            <div class="movie-poster">
+                                                <?php if (!empty($movie['poster_path'])): ?>
+                                                    <img
+                                                        src="https://image.tmdb.org/t/p/w200<?php echo $movie['poster_path']; ?>"
+                                                        alt="<?php echo htmlspecialchars($movie['title']); ?>">
+                                                <?php else: ?>
+                                                    <div class="no-poster">No Image</div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="movie-info">
+                                                <h3><?php echo htmlspecialchars($movie['title']); ?></h3>
+                                                <?php if (!empty($movie['release_date'])): ?>
+                                                    <span class="movie-year">(<?php echo substr($movie['release_date'],0,4); ?>)</span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($movie['character'])): ?>
+                                                    <div class="movie-character">as <?php echo htmlspecialchars($movie['character']); ?></div>
+                                                <?php endif; ?>
+                                            </div>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div>No movies found for this actor.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <!-- COLOANA DREAPTA - NEWS -->
+            <div class="right-col news-section">
+                <h2>Latest News</h2>
+                <?php if (count($news)): ?>
+                <ul class="news-list">
+                    <?php foreach($news as $item): ?>
+                    <li>
+                        <a href="<?php echo htmlspecialchars($item['link']); ?>" target="_blank">
+                            <?php echo htmlspecialchars($item['title']); ?>
+                        </a>
+                        <span class="news-date">
+                            <?php echo htmlspecialchars(date('Y-m-d', strtotime($item['pubDate']))); ?>
+                        </span>
+                    </li>
                     <?php endforeach; ?>
                 </ul>
-            <?php else: ?>
-                <div>No awards found for this actor.</div>
-            <?php endif; ?>
+                <?php else: ?>
+                <div>No news found for this actor.</div>
+                <?php endif; ?>
+            </div>
         </div>
-        
-        <div class="movies-section">
-            <h2>Popular Movies</h2>
-            <?php if (count($movies)): ?>
-                <ul class="movies-list">
-                    <?php foreach ($movies as $movie): ?>
-                        <li class="movie-item">
-                            <div class="movie-poster">
-                                <?php if ($movie['poster_path']): ?>
-                                    <img src="https://image.tmdb.org/t/p/w200<?php echo $movie['poster_path']; ?>" 
-                                         alt="<?php echo htmlspecialchars($movie['title']); ?>">
-                                <?php else: ?>
-                                    <div class="no-poster">No Image</div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="movie-info">
-                                <h3><?php echo htmlspecialchars($movie['title']); ?></h3>
-                                <?php if ($movie['release_date']): ?>
-                                    <span class="movie-year">(<?php echo htmlspecialchars(substr($movie['release_date'], 0, 4)); ?>)</span>
-                                <?php endif; ?>
-                                <?php if ($movie['character']): ?>
-                                    <div class="movie-character">as <?php echo htmlspecialchars($movie['character']); ?></div>
-                                <?php endif; ?>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <div>No movies found for this actor.</div>
-            <?php endif; ?>
-        </div>
-        
-        <!-- Uncomment when consecutive function is working -->
-        <!-- <div class="vizualizare">Consecutive nomination years: <?php echo $consecutive; ?></div> -->
     </div>
 </body>
 </html>

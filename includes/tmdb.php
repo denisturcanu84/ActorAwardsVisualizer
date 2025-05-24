@@ -33,7 +33,7 @@ function getActorNews($actor_name) {
     return $news;
 }
 
-function getActorMovies($tmdb_id, $api_key, $limit = 6) {
+function getActorMovies($tmdb_id, $api_key, $limit = 4) {
     $url = 'https://api.themoviedb.org/3/person/' . $tmdb_id . '/movie_credits?api_key=' . $api_key;
     $json = @file_get_contents($url);
     $data = $json ? json_decode($json, true) : [];
