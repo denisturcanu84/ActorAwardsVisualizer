@@ -1,4 +1,4 @@
- <?php
+<?php
  ini_set('display_errors', 1);
  ini_set('display_startup_errors', 1);
  error_reporting(E_ALL);
@@ -21,22 +21,13 @@
  $data = $json ? json_decode($json, true) : [];
  $actor = $data['results'][0] ?? null;
 
- // Get all awards for this actor from CSV
+ // Get all awards for this actor from database
+ $db = new PDO('sqlite:' . __DIR__ . '/database/awards.db');
+ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
  $awards = [];
- if (($f = fopen(__DIR__ . '/screen_actor_guild_awards.csv', 'r')) !== false) {
-     fgetcsv($f, 1000, ','); // skip header
-     while (($row = fgetcsv($f, 1000, ',')) !== false) {
-         list($year, $category, $full_name, $show, $won) = $row;
-         if (strcasecmp(trim($full_name), $actor_name) === 0 && trim($won) === 'True') {
-             $awards[] = [
-                 'year' => $year,
-                 'category' => $category,
-                 'show' => $show,
-             ];
-         }
-     }
-     fclose($f);
- }
+ $stmt = $db->prepare("SELECT year, category, show FROM awards WHERE UPPER(full_name) = UPPER(?) AND won = 'True'");
+ $stmt->execute([$actor_name]);
+ $awards = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
  // Actor image
  $profile_path = $actor && !empty($actor['profile_path']) ? 'https://image.tmdb.org/t/p/w400' . $actor['profile_path'] : null;
