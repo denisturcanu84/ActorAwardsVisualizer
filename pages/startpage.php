@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actor Awards Visualizer</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/startpage.css">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -33,37 +33,6 @@
                     categories, and productions. Discover trends, statistics, and detailed 
                     information about your favorite actors and movies.
                 </p>
-            </div>
-        </section>
-
-        <!-- Period Selection -->
-        <section class="period-selection">
-            <div class="container">
-                <h2>Select Time Period</h2>
-                <form method="GET" action="index.php" class="period-form">
-                    <div class="form-group">
-                        <label for="years">Show data for the last:</label>
-                        <select name="years" id="years" onchange="this.form.submit()">
-                            <option value="5" <?php echo (isset($_GET['years']) && $_GET['years'] == '5') ? 'selected' : ''; ?>>5 years</option>
-                            <option value="10" <?php echo (isset($_GET['years']) && $_GET['years'] == '10') ? 'selected' : ''; ?>>10 years</option>
-                            <option value="15" <?php echo (isset($_GET['years']) && $_GET['years'] == '15') ? 'selected' : ''; ?>>15 years</option>
-                            <option value="20" <?php echo (isset($_GET['years']) && $_GET['years'] == '20') ? 'selected' : ''; ?>>20 years</option>
-                            <option value="all" <?php echo (isset($_GET['years']) && $_GET['years'] == 'all') ? 'selected' : ''; ?>>All available data</option>
-                        </select>
-                    </div>
-                </form>
-                
-                <?php
-                $selectedYears = isset($_GET['years']) ? $_GET['years'] : '10';
-                $currentYear = date('Y');
-                
-                if ($selectedYears == 'all') {
-                    echo "<p class='period-info'>Showing all available SAG Awards data</p>";
-                } else {
-                    $startYear = $currentYear - $selectedYears;
-                    echo "<p class='period-info'>Showing data from $startYear to $currentYear ($selectedYears years)</p>";
-                }
-                ?>
             </div>
         </section>
 

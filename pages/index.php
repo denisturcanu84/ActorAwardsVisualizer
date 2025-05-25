@@ -19,7 +19,7 @@ if ($search !== '') {
 <body>
 <?php include 'includes/navbar.php'; ?>
     <div class="container">
-        <h1>Search Actor Profile lalalalalawefwef</h1>
+        <h1>Search Actor Profile</h1>
         <form method="get" action="index.php">
             <input type="text" name="name" placeholder="Enter actor's full name" required>
             <br>
