@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . '/includes/db.php';
-require_once __DIR__ . '/includes/tmdb.php';
-require_once __DIR__ . '/includes/functions.php';
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '../includes/db.php';
+require_once __DIR__ . '../includes/tmdb.php';
+require_once __DIR__ . '../includes/functions.php';
+require_once __DIR__ . '../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -66,11 +66,11 @@ $news   = getActorNews($actor_name);
     <meta charset="UTF-8">
     <title><?php echo htmlspecialchars($actor_name); ?> - Actor Profile</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" href="assets/css/actor_profile.css">
-    <link rel="stylesheet" href="assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/actor_profile.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
 </head>
 <body>
-    <?php include 'includes/navbar.php'; ?>
+    <?php include '../includes/navbar.php'; ?>
     <div class="container">
         <div class="main-content">
             <!-- COLOANA STANGA -->
