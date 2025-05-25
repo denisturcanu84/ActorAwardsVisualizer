@@ -2,21 +2,23 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             background: #F0FAFF;
             margin: 0;
+            font-size: 16px;
         }
 
         .container {
             max-width: 400px;
-            margin: 100px auto;
+            margin: 80px auto 0;
             background: #fff;
             border-radius: 14px;
             box-shadow: 0 2px 16px #00000067;
-            padding: 32px 24px;
+            padding: 24px 20px;
             text-align: center;
         }
 
         h1 {
             color: #000000;
             margin-bottom: 18px;
+            font-size: 1.5rem;
         }
 
         form {
@@ -24,52 +26,55 @@
         }
 
         input[type="text"] {
-            width: 80%;
-            padding: 12px;
+            width: 100%;
+            padding: 10px;
             border-radius: 6px;
             border: 1px solid #bbb;
-            font-size: 1.1em;
+            font-size: 1rem;
             margin-bottom: 18px;
+            box-sizing: border-box;
         }
 
         button {
             background: #4A90E2;
             color: #fff;
-            font-size: 1.1em;
+            font-size: 1rem;
             font-weight: 600;
-            padding: 12px 32px;
+            padding: 10px 24px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.2s;
+            transition: background 0.2s;
+            width: 100%;
         }
 
         button:hover {
             background: #357ABD;
-            color: #fff;
-            transform: translateY(-2px) scale(1.03);
         }
 
         /* Responsive styles */
         @media (max-width: 576px) {
+            body {
+                font-size: 14px;
+            }
+
             .container {
                 max-width: 90%;
-                margin: 80px auto;
-                padding: 24px 16px;
+                margin: 60px auto 0;
+                padding: 20px 16px;
             }
 
             h1 {
-                font-size: 1.5em;
+                font-size: 1.3rem;
             }
 
             input[type="text"] {
-                width: 90%;
-                font-size: 1em;
+                padding: 8px;
+                font-size: 0.9rem;
             }
 
             button {
-                width: 90%;
-                font-size: 1em;
-                padding: 10px 24px;
+                font-size: 0.9rem;
+                padding: 8px 20px;
             }
         }

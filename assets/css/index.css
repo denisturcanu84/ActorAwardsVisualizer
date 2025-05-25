@@ -10,96 +10,94 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #f4f4f4;
+    font-size: 16px;
 }
 
 /* Container */
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 20px;
 }
 
 /* Hero Section */
 .hero {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 4rem 0;
+    padding: 3rem 0;
     text-align: center;
 }
 
 .hero-content {
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 20px;
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     margin-bottom: 1rem;
     font-weight: bold;
 }
 
 .hero-description {
-    font-size: 1.2rem;
-    line-height: 1.8;
+    font-size: 1rem;
+    line-height: 1.6;
     opacity: 0.9;
 }
 
 /* Navigation Cards */
 .navigation-cards {
-    padding: 4rem 0;
+    padding: 3rem 0;
 }
 
 .navigation-cards h2 {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     color: #2c3e50;
+    font-size: 1.5rem;
 }
 
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .card {
     background-color: white;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .card-icon {
-    font-size: 3rem;
+    font-size: 2rem;
     margin-bottom: 1rem;
 }
 
 .card h3 {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
     color: #2c3e50;
+    font-size: 1.2rem;
 }
 
 .card p {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
     color: #666;
-    line-height: 1.6;
+    line-height: 1.5;
+    font-size: 0.9rem;
 }
 
 .card-button {
     display: inline-block;
     background-color: #3498db;
     color: white;
-    padding: 0.8rem 1.5rem;
+    padding: 0.6rem 1.2rem;
     text-decoration: none;
     border-radius: 4px;
-    transition: background-color 0.3s;
+    font-size: 0.9rem;
 }
 
 .card-button:hover {
@@ -108,20 +106,21 @@ body {
 
 /* Quick Stats */
 .quick-stats {
-    padding: 4rem 0;
+    padding: 3rem 0;
     background-color: white;
 }
 
 .quick-stats h2 {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     color: #2c3e50;
+    font-size: 1.5rem;
 }
 
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .stat-item {
@@ -129,7 +128,7 @@ body {
 }
 
 .stat-number {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #3498db;
     margin-bottom: 0.5rem;
@@ -137,7 +136,7 @@ body {
 
 .stat-label {
     color: #666;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
 }
 
 /* Settings Popup */
@@ -215,118 +214,123 @@ body {
 }
 
 /* Responsive Design */
-/* Large screens (1200px and up) */
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1140px;
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
     }
-}
 
-/* Medium screens (992px to 1199px) */
-@media (max-width: 1199px) {
     .container {
-        max-width: 960px;
+        padding: 0 15px;
     }
-    
-    .hero h1 {
-        font-size: 2.8rem;
-    }
-}
 
-/* Tablets and small desktops (768px to 991px) */
-@media (max-width: 991px) {
-    .container {
-        max-width: 720px;
-    }
-    
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-    
-    .hero-description {
-        font-size: 1.1rem;
-    }
-    
-    .cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Mobile landscape (576px to 767px) */
-@media (max-width: 767px) {
-    .container {
-        max-width: 540px;
-        padding: 0 1.5rem;
-    }
-    
-    .hero {
-        padding: 3rem 0;
-    }
-    
-    .hero h1 {
-        font-size: 2.2rem;
-    }
-    
-    .hero-description {
-        font-size: 1rem;
-    }
-    
-    .cards-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-    
-    .stat-number {
-        font-size: 2rem;
-    }
-}
-
-/* Mobile portrait (up to 575px) */
-@media (max-width: 575px) {
-    .container {
-        padding: 0 1rem;
-    }
-    
     .hero {
         padding: 2rem 0;
     }
-    
+
     .hero h1 {
         font-size: 1.8rem;
     }
-    
+
     .hero-description {
         font-size: 0.9rem;
     }
-    
+
+    .navigation-cards,
+    .quick-stats {
+        padding: 2rem 0;
+    }
+
     .navigation-cards h2,
     .quick-stats h2 {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
     }
-    
-    .card {
-        padding: 1.5rem;
-    }
-    
-    .card-icon {
-        font-size: 2.5rem;
-    }
-    
-    .stats-grid {
+
+    .cards-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
-    
+
+    .card {
+        padding: 1.2rem;
+    }
+
+    .card-icon {
+        font-size: 1.8rem;
+    }
+
+    .card h3 {
+        font-size: 1.1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
     .stat-number {
         font-size: 1.8rem;
     }
-    
-    .stat-label {
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    .hero {
+        padding: 1.5rem 0;
+    }
+
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .hero-description {
+        font-size: 0.85rem;
+    }
+
+    .navigation-cards,
+    .quick-stats {
+        padding: 1.5rem 0;
+    }
+
+    .navigation-cards h2,
+    .quick-stats h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    .card-icon {
+        font-size: 1.5rem;
+    }
+
+    .card h3 {
         font-size: 1rem;
+    }
+
+    .card p {
+        font-size: 0.85rem;
+    }
+
+    .card-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-number {
+        font-size: 1.6rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
     }
 }
