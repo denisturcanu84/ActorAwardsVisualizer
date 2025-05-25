@@ -1,5 +1,4 @@
 <nav class="navbar">
-    <?php include '/../includes/navbar.css'; ?>
     <span class="logo">ActorAwardsVisualizer</span>
     <div class="nav-links">
         <a href="index.php">Home</a>
