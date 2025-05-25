@@ -26,5 +26,6 @@ if ($search !== '') {
             <button type="submit">Search</button>
         </form>
     </div>
+    <?php include '../includes/footer.php'; ?>
 </body>
 </html>
