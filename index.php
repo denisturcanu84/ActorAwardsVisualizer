@@ -6,6 +6,7 @@
     <title>Actor Awards Visualizer</title>
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="assets/css/navbar.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
 </head>
 <body>
     <?php include 'includes/navbar.php'; ?>
