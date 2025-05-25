@@ -1,6 +1,6 @@
         body {
-            background: linear-gradient(120deg, #2b2b2b 60%, #ffffff 100%);
-            color: #fff;
+            background: linear-gradient(120deg, #E0F7FF 60%, #ffffff 100%);
+            color: #243B55;         /* dark slate for text */
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             height: 100vh;
@@ -28,7 +28,7 @@
         }
         a {
             color: #fff;
-            background: #f59e42;
+            background: #4A90E2;
             padding: 12px 28px;
             border-radius: 8px;
             text-decoration: none;
@@ -37,6 +37,6 @@
             transition: background 0.2s;
         }
         a:hover {
-            background: #fff;
-            color: #000000;
+            background: #357ABD;
+            color: #fff;
         }

@@ -1,5 +1,5 @@
 .navbar {
-    background: #f59e42;
+    background: #4A90E2;
     padding: 12px 0;
     display: flex;
     align-items: center;
@@ -7,7 +7,7 @@
 }
 
 .logo {
-    color: #fff;
+    color: #ffffff;
     font-size: 1.5em;
     font-weight: bold;
     margin-left: 24px;
@@ -19,7 +19,7 @@
 }
 
 .nav-links a {
-    color: #fff;
+    color: #ffffff;
     text-decoration: none;
     margin: 0 18px;
     font-weight: bold;
@@ -28,5 +28,5 @@
 }
 
 .nav-links a:hover {
-    color: #000000;
+    color: #357ABD;
 }
