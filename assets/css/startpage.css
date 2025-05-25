@@ -10,88 +10,6 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #f4f4f4;
-    transition: all 0.3s ease;
-}
-
-/* Light theme (default) */
-.light-theme {
-    background-color: #f4f4f4;
-    color: #333;
-}
-
-.light-theme .navbar {
-    background-color: #2c3e50;
-}
-
-.light-theme .card {
-    background-color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-/* Dark theme */
-.dark-theme {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-}
-
-.dark-theme .navbar {
-    background-color: #0f1419;
-}
-
-.dark-theme .card {
-    background-color: #2d2d2d;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-.dark-theme .hero {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-}
-
-.dark-theme .popup-content {
-    background-color: #2d2d2d;
-    color: #e0e0e0;
-}
-
-/* Navigation */
-.navbar {
-    background-color: #2c3e50;
-    padding: 1rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-}
-
-.nav-logo h2 {
-    color: #ecf0f1;
-    font-size: 1.5rem;
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-}
-
-.nav-link {
-    color: #ecf0f1;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    background-color: #34495e;
 }
 
 /* Container */
@@ -127,65 +45,6 @@ body {
     opacity: 0.9;
 }
 
-/* Period Selection */
-.period-selection {
-    padding: 3rem 0;
-    background-color: white;
-}
-
-.dark-theme .period-selection {
-    background-color: #2d2d2d;
-}
-
-.period-selection h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #2c3e50;
-}
-
-.dark-theme .period-selection h2 {
-    color: #e0e0e0;
-}
-
-.period-form {
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    display: inline-block;
-}
-
-.form-group label {
-    margin-right: 1rem;
-    font-weight: bold;
-}
-
-.form-group select {
-    padding: 0.5rem 1rem;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    background-color: white;
-}
-
-.dark-theme .form-group select {
-    background-color: #1a1a1a;
-    color: #e0e0e0;
-    border-color: #555;
-}
-
-.period-info {
-    text-align: center;
-    font-style: italic;
-    color: #666;
-    margin-top: 1rem;
-}
-
-.dark-theme .period-info {
-    color: #aaa;
-}
-
 /* Navigation Cards */
 .navigation-cards {
     padding: 4rem 0;
@@ -195,10 +54,6 @@ body {
     text-align: center;
     margin-bottom: 3rem;
     color: #2c3e50;
-}
-
-.dark-theme .navigation-cards h2 {
-    color: #e0e0e0;
 }
 
 .cards-grid {
@@ -231,25 +86,17 @@ body {
     color: #2c3e50;
 }
 
-.dark-theme .card h3 {
-    color: #e0e0e0;
-}
-
 .card p {
     margin-bottom: 1.5rem;
     color: #666;
     line-height: 1.6;
 }
 
-.dark-theme .card p {
-    color: #aaa;
-}
-
 .card-button {
     display: inline-block;
     background-color: #3498db;
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 0.8rem 1.5rem;
     text-decoration: none;
     border-radius: 4px;
     transition: background-color 0.3s;
@@ -261,22 +108,14 @@ body {
 
 /* Quick Stats */
 .quick-stats {
-    background-color: #ecf0f1;
-    padding: 3rem 0;
-}
-
-.dark-theme .quick-stats {
-    background-color: #1a1a1a;
+    padding: 4rem 0;
+    background-color: white;
 }
 
 .quick-stats h2 {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     color: #2c3e50;
-}
-
-.dark-theme .quick-stats h2 {
-    color: #e0e0e0;
 }
 
 .stats-grid {
@@ -287,7 +126,6 @@ body {
 
 .stat-item {
     text-align: center;
-    padding: 1.5rem;
 }
 
 .stat-number {
@@ -298,14 +136,8 @@ body {
 }
 
 .stat-label {
-    font-size: 1rem;
     color: #666;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.dark-theme .stat-label {
-    color: #aaa;
+    font-size: 1.1rem;
 }
 
 /* Settings Popup */
@@ -316,10 +148,10 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .popup-content {
@@ -327,8 +159,7 @@ body {
     padding: 2rem;
     border-radius: 8px;
     width: 90%;
-    max-width: 400px;
-    position: relative;
+    max-width: 500px;
 }
 
 .popup-header {
@@ -336,8 +167,6 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 1rem;
 }
 
 .close-btn {
@@ -353,13 +182,13 @@ body {
 }
 
 .setting-item {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .setting-item label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: bold;
+    color: #333;
 }
 
 .setting-item select {
@@ -370,14 +199,15 @@ body {
 }
 
 .auth-btn {
+    display: block;
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.8rem;
     background-color: #3498db;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 1rem;
+    margin-top: 1rem;
 }
 
 .auth-btn:hover {
@@ -387,10 +217,9 @@ body {
 /* Footer */
 .footer {
     background-color: #2c3e50;
-    color: #ecf0f1;
-    text-align: center;
+    color: white;
     padding: 2rem 0;
-    margin-top: 2rem;
+    text-align: center;
 }
 
 /* Responsive Design */
@@ -399,25 +228,24 @@ body {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .nav-menu {
         flex-direction: column;
-        gap: 0.5rem;
         text-align: center;
     }
-    
+
     .hero h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
-    
+
     .hero-description {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
-    
+
     .cards-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -427,11 +255,11 @@ body {
     .container {
         padding: 0 1rem;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .stat-number {
         font-size: 2rem;
     }

@@ -86,27 +86,6 @@
         </section>
     </main>
 
-    <!-- Settings Popup -->
-    <div id="settingsPopup" class="popup-overlay">
-        <div class="popup-content">
-            <div class="popup-header">
-                <h3>Settings</h3>
-                <button class="close-btn" onclick="closeSettings()">&times;</button>
-            </div>
-            <div class="popup-body">
-                <div class="setting-item">
-                    <label for="themeToggle">Theme:</label>
-                    <select id="themeToggle" onchange="toggleTheme()">
-                        <option value="light">Light Mode</option>
-                        <option value="dark">Dark Mode</option>
-                    </select>
-                </div>
-                <div class="setting-item">
-                    <button class="auth-btn" onclick="handleAuth()">Sign In</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -114,44 +93,6 @@
             <p>&copy; 2024 Actor Awards Visualizer. Data provided by TMDB API.</p>
         </div>
     </footer>
-
-    <script>
-        // Settings popup functions
-        function openSettings() {
-            document.getElementById('settingsPopup').style.display = 'flex';
-        }
-
-        function closeSettings() {
-            document.getElementById('settingsPopup').style.display = 'none';
-        }
-
-        // Theme toggle
-        function toggleTheme() {
-            const theme = document.getElementById('themeToggle').value;
-            document.body.className = theme + '-theme';
-            localStorage.setItem('theme', theme);
-        }
-
-        // Load saved theme
-        window.onload = function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.getElementById('themeToggle').value = savedTheme;
-            document.body.className = savedTheme + '-theme';
-        }
-
-        // Auth handler
-        function handleAuth() {
-            // For now, just redirect to a sign-in page
-            window.location.href = 'auth.php';
-        }
-
-        // Close popup when clicking outside
-        window.onclick = function(event) {
-            const popup = document.getElementById('settingsPopup');
-            if (event.target == popup) {
-                closeSettings();
-            }
-        }
-    </script>
+ 
 </body>
 </html>
