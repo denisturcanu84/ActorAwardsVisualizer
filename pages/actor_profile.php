@@ -4,7 +4,7 @@ require_once __DIR__ . '/../includes/tmdb.php';
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 
