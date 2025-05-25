@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actor Awards Visualizer</title>
-    <link rel="stylesheet" href="/../assets/css/startpage.css">
-    <link rel="stylesheet" href="/../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/startpage.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
 </head>
 <body>
-    <?php include '/../includes/navbar.php'; ?>
+    <?php include '../includes/navbar.php'; ?>
 
     <!-- Main Content -->
     <main class="main-content">
