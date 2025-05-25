@@ -49,3 +49,27 @@
             color: #fff;
             transform: translateY(-2px) scale(1.03);
         }
+
+        /* Responsive styles */
+        @media (max-width: 576px) {
+            .container {
+                max-width: 90%;
+                margin: 80px auto;
+                padding: 24px 16px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            input[type="text"] {
+                width: 90%;
+                font-size: 1em;
+            }
+
+            button {
+                width: 90%;
+                font-size: 1em;
+                padding: 10px 24px;
+            }
+        }

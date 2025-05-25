@@ -188,17 +188,66 @@ body {
     font-size: 0.9em;
     margin-top: 4px;
 }
-@media (max-width: 600px) {
+/* Responsive styles */
+@media (max-width: 991px) {
+    .main-content {
+        flex-direction: column;
+    }
+    .right-col.news-section {
+        width: 100%;
+        margin-top: 24px;
+    }
+    .movies-list {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}
+@media (max-width: 768px) {
     .container {
-        padding: 12px 2vw;
+        padding: 16px;
     }
     .profile-header {
         flex-direction: column;
         gap: 18px;
-        align-items: flex-start;
+        align-items: center;
+        text-align: center;
     }
     .profile-img {
-        width: 100%;
+        width: 160px;
         height: 220px;
+    }
+    .profile-info h1 {
+        font-size: 1.8em;
+    }
+    .movies-list {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+    }
+    .movie-poster img {
+        height: 180px;
+    }
+}
+@media (max-width: 576px) {
+    .container {
+        padding: 12px;
+    }
+    .profile-card,
+    .right-col.news-section {
+        padding: 16px;
+    }
+    .profile-img {
+        width: 140px;
+        height: 200px;
+    }
+    .profile-info h1 {
+        font-size: 1.5em;
+    }
+    .movies-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .movie-poster img {
+        height: 160px;
+    }
+    .awards-list li {
+        padding: 10px 14px;
     }
 }
