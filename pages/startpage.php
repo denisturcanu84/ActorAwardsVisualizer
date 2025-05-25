@@ -5,22 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actor Awards Visualizer</title>
     <link rel="stylesheet" href="../assets/css/startpage.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <h2>🏆 Actor Awards Visualizer</h2>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="index.php" class="nav-link active">Home</a></li>
-                <li><a href="nominations.php" class="nav-link">Nominations</a></li>
-                <li><a href="stats.php" class="nav-link">Statistics</a></li>
-                <li><a href="#" class="nav-link" onclick="openSettings()">Settings</a></li>
-            </ul>
-        </div>
-    </nav>
+    <?php include 'includes/navbar.php'; ?>
 
     <!-- Main Content -->
     <main class="main-content">
