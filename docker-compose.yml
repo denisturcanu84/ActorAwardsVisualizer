@@ -1,0 +1,9 @@
+services:
+  app:
+    build: .
+    ports:
+      - "30112:80"
+    environment:
+      TMDB_API_KEY: ${TMDB_API_KEY}
+    volumes:
+      - .:/var/www/html
