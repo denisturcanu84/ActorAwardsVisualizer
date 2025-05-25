@@ -5,16 +5,25 @@
     box-sizing: border-box;
 }
 
+/* Root variables for responsive typography */
+:root {
+    --h1-size: clamp(1.75rem, 4vw, 2.5rem);
+    --h2-size: clamp(1.25rem, 3vw, 1.75rem);
+    --p-size: clamp(0.875rem, 2vw, 1rem);
+}
+
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     color: #333;
     background-color: #f4f4f4;
-    font-size: 16px;
+    font-size: var(--p-size);
+    overflow-x: hidden;
 }
 
 /* Container */
 .container {
+    width: 90%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
@@ -24,70 +33,79 @@ body {
 .hero {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 3rem 0;
+    padding: clamp(2rem, 5vh, 4rem) 0;
     text-align: center;
+    margin-top: 60px; /* Account for fixed navbar */
 }
 
 .hero-content {
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 clamp(1rem, 3vw, 2rem);
 }
 
 .hero h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: var(--h1-size);
+    margin-bottom: clamp(0.5rem, 2vh, 1.5rem);
     font-weight: bold;
 }
 
 .hero-description {
-    font-size: 1rem;
+    font-size: var(--p-size);
     line-height: 1.6;
     opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Navigation Cards */
 .navigation-cards {
-    padding: 3rem 0;
+    padding: clamp(2rem, 5vh, 4rem) 0;
 }
 
 .navigation-cards h2 {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
     color: #2c3e50;
-    font-size: 1.5rem;
+    font-size: var(--h2-size);
 }
 
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(1rem, 3vw, 1.5rem);
+    padding: 0 1rem;
 }
 
 .card {
     background-color: white;
-    padding: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 1.5rem);
     border-radius: 8px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
 }
 
 .card-icon {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 4vw, 2rem);
     margin-bottom: 1rem;
 }
 
 .card h3 {
     margin-bottom: 0.8rem;
     color: #2c3e50;
-    font-size: 1.2rem;
+    font-size: var(--h2-size);
 }
 
 .card p {
     margin-bottom: 1.2rem;
     color: #666;
     line-height: 1.5;
-    font-size: 0.9rem;
+    font-size: var(--p-size);
 }
 
 .card-button {
@@ -97,46 +115,45 @@ body {
     padding: 0.6rem 1.2rem;
     text-decoration: none;
     border-radius: 4px;
-    font-size: 0.9rem;
+    font-size: var(--p-size);
+    transition: background-color 0.3s ease;
 }
 
 .card-button:hover {
     background-color: #2980b9;
 }
 
-/* Quick Stats */
+/* Quick Stats Section */
 .quick-stats {
-    padding: 3rem 0;
-    background-color: white;
-}
-
-.quick-stats h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #2c3e50;
-    font-size: 1.5rem;
+    padding: clamp(2rem, 5vh, 4rem) 0;
+    background-color: #f8f9fa;
 }
 
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    gap: clamp(1rem, 3vw, 1.5rem);
+    padding: 1rem;
 }
 
 .stat-item {
     text-align: center;
+    padding: clamp(1rem, 3vw, 1.5rem);
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .stat-number {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 4vw, 2rem);
     font-weight: bold;
     color: #3498db;
     margin-bottom: 0.5rem;
 }
 
 .stat-label {
+    font-size: var(--p-size);
     color: #666;
-    font-size: 0.9rem;
 }
 
 /* Settings Popup */
@@ -215,12 +232,9 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    body {
-        font-size: 14px;
-    }
-
     .container {
-        padding: 0 15px;
+        width: 95%;
+        padding: 0 10px;
     }
 
     .hero {
@@ -247,29 +261,11 @@ body {
     }
 
     .cards-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .card {
-        padding: 1.2rem;
-    }
-
-    .card-icon {
-        font-size: 1.8rem;
-    }
-
-    .card h3 {
-        font-size: 1.1rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
     }
 }
 

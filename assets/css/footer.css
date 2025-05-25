@@ -1,6 +1,43 @@
+:root {
+    --footer-bg: #2c3e50;
+    --footer-text: #fff;
+    --footer-link: #3498db;
+    --footer-link-hover: #2980b9;
+    --spacing: clamp(0.5rem, 2vw, 1rem);
+}
+
 .footer {
-    background-color: #2c3e50;
-    color: white;
-    padding: 2rem 0;
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    padding: calc(var(--spacing) * 2) 0;
     text-align: center;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing);
+    font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.footer p {
+    margin: calc(var(--spacing) * 0.5) 0;
+    opacity: 0.9;
+}
+
+.footer a {
+    color: var(--footer-link);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--footer-link-hover);
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: calc(var(--spacing) * 1.5) 0;
+    }
 }

@@ -1,5 +1,13 @@
+/* Root variables */
+:root {
+    --navbar-bg: #2c3e50;
+    --navbar-text: #ecf0f1;
+    --navbar-hover: #34495e;
+    --navbar-height: 60px;
+}
+
 .navbar {
-    background-color: #2c3e50;
+    background-color: var(--navbar-bg);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
@@ -8,51 +16,52 @@
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 1000;
+    height: var(--navbar-height);
+    box-sizing: border-box;
 }
 
 .logo {
-    color: #ecf0f1;
-    font-size: 1.5rem;
+    color: var(--navbar-text);
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
     font-weight: bold;
-}
-
-.menu-toggle {
-    display: none;
-}
-
-.menu-button {
-    display: none;
-    color: #ecf0f1;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 .nav-links {
     display: flex;
-    gap: 2rem;
+    gap: clamp(1rem, 3vw, 2rem);
+    align-items: center;
 }
 
 .nav-links a {
-    color: #ecf0f1;
+    color: var(--navbar-text);
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: background-color 0.3s;
+    font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
 .nav-links a:hover {
-    background-color: #34495e;
+    background-color: var(--navbar-hover);
 }
 
-/* Mobile layout */
-@media (max-width: 576px) {
-    .navbar {
-        padding: 1rem;
-    }
+.menu-button {
+    display: none;
+    color: var(--navbar-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+}
 
-    .logo {
-        font-size: 1.2rem;
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.75rem 1rem;
     }
 
     .menu-button {
@@ -62,120 +71,38 @@
     .nav-links {
         display: none;
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #2c3e50;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        top: var(--navbar-height);
+        left: 0;
+        right: 0;
+        background-color: var(--navbar-bg);
+        padding: 1rem;
         flex-direction: column;
         align-items: center;
-        gap: 1rem;
-        z-index: 1000;
+        gap: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-links.active {
+        display: flex;
     }
 
     .nav-links a {
-        font-size: 1.1rem;
-        padding: 0.8rem 1.5rem;
         width: 100%;
         text-align: center;
-    }
-
-    .menu-toggle:checked ~ .nav-links {
-        display: flex;
-    }
-
-    .menu-toggle:checked ~ .menu-button {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1001;
-    }
-
-    /* Overlay when menu is open */
-    .menu-toggle:checked ~ .nav-links::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: -1;
+        padding: 0.75rem;
     }
 }
 
-/* Responsive Design */
-@media (max-width: 991px) {
-    .nav-container {
-        padding: 0 1.5rem;
-    }
-    
-    .nav-menu {
-        gap: 1rem;
-    }
-}
-
-@media (max-width: 767px) {
-    .menu-toggle {
-        display: block;
-    }
-    
-    .nav-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background-color: #2c3e50;
-        flex-direction: column;
-        padding: 1rem 0;
-        text-align: center;
-        gap: 0.5rem;
-    }
-    
-    .nav-menu.active {
-        display: flex;
-    }
-    
-    .nav-link {
-        display: block;
-        padding: 0.8rem 1rem;
-    }
-    
-    .nav-link:hover,
-    .nav-link.active {
-        background-color: #34495e;
-    }
-}
-
-@media (max-width: 575px) {
-    .nav-container {
-        padding: 0 1rem;
-    }
-    
-    .nav-logo h2 {
-        font-size: 1.2rem;
-    }
-}
-
-/* Responsive styles */
+/* Animation for mobile menu */
 @media (max-width: 768px) {
-    .navbar {
-        padding: 1rem;
-    }
-    
-    .logo {
-        font-size: 1.2rem;
-    }
-    
     .nav-links {
-        gap: 1rem;
+        transform: translateY(-10px);
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.3s ease;
     }
-    
-    .nav-links a {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
+
+    .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

@@ -1,80 +1,102 @@
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #F0FAFF;
-            margin: 0;
-            font-size: 16px;
-        }
+/* Reset and Variables */
+:root {
+    --primary-color: #4A90E2;
+    --primary-hover: #357ABD;
+    --background: #F0FAFF;
+    --card-background: #fff;
+    --text-color: #000000;
+    --border-color: #bbb;
+    --shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+    --spacing: clamp(0.5rem, 2vw, 1rem);
+}
 
-        .container {
-            max-width: 400px;
-            margin: 80px auto 0;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 2px 16px #00000067;
-            padding: 24px 20px;
-            text-align: center;
-        }
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--background);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-        h1 {
-            color: #000000;
-            margin-bottom: 18px;
-            font-size: 1.5rem;
-        }
+.container {
+    max-width: min(90%, 400px);
+    margin: clamp(40px, 10vh, 80px) auto 0;
+    background: var(--card-background);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: calc(var(--spacing) * 2);
+    text-align: center;
+}
 
-        form {
-            margin-top: 18px;
-        }
+h1 {
+    color: var(--text-color);
+    margin-bottom: calc(var(--spacing) * 1.5);
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    line-height: 1.2;
+}
 
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #bbb;
-            font-size: 1rem;
-            margin-bottom: 18px;
-            box-sizing: border-box;
-        }
+form {
+    margin-top: calc(var(--spacing) * 1.5);
+}
 
-        button {
-            background: #4A90E2;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 10px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-        }
+input[type="text"] {
+    width: 100%;
+    padding: calc(var(--spacing) * 0.8);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    margin-bottom: calc(var(--spacing) * 1.5);
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
 
-        button:hover {
-            background: #357ABD;
-        }
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
 
-        /* Responsive styles */
-        @media (max-width: 576px) {
-            body {
-                font-size: 14px;
-            }
+button {
+    background: var(--primary-color);
+    color: var(--card-background);
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    font-weight: 600;
+    padding: calc(var(--spacing) * 0.8) calc(var(--spacing) * 2);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    width: 100%;
+}
 
-            .container {
-                max-width: 90%;
-                margin: 60px auto 0;
-                padding: 20px 16px;
-            }
+button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
 
-            h1 {
-                font-size: 1.3rem;
-            }
+button:active {
+    transform: translateY(0);
+}
 
-            input[type="text"] {
-                padding: 8px;
-                font-size: 0.9rem;
-            }
+/* Footer positioning */
+.footer {
+    margin-top: auto;
+}
 
-            button {
-                font-size: 0.9rem;
-                padding: 8px 20px;
-            }
-        }
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .container {
+        margin-top: clamp(20px, 5vh, 40px);
+        padding: calc(var(--spacing) * 1.5);
+        border-radius: 12px;
+    }
+
+    input[type="text"] {
+        padding: calc(var(--spacing) * 0.6);
+    }
+
+    button {
+        padding: calc(var(--spacing) * 0.6) calc(var(--spacing) * 1.5);
+    }
+}
