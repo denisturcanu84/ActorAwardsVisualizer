@@ -2,5 +2,9 @@
 /vendor/
 /node_modules/
 *.log
+<<<<<<< HEAD
 .DS_Store
 Thumbs.db
+=======
+.DS_Store
+>>>>>>> 5f5134b2def65d5980cbb7ce39f7f8f3f6844c6c

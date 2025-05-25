@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS actors (
     tmdb_id INTEGER,
     bio TEXT,
     profile_path TEXT,
-    popularity REAL
-    last_updated TEXT,
+    popularity REAL,
+    last_updated TEXT
 );
 
 CREATE TABLE IF NOT EXISTS productions (
