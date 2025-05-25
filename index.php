@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actor Awards Visualizer</title>
-    <link rel="stylesheet" href="../assets/css/startpage.css">
-    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="/assets/css/index.css">
+    <link rel="stylesheet" href="/assets/css/navbar.css">
 </head>
 <body>
-    <?php include '../includes/navbar.php'; ?>
+    <?php include '/includes/navbar.php'; ?>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -40,7 +40,7 @@
                         <div class="card-icon">👤</div>
                         <h3>Actors</h3>
                         <p>Explore detailed profiles, biographies, and award histories</p>
-                        <a href="actor.php" class="card-button">Browse Actors</a>
+                        <a href="pages/searchActor.php" class="card-button">Browse Actors</a>
                     </div>
                     
                     <div class="card">
@@ -87,7 +87,7 @@
     </main>
 
 
-    <?php include '../includes/footer.php'; ?>
+    <?php include '/includes/footer.php'; ?>
  
 </body>
 </html>
