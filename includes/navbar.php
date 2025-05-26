@@ -1,4 +1,3 @@
-<?php
 <nav class="navbar">
     <input type="checkbox" id="nav-toggle" class="nav-toggle" style="display:none;">
     <a href="/" class="logo">Actor Awards Visualizer</a>
