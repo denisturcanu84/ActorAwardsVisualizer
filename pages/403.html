@@ -221,14 +221,14 @@
         let soundsActive = true;
         let soundIntervals = [];
         
-        // Funcție pentru spam-ul de sunet erro.mp3
-        function spamErroSound() {
+        // Funcție pentru spam-ul de sunet vine-boom.mp3
+        function spamVineBoomSound() {
             // Creăm mai multe instanțe audio pentru a permite suprapunerea
             const maxSounds = 10;
             const audioPool = [];
             
             for (let i = 0; i < maxSounds; i++) {
-                audioPool.push(new Audio('https://www.myinstants.com/media/sounds/erro.mp3'));
+                audioPool.push(new Audio('https://www.myinstants.com/media/sounds/vine-boom.mp3'));
                 audioPool[i].volume = 0.4;
             }
             
@@ -243,11 +243,11 @@
                 
                 audioPool[currentIndex].play();
                 currentIndex = (currentIndex + 1) % maxSounds;
-            }, 500); // O dată la 500ms
+            }, 1000); // O dată la 1 secundă
             
             soundIntervals.push(rapidInterval);
             
-            // Spam aleator
+            // Spam aleator mai intens
             const randomInterval = setInterval(() => {
                 if (!soundsActive) {
                     clearInterval(randomInterval);
@@ -257,7 +257,7 @@
                 if (Math.random() > 0.5) {
                     audioPool[Math.floor(Math.random() * maxSounds)].play();
                 }
-            }, 1200); // Posibilitate aleatorie la fiecare 1.2 secunde
+            }, 2500); // Posibilitate aleatorie la fiecare 2.5 secunde
             
             soundIntervals.push(randomInterval);
         }
@@ -353,7 +353,7 @@
                 setTimeout(() => {
                     if (Math.random() > 0.5) { // 50% șansă să reactivăm
                         soundsActive = true;
-                        spamErroSound();
+                        spamVineBoomSound();
                         stopButton.textContent = 'STOP SPAM';
                         stopButton.style.background = 'var(--primary)';
                     }
@@ -372,8 +372,8 @@
                 navigator.vibrate && navigator.vibrate([200, 100, 200]);
             }, 500);
             
-            // Pornește spam-ul de sunet
-            spamErroSound();
+            // Pornește spam-ul de sunet Vine Boom
+            spamVineBoomSound();
         });
     </script>
 </body>
