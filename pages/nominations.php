@@ -135,7 +135,6 @@ unset($nomination);
                     <div class="filter-group">
                         <label for="yearFilter">Year:</label>
                         <select id="yearFilter" name="year">
-                            <option value="">All Years</option>
                             <?php foreach ($years as $year): ?>
                                 <option value="<?php echo htmlspecialchars($year); ?>" 
                                     <?php echo $selectedYear === $year ? 'selected' : ''; ?>>
