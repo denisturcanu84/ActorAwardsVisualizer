@@ -10,10 +10,7 @@
 </head>
 <body>
     <?php include 'includes/navbar.php'; ?>
-
-    <!-- Main Content -->
     <main class="main-content">
-        <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
                 <h1>Welcome to Actor Awards Visualizer</h1>
@@ -24,8 +21,6 @@
                 </p>
             </div>
         </section>
-
-        <!-- Navigation Cards -->
         <section class="navigation-cards">
             <div class="container">
                 <h2>Explore the Data</h2>
@@ -61,7 +56,6 @@
             </div>
         </section>
 
-        <!-- Quick Stats Preview -->
         <section class="quick-stats">
             <div class="container">
                 <h2>Quick Overview</h2>
@@ -86,7 +80,6 @@
             </div>
         </section>
     </main>
-
 
     <?php include 'includes/footer.php'; ?>
  

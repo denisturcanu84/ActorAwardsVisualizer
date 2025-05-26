@@ -1,4 +1,5 @@
 <nav class="navbar">
+    <!-- checkbox e butonul hamburger pentru meniul mobil -->
     <input type="checkbox" id="nav-toggle" class="nav-toggle" style="display:none;">
     <a href="/" class="logo">Actor Awards Visualizer</a>
     

@@ -204,4 +204,4 @@ GROUP BY category
 ORDER BY total DESC;
 ");
 
-log_message("Structura bazei de date a fost inițializată cu succes!");
+log_message("Succes!");

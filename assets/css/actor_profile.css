@@ -296,7 +296,6 @@ body {
   color: var(--text-secondary);
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
   .main-content {
     grid-template-columns: 2fr 1fr;
