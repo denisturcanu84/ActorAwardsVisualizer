@@ -11,11 +11,19 @@ $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 // Initialize database connection
 $db = getDbConnection();
 
-// Get filter values from POST or set defaults
-$selectedYear = $_POST['year'] ?? '2020 - 26th Annual Screen Actors Guild Awards';
+// Get filter values from POST
+$selectedYear = $_POST['year'] ?? '2020';
 $selectedCategory = $_POST['category'] ?? '';
 $selectedResult = $_POST['result'] ?? '';
 $searchQuery = $_POST['search'] ?? '';
+
+// Convert Won/Nominated to true/false for database query
+$resultBoolean = null;
+if ($selectedResult === 'Won') {
+    $resultBoolean = true;
+} elseif ($selectedResult === 'Nominated') {
+    $resultBoolean = false;
+}
 
 // Build the query with filters
 $query = "SELECT a.*, a.full_name, ac.profile_path, ac.tmdb_id, p.title as production_title, p.poster_path 
@@ -36,9 +44,9 @@ if ($selectedCategory) {
     $params[] = $selectedCategory;
 }
 
-if ($selectedResult) {
+if ($resultBoolean !== null) {
     $query .= " AND a.won = ?";
-    $params[] = $selectedResult;
+    $params[] = $resultBoolean;
 }
 
 if ($searchQuery) {
@@ -261,8 +269,8 @@ unset($nomination);
                                     <p><strong>Category:</strong> <?php echo htmlspecialchars($nomination['category'] ?? 'N/A'); ?></p>
                                     <p><strong>Show:</strong> <?php echo htmlspecialchars($nomination['show'] ?? 'N/A'); ?></p>
                                     <p><strong>Result:</strong> 
-                                        <span class="result-badge <?php echo ($nomination['won'] ?? 'Nominated') === 'Won' ? 'won' : 'nominated'; ?>">
-                                            <?php echo htmlspecialchars($nomination['won'] ?? 'Nominated'); ?>
+                                        <span class="result-badge <?php echo $nomination['won'] ? 'won' : 'nominated'; ?>">
+                                            <?php echo $nomination['won'] ? 'Won' : 'Nominated'; ?>
                                         </span>
                                     </p>
                                 </div>
