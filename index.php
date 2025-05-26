@@ -20,7 +20,7 @@
                 <p class="hero-description">
                     Explore and analyze SAG Awards nominations and wins across different years, 
                     categories, and productions. Discover trends, statistics, and detailed 
-                    information about your favorite actors and movies.
+                    information about your favorite actors &amp; movies.
                 </p>
             </div>
         </section>

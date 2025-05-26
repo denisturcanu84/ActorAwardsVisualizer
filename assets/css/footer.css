@@ -1,8 +1,8 @@
 :root {
-    --footer-bg: #2c3e50;
+    --footer-bg: #4A90E2;
     --footer-text: #fff;
-    --footer-link: #3498db;
-    --footer-link-hover: #2980b9;
+    --footer-link: #E0F7FF;
+    --footer-link-hover: #ffffff;
     --spacing: clamp(0.5rem, 2vw, 1rem);
 }
 

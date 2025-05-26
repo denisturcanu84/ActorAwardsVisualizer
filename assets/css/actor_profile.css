@@ -1,18 +1,18 @@
 :root {
-  --primary-color: #3498db;
-  --primary-hover: #2980b9;
-  --text-color: #2c3e50;
-  --text-secondary: #7f8c8d;
-  --background: #f9fafc;
+  --primary-color: #4A90E2;
+  --primary-hover: #357ABD;
+  --text-color: #243B55;
+  --text-secondary: #576a7e;
+  --background: linear-gradient(120deg, #E0F7FF 60%, #ffffff 100%);
   --card-background: #ffffff;
-  --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.12);
   --spacing: 2.5rem;
   --border-radius: 16px;
   --transition: all 0.3s ease;
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   background: var(--background);
   margin: 0;
   color: var(--text-color);
@@ -35,7 +35,7 @@ body {
 
 .profile-card, 
 .right-col.news-section {
-  background: var(--card-background);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
   overflow: hidden;
@@ -95,8 +95,8 @@ body {
 
 .profile-info .popularity {
   display: inline-block;
-  background: #fef7e8;
-  color: #e67e22;
+  background: #E0F7FF;
+  color: #357ABD;
   font-weight: 600;
   padding: 0.5rem 1rem;
   border-radius: 50px;
@@ -159,14 +159,14 @@ body {
 }
 
 .awards-list li {
-  background: rgba(240, 242, 245, 0.5);
+  background: rgba(255, 255, 255, 0.5);
   padding: 1.2rem;
   border-radius: 12px;
   transition: var(--transition);
 }
 
 .awards-list li:hover {
-  background: rgba(240, 242, 245, 0.9);
+  background: rgba(255, 255, 255, 0.9);
   transform: translateY(-3px);
 }
 
