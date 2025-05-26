@@ -1,0 +1,193 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    line-height: 1.6;
+    color: #243B55;
+    background: linear-gradient(120deg, #E0F7FF 60%, #ffffff 100%);
+    font-size: var(--p-size);
+    overflow-x: hidden;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Filters Section */
+.filters-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    margin-bottom: 2rem;
+}
+
+.form-select, .form-control {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-size: var(--p-size);
+    color: #243B55;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+/* Statistics Section */
+.statistics-section .card {
+    background-color: white;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    margin-bottom: 20px;
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: #243B55;
+    font-size: var(--h2-size);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+/* Nominations List */
+.nomination-card {
+    background-color: white;
+    transition: transform 0.3s ease;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    margin-bottom: 1.5rem;
+}
+
+.nomination-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.15);
+}
+
+.nomination-card .card-body {
+    padding: 1.5rem;
+}
+
+.nomination-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nomination-card .card-title {
+    color: #243B55;
+    font-size: var(--h2-size);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.nomination-card .card-text {
+    color: #243B55;
+    line-height: 1.6;
+    font-size: var(--p-size);
+}
+
+.badge {
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    border-radius: 8px;
+    font-size: var(--p-size);
+}
+
+.bg-success {
+    background-color: #4A90E2 !important;
+}
+
+.bg-secondary {
+    background-color: #357ABD !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 0 10px;
+    }
+
+    .filters-section {
+        padding: 15px;
+    }
+
+    .filters-section .row > div {
+        margin-bottom: 10px;
+    }
+
+    .statistics-section .card {
+        margin-bottom: 15px;
+    }
+
+    .nomination-card .row {
+        flex-direction: column;
+    }
+
+    .nomination-card .col-md-2 {
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .nomination-card img {
+        max-width: 150px;
+        margin: 0 auto;
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+    }
+
+    .card-text {
+        font-size: 0.9rem;
+    }
+}
+
+/* Chart Responsiveness */
+canvas {
+    max-width: 100%;
+    height: auto !important;
+}
+
+/* Loading State */
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #243B55;
+    font-size: var(--p-size);
+}
+
+/* Empty State */
+.no-results {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #243B55;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    font-size: var(--p-size);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nomination-card {
+    animation: fadeIn 0.3s ease-out;
+} 
