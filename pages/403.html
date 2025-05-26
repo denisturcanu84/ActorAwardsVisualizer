@@ -1,43 +1,230 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acces interzis</title>
-    <link rel="stylesheet" href="/styles/styles.css">
+    <title>🚫 ACCES RESTRICȚIONAT 🚫</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        :root {
+            --primary: #ff00dd;
+            --secondary: #00c3ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
+            background: linear-gradient(135deg, #000 0%, #222 100%);
+            color: #fff;
+            font-family: 'Impact', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
-            margin: 0;
+            align-items: center;
             text-align: center;
-            font-family: Arial, sans-serif;
+            padding: 20px;
         }
+        
+        .moai-container {
+            font-size: 150px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease infinite;
+            text-shadow: 0 0 20px var(--secondary);
+        }
+        
         h1 {
-            color: #e74c3c;
-            font-size: 3rem;
+            font-size: 4rem;
+            margin: 20px 0;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+            animation: pulse 2s ease infinite;
         }
-        p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 20px auto;
+        
+        .message {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            text-shadow: 0 0 10px var(--primary);
+            animation: wobble 5s ease infinite;
         }
-        .home-link {
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #3498db;
+        
+        .back-button {
+            margin-top: 40px;
+            padding: 15px 30px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             color: white;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
             text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 0 20px var(--primary);
+            animation: heartBeat 1.5s ease infinite;
+        }
+        
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--secondary);
+        }
+        
+        .police {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 80px;
+            animation: driveIn 3s ease-in-out infinite alternate;
+        }
+        
+        .siren {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 5px;
+            background-color: red;
+            animation: flash 0.5s ease-in-out infinite alternate;
             border-radius: 5px;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes wobble {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes driveIn {
+            0% { bottom: -100px; }
+            100% { bottom: 20px; }
+        }
+        
+        @keyframes flash {
+            0% { background-color: red; box-shadow: 0 0 20px red; }
+            100% { background-color: blue; box-shadow: 0 0 20px blue; }
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .message { font-size: 2rem; }
+            .moai-container { font-size: 100px; }
+            .police { font-size: 60px; }
+        }
+        
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem; }
+            .message { font-size: 1.5rem; }
+            .moai-container { font-size: 80px; }
+            .police { font-size: 40px; }
         }
     </style>
 </head>
 <body>
-    <h1>Acces interzis</h1>
-    <p>Nu ai permisiunea să accesezi această resursă. Acest fișier nu este disponibil pentru vizualizare publică din motive de securitate.</p>
-    <a href="/" class="home-link">Înapoi la pagina principală</a>
+    <div class="siren"></div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container animate__animated animate__jackInTheBox">
+        <div class="moai-container">🗿</div>
+        <h1 class="animate__animated animate__rubberBand">403 FORBIDDEN</h1>
+        <p class="message animate__animated animate__shakeX">Nu ai voie pe aici rege, 🗿</p>
+        <a href="/" class="back-button">Întoarce-te la treabă</a>
+    </div>
+    
+    <div class="police">🚓</div>
+    
+    <script>
+        // Particule care zboară
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                
+                // Random emoji selection
+                const emojis = ['💀', '⚠️', '🚫', '⛔', '🔒', '🚷', '👮', '🔴', '🚨', '🗿'];
+                const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                particle.textContent = randomEmoji;
+                particle.style.position = 'absolute';
+                particle.style.fontSize = Math.random() * 30 + 10 + 'px';
+                particle.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                particle.style.left = posX + '%';
+                particle.style.top = posY + '%';
+                
+                // Animation
+                particle.style.animation = `rotate ${Math.random() * 10 + 5}s linear infinite`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Audio surpriză
+        function addSurpriseSounds() {
+            const container = document.querySelector('.container');
+            container.addEventListener('click', () => {
+                const audio = new Audio('https://www.myinstants.com/media/sounds/police-siren-1.mp3');
+                audio.volume = 0.3;
+                audio.play();
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            addSurpriseSounds();
+            
+            // Adaugă efect de vibrație când pagina se încarcă
+            setTimeout(() => {
+                navigator.vibrate && navigator.vibrate([200, 100, 200]);
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
