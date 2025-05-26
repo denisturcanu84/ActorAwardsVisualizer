@@ -12,7 +12,7 @@ $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 $db = getDbConnection();
 
 // Get filter values from POST or set defaults
-$selectedYear = $_POST['year'] ?? '2020';
+$selectedYear = $_POST['year'] ?? '2020 - 26th Annual Screen Actors Guild Awards';
 $selectedCategory = $_POST['category'] ?? '';
 $selectedResult = $_POST['result'] ?? '';
 $searchQuery = $_POST['search'] ?? '';
