@@ -189,7 +189,6 @@ unset($nomination);
                                 <tr>
                                     <th>Category</th>
                                     <th>Count</th>
-                                    <th>Visual</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -197,11 +196,6 @@ unset($nomination);
                                     <tr>
                                         <td><?php echo htmlspecialchars($category); ?></td>
                                         <td><?php echo $count; ?></td>
-                                        <td>
-                                            <div class="bar-container">
-                                                <div class="bar" style="width: <?php echo ($count / max($categoryCounts)) * 100; ?>%"></div>
-                                            </div>
-                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -218,7 +212,6 @@ unset($nomination);
                                 <tr>
                                     <th>Year</th>
                                     <th>Count</th>
-                                    <th>Visual</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -226,11 +219,6 @@ unset($nomination);
                                     <tr>
                                         <td><?php echo htmlspecialchars($year); ?></td>
                                         <td><?php echo $count; ?></td>
-                                        <td>
-                                            <div class="bar-container">
-                                                <div class="bar" style="width: <?php echo ($count / max($yearCounts)) * 100; ?>%"></div>
-                                            </div>
-                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
