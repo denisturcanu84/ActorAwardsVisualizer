@@ -48,7 +48,7 @@
             padding: 20px;
         }
         
-        .moai-container {
+        .finger-container {
             font-size: 150px;
             margin-bottom: 20px;
             animation: bounce 2s ease infinite;
@@ -150,14 +150,14 @@
         @media (max-width: 768px) {
             h1 { font-size: 3rem; }
             .message { font-size: 2rem; }
-            .moai-container { font-size: 100px; }
+            .finger-container { font-size: 100px; }
             .police { font-size: 60px; }
         }
         
         @media (max-width: 480px) {
             h1 { font-size: 2rem; }
             .message { font-size: 1.5rem; }
-            .moai-container { font-size: 80px; }
+            .finger-container { font-size: 80px; }
             .police { font-size: 40px; }
         }
     </style>
@@ -167,10 +167,10 @@
     <div class="particles" id="particles"></div>
     
     <div class="container animate__animated animate__jackInTheBox">
-        <div class="moai-container">🗿</div>
+        <div class="finger-container">🖕</div>
         <h1 class="animate__animated animate__rubberBand">403 FORBIDDEN</h1>
-        <p class="message animate__animated animate__shakeX">Nu ai voie pe aici rege, 🗿</p>
-        <a href="/" class="back-button">Întoarce-te la treabă</a>
+        <p class="message animate__animated animate__shakeX">Nice try bro! Aici nu-i voie!</p>
+        <a href="/" class="back-button">Întoarce-te de unde ai venit</a>
     </div>
     
     <div class="police">🚓</div>
@@ -185,7 +185,7 @@
                 const particle = document.createElement('div');
                 
                 // Random emoji selection
-                const emojis = ['💀', '⚠️', '🚫', '⛔', '🔒', '🚷', '👮', '🔴', '🚨', '🗿'];
+                const emojis = ['💀', '⚠️', '🚫', '⛔', '🔒', '🚷', '👮', '🔴', '🚨', '🖕', '😂', '🤣', '🤡', '👹'];
                 const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
                 
                 particle.textContent = randomEmoji;
@@ -210,7 +210,14 @@
         function addSurpriseSounds() {
             const container = document.querySelector('.container');
             container.addEventListener('click', () => {
-                const audio = new Audio('https://www.myinstants.com/media/sounds/police-siren-1.mp3');
+                const sounds = [
+                    'https://www.myinstants.com/media/sounds/nope.mp3',
+                    'https://www.myinstants.com/media/sounds/police-siren-1.mp3',
+                    'https://www.myinstants.com/media/sounds/bruh.mp3',
+                    'https://www.myinstants.com/media/sounds/epic-sax-guy.mp3'
+                ];
+                const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
+                const audio = new Audio(randomSound);
                 audio.volume = 0.3;
                 audio.play();
             });
@@ -224,6 +231,20 @@
             setTimeout(() => {
                 navigator.vibrate && navigator.vibrate([200, 100, 200]);
             }, 1000);
+            
+            // Easter egg: Inversează pagina când se apasă rapid de 3 ori
+            let clickCount = 0;
+            document.addEventListener('click', () => {
+                clickCount++;
+                if (clickCount >= 3) {
+                    document.body.style.transform = 'rotate(180deg)';
+                    document.body.style.transition = 'transform 1s';
+                    setTimeout(() => {
+                        document.body.style.transform = 'rotate(0deg)';
+                        clickCount = 0;
+                    }, 3000);
+                }
+            });
         });
     </script>
 </body>
