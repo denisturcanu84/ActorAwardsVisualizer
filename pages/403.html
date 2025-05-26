@@ -6,6 +6,7 @@
     <title>🚫 ACCES RESTRICȚIONAT 🚫</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
+        /* Stilurile existente rămân neschimbate */
         :root {
             --primary: #ff0000;
             --secondary: #000000;
@@ -182,6 +183,20 @@
             .message { font-size: 1.5rem; }
             .skull-container { font-size: 80px; }
         }
+        
+        /* Buton stocare sunete */
+        .stop-sound {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: black;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
@@ -191,7 +206,7 @@
     <div class="container animate__animated animate__jackInTheBox">
         <div class="skull-container">💀</div>
         <h1 class="animate__animated animate__headShake">ACCES INTERZIS</h1>
-        <p class="message animate__animated animate__pulse">CE CAUTI AICI FRATE? IEȘI!</p>
+        <p class="message animate__animated animate__pulse">CE CAUTI AICI FRATE?</p>
         <a href="/" class="back-button">ÎNAPOI</a>
     </div>
     
@@ -199,8 +214,55 @@
         <img src="https://media.tenor.com/GY_Ul3mwkh4AAAAd/jumpscare-fnaf.gif" alt="Jumpscare">
     </div>
     
+    <div class="stop-sound" id="stopSound">STOP SPAM</div>
+    
     <script>
-        // Particule care zboară
+        // Variabilă globală pentru a ține evidența sunetelor
+        let soundsActive = true;
+        let soundIntervals = [];
+        
+        // Funcție pentru spam-ul de sunet erro.mp3
+        function spamErroSound() {
+            // Creăm mai multe instanțe audio pentru a permite suprapunerea
+            const maxSounds = 10;
+            const audioPool = [];
+            
+            for (let i = 0; i < maxSounds; i++) {
+                audioPool.push(new Audio('https://www.myinstants.com/media/sounds/erro.mp3'));
+                audioPool[i].volume = 0.4;
+            }
+            
+            let currentIndex = 0;
+            
+            // Spam rapid
+            const rapidInterval = setInterval(() => {
+                if (!soundsActive) {
+                    clearInterval(rapidInterval);
+                    return;
+                }
+                
+                audioPool[currentIndex].play();
+                currentIndex = (currentIndex + 1) % maxSounds;
+            }, 500); // O dată la 500ms
+            
+            soundIntervals.push(rapidInterval);
+            
+            // Spam aleator
+            const randomInterval = setInterval(() => {
+                if (!soundsActive) {
+                    clearInterval(randomInterval);
+                    return;
+                }
+                
+                if (Math.random() > 0.5) {
+                    audioPool[Math.floor(Math.random() * maxSounds)].play();
+                }
+            }, 1200); // Posibilitate aleatorie la fiecare 1.2 secunde
+            
+            soundIntervals.push(randomInterval);
+        }
+        
+        // Funcția pentru particule
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 30;
@@ -238,9 +300,11 @@
                 jumpscare.classList.add('active');
                 
                 // Sunet de jumpscare
-                const screamSound = new Audio('https://www.myinstants.com/media/sounds/fnaf-1-scream-made-with-Voicemod-technology.mp3');
-                screamSound.volume = 0.7;
-                screamSound.play();
+                if (soundsActive) {
+                    const screamSound = new Audio('https://www.myinstants.com/media/sounds/fnaf-1-scream-made-with-Voicemod-technology.mp3');
+                    screamSound.volume = 0.7;
+                    screamSound.play();
+                }
                 
                 // Vibrație puternică
                 navigator.vibrate && navigator.vibrate([300, 100, 300, 100, 300]);
@@ -256,6 +320,8 @@
         function addSurpriseSounds() {
             const container = document.querySelector('.container');
             container.addEventListener('click', () => {
+                if (!soundsActive) return;
+                
                 const sounds = [
                     'https://www.myinstants.com/media/sounds/metal-pipe.mp3',
                     'https://www.myinstants.com/media/sounds/vine-boom.mp3',
@@ -269,22 +335,45 @@
             });
         }
         
+        // Configurarea butonului de stop
+        function setupStopButton() {
+            const stopButton = document.getElementById('stopSound');
+            stopButton.addEventListener('click', () => {
+                soundsActive = false;
+                
+                // Oprim toate intervalele
+                soundIntervals.forEach(interval => clearInterval(interval));
+                soundIntervals = [];
+                
+                // Actualizăm textul butonului
+                stopButton.textContent = 'SUNETELE OPRITE';
+                stopButton.style.background = '#333';
+                
+                // Opțional: reactivăm după 10 secunde
+                setTimeout(() => {
+                    if (Math.random() > 0.5) { // 50% șansă să reactivăm
+                        soundsActive = true;
+                        spamErroSound();
+                        stopButton.textContent = 'STOP SPAM';
+                        stopButton.style.background = 'var(--primary)';
+                    }
+                }, 10000);
+            });
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
             addSurpriseSounds();
             setupJumpscare();
+            setupStopButton();
             
             // Adaugă efect de vibrație când pagina se încarcă
             setTimeout(() => {
                 navigator.vibrate && navigator.vibrate([200, 100, 200]);
             }, 500);
             
-            // Sunet inițial
-            setTimeout(() => {
-                const audio = new Audio('https://www.myinstants.com/media/sounds/horror-sfx.mp3');
-                audio.volume = 0.4;
-                audio.play();
-            }, 300);
+            // Pornește spam-ul de sunet
+            spamErroSound();
         });
     </script>
 </body>
