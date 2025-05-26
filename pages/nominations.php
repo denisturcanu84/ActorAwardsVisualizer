@@ -12,7 +12,7 @@ $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 $db = getDbConnection();
 
 // Get filter values from POST or set defaults
-$selectedYear = $_POST['year'] ?? '2019';
+$selectedYear = $_POST['year'] ?? '';
 $selectedCategory = $_POST['category'] ?? '';
 $selectedResult = $_POST['result'] ?? '';
 $searchQuery = $_POST['search'] ?? '';
@@ -73,25 +73,25 @@ foreach ($nominations as &$nomination) {
         
         if (!$actor_db || empty($actor_db['profile_path'])) {
             // If not found or no profile image, search TMDB
-            $actor_data = searchActorTmdb($nomination['full_name'], $api_key);
+            $actor = searchActorTmdb($nomination['full_name'], $api_key);
             
-            if ($actor_data) {
-                // Get detailed actor info
-                $actor_details = getActorDetailsTmdb($actor_data['id'], $api_key);
+            if ($actor) {
+                $tmdb_id = $actor['id'];
+                $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
                 
-                if ($actor_details) {
+                if ($tmdb_data) {
                     // Update the actor in our database
                     upsertActor($db, [
-                        'full_name' => $actor_details['name'] ?? $nomination['full_name'],
-                        'tmdb_id' => $actor_data['id'],
-                        'bio' => $actor_details['biography'] ?? '',
-                        'profile_path' => $actor_details['profile_path'] ?? null,
-                        'popularity' => $actor_details['popularity'] ?? 0
+                        'full_name' => $tmdb_data['name'] ?? $nomination['full_name'],
+                        'tmdb_id' => $tmdb_id,
+                        'bio' => $tmdb_data['biography'] ?? '',
+                        'profile_path' => $tmdb_data['profile_path'] ?? null,
+                        'popularity' => $tmdb_data['popularity'] ?? 0
                     ]);
                     
                     // Update the nomination with the new profile path
-                    $nomination['profile_path'] = $actor_details['profile_path'] ?? null;
-                    $nomination['tmdb_id'] = $actor_data['id'];
+                    $nomination['profile_path'] = $tmdb_data['profile_path'] ?? null;
+                    $nomination['tmdb_id'] = $tmdb_id;
                 }
             }
         } else {
