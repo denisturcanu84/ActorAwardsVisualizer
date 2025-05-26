@@ -1,7 +1,10 @@
 <?php
-//require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/functions.php';
+
+// Initialize database connection
+$db = getDbConnection();
 
 // Get filter values from POST or set defaults
 $selectedYear = $_POST['year'] ?? '';
@@ -19,23 +22,24 @@ $query = "SELECT a.*, ac.full_name, ac.profile_path, p.title as production_title
 $params = [];
 
 if ($selectedYear) {
-    $query .= " AND a.year = :year";
-    $params[':year'] = $selectedYear;
+    $query .= " AND a.year = ?";
+    $params[] = $selectedYear;
 }
 
 if ($selectedCategory) {
-    $query .= " AND a.category = :category";
-    $params[':category'] = $selectedCategory;
+    $query .= " AND a.category = ?";
+    $params[] = $selectedCategory;
 }
 
 if ($selectedResult) {
-    $query .= " AND a.won = :result";
-    $params[':result'] = $selectedResult;
+    $query .= " AND a.won = ?";
+    $params[] = $selectedResult;
 }
 
 if ($searchQuery) {
-    $query .= " AND (ac.full_name LIKE :search OR a.show LIKE :search)";
-    $params[':search'] = "%$searchQuery%";
+    $query .= " AND (ac.full_name LIKE ? OR a.show LIKE ?)";
+    $params[] = "%$searchQuery%";
+    $params[] = "%$searchQuery%";
 }
 
 $query .= " ORDER BY a.year DESC, a.category";
