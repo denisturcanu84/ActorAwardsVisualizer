@@ -94,7 +94,6 @@ $profile_path = getProfileImageUrl($profile_path);
 
 // informatii aditionale
 $awards = getActorAwards($db, $actor_name);
-$consecutive = getConsecutiveNominationYears($db, $actor_name);
 $movies = getActorMovies($tmdb_id, $api_key, 4);
 $news = getActorNews($actor_name);
 ?>
