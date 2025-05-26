@@ -46,7 +46,10 @@
 
 /* hamburger menu - hidden by default */
 .nav-toggle {
-    display: none;
+    display: none !important;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .nav-toggle-label {
