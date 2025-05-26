@@ -18,7 +18,7 @@ $selectedResult = $_POST['result'] ?? '';
 $searchQuery = $_POST['search'] ?? '';
 
 // Build the query with filters
-$query = "SELECT a.*, ac.full_name, ac.profile_path, ac.tmdb_id, p.title as production_title, p.poster_path 
+$query = "SELECT a.*, a.full_name, ac.profile_path, ac.tmdb_id, p.title as production_title, p.poster_path 
           FROM awards a 
           LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id 
           LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id 
@@ -42,7 +42,7 @@ if ($selectedResult) {
 }
 
 if ($searchQuery) {
-    $query .= " AND (ac.full_name LIKE ? OR a.show LIKE ?)";
+    $query .= " AND (a.full_name LIKE ? OR a.show LIKE ?)";
     $params[] = "%$searchQuery%";
     $params[] = "%$searchQuery%";
 }
@@ -226,8 +226,11 @@ unset($nomination);
                     <div class="nomination-card">
                         <div class="nomination-content">
                             <div class="nomination-image">
-                                <?php if ($nomination['profile_path']): ?>
-                                    <img src="https://image.tmdb.org/t/p/w200<?php echo htmlspecialchars($nomination['profile_path']); ?>" 
+                                <?php 
+                                $profile_image = getProfileImageUrl($nomination['profile_path']);
+                                if ($profile_image): 
+                                ?>
+                                    <img src="<?php echo htmlspecialchars($profile_image); ?>" 
                                          alt="<?php echo htmlspecialchars($nomination['full_name'] ?? 'Unknown Actor'); ?>">
                                 <?php else: ?>
                                     <div class="no-image">No Image Available</div>
