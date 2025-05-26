@@ -6,23 +6,36 @@
     --spacing: clamp(0.5rem, 2vw, 1rem);
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .footer {
     background-color: var(--footer-bg);
     color: var(--footer-text);
-    padding: calc(var(--spacing) * 2) 0;
+    padding: calc(var(--spacing) * 1) 0;
     text-align: center;
     margin-top: auto;
+    width: 100%;
+    position: relative; 
 }
 
 .footer-content {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing);
-    font-size: clamp(0.875rem, 2vw, 1rem);
+    font-size: clamp(0.8rem, 1.5vw, 0.9rem); 
 }
 
 .footer p {
-    margin: calc(var(--spacing) * 0.5) 0;
+    margin: calc(var(--spacing) * 0.25) 0; 
     opacity: 0.9;
 }
 
@@ -38,6 +51,6 @@
 
 @media (max-width: 480px) {
     .footer {
-        padding: calc(var(--spacing) * 1.5) 0;
+        padding: var(--spacing) 0;
     }
 }

@@ -24,34 +24,21 @@ if ($actor) {
 $db = getDbConnection();
 $actor_db = findActorByTmdbId($db, $tmdb_id);
 
-// daca ar trebui actualizat actorul in baza de date
-$shouldUpdate = !$actor_db || isOutdated($actor_db['last_updated']);
+$tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
 
-if ($shouldUpdate) {
-    // fetch detalii actor din TMDB
-    $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
+$actor_name    = $tmdb_data['name'] ?? '';
+$profile_path  = $tmdb_data['profile_path'] ?? '';
+$bio           = $tmdb_data['biography'] ?? ''; // Or any relevant TMDB field
+$popularity    = $tmdb_data['popularity'] ?? '';
+$tmdb_link     = "https://www.themoviedb.org/person/$tmdb_id";
 
-    $actor_name = $tmdb_data['name'] ?? '';
-    $profile_path = $tmdb_data['profile_path'] ?? '';
-    $bio = $tmdb_data['known_for_department'] ?? '';
-    $popularity = $tmdb_data['popularity'] ?? '';
-    $tmdb_link = "https://www.themoviedb.org/person/$tmdb_id";
-
-    upsertActor($db, [
+upsertActor($db, [
     'full_name' => $actor_name,
-    'tmdb_id' => $tmdb_id,
-    'bio' => $bio,
+    'tmdb_id'   => $tmdb_id,
+    'bio'       => $bio,
     'profile_path' => $profile_path,
-    'popularity' => $popularity
+    'popularity'=> $popularity
 ]);
-
-} else {
-    $actor_name = $actor_db['full_name'];
-    $profile_path = $actor_db['profile_path'];
-    $bio = $actor_db['bio'];
-    $popularity = $actor_db['popularity'];
-    $tmdb_link = "https://www.themoviedb.org/person/$tmdb_id";
-}
 
 $awards = getActorAwards($db, $actor_name);
 $profile_path = getProfileImageUrl($profile_path);
@@ -68,6 +55,7 @@ $news   = getActorNews($actor_name);
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/actor_profile.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
 </head>
 <body>
     <?php include '../includes/navbar.php'; ?>
@@ -84,9 +72,6 @@ $news   = getActorNews($actor_name);
                         </div>
                         <div class="profile-info">
                             <h1><?php echo htmlspecialchars($actor_name); ?></h1>
-                            <?php if ($bio): ?>
-                                <div class="bio">Known for: <?php echo htmlspecialchars($bio); ?></div>
-                            <?php endif; ?>
                             <?php if (!empty($tmdb_data['biography'])): ?>
                                 <div class="biography"><?php echo nl2br(htmlspecialchars($tmdb_data['biography'])); ?></div>
                             <?php endif; ?>
@@ -174,5 +159,6 @@ $news   = getActorNews($actor_name);
             </div>
         </div>
     </div>
+    <?php include '../includes/footer.php'; ?>
 </body>
 </html>

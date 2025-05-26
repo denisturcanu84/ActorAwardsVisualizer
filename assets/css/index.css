@@ -35,7 +35,7 @@ body {
     color: white;
     padding: clamp(2rem, 5vh, 4rem) 0;
     text-align: center;
-    margin-top: 60px; /* Account for fixed navbar */
+    margin-top: 60px; 
 }
 
 .hero-content {
@@ -156,9 +156,6 @@ body {
     color: #666;
 }
 
-/* Media Queries */
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .container {
         width: 95%;
