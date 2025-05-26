@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/tmdb.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+$api_key = $_ENV['TMDB_API_KEY'] ?? '';
 
 // Initialize database connection
 $db = getDbConnection();
@@ -12,7 +18,7 @@ $selectedResult = $_POST['result'] ?? '';
 $searchQuery = $_POST['search'] ?? '';
 
 // Build the query with filters
-$query = "SELECT a.*, ac.full_name, ac.profile_path, p.title as production_title, p.poster_path 
+$query = "SELECT a.*, ac.full_name, ac.profile_path, ac.tmdb_id, p.title as production_title, p.poster_path 
           FROM awards a 
           LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id 
           LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id 
@@ -58,6 +64,25 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
 // Calculate statistics
 $categoryCounts = array_count_values(array_column($nominations, 'category'));
 $yearCounts = array_count_values(array_column($nominations, 'year'));
+
+// Get TMDB data for actors without profile images
+foreach ($nominations as &$nomination) {
+    if (empty($nomination['profile_path']) && !empty($nomination['tmdb_id'])) {
+        $actor_data = getActorDetailsTmdb($nomination['tmdb_id'], $api_key);
+        if ($actor_data) {
+            $nomination['profile_path'] = $actor_data['profile_path'] ?? null;
+            // Update the actor in the database
+            upsertActor($db, [
+                'full_name' => $actor_data['name'] ?? $nomination['full_name'],
+                'tmdb_id' => $nomination['tmdb_id'],
+                'bio' => $actor_data['biography'] ?? '',
+                'profile_path' => $nomination['profile_path'],
+                'popularity' => $actor_data['popularity'] ?? 0
+            ]);
+        }
+    }
+}
+unset($nomination);
 ?>
 
 <!DOCTYPE html>
@@ -203,7 +228,9 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
                             <div class="nomination-image">
                                 <?php if ($nomination['profile_path']): ?>
                                     <img src="https://image.tmdb.org/t/p/w200<?php echo htmlspecialchars($nomination['profile_path']); ?>" 
-                                         alt="<?php echo htmlspecialchars($nomination['full_name']); ?>">
+                                         alt="<?php echo htmlspecialchars($nomination['full_name'] ?? 'Unknown Actor'); ?>">
+                                <?php else: ?>
+                                    <div class="no-image">No Image Available</div>
                                 <?php endif; ?>
                             </div>
                             <div class="nomination-details">
