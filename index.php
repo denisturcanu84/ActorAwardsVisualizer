@@ -36,7 +36,7 @@
                         <p>Browse nominations by year, category, actor, or production</p>
                         <a href="pages/nominations.php" class="card-button">View Nominations</a>
                     </div>
-                    
+
                     <div class="card">
                         <div class="card-icon">👤</div>
                         <h3>Actors</h3>
@@ -48,14 +48,14 @@
                         <div class="card-icon">🎬</div>
                         <h3>Productions</h3>
                         <p>Discover movies and TV shows with their nominations</p>
-                        <a href="production.php" class="card-button">View Productions</a>
+                        <a href="pages/production.php" class="card-button">View Productions</a>
                     </div>
                     
                     <div class="card">
                         <div class="card-icon">📊</div>
                         <h3>Statistics</h3>
                         <p>Analyze trends, generate charts, and export data</p>
-                        <a href="stats.php" class="card-button">View Statistics</a>
+                        <a href="pages/stats.php" class="card-button">View Statistics</a>
                     </div>
                 </div>
             </div>
