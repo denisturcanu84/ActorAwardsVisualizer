@@ -2,6 +2,10 @@
 
 ErrorDocument 404 /pages/404.html
 
+<FilesMatch "^\.">
+Require all denied
+</FilesMatch>
+
 # rewrites
 
 RewriteEngine On
