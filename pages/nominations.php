@@ -3,24 +3,56 @@ require_once '../includes/config.php';
 require_once '../includes/db.php';
 require_once '../includes/functions.php';
 
-// Get all nominations with actor and production details
+// Get filter values from POST or set defaults
+$selectedYear = $_POST['year'] ?? '';
+$selectedCategory = $_POST['category'] ?? '';
+$selectedResult = $_POST['result'] ?? '';
+$searchQuery = $_POST['search'] ?? '';
+
+// Build the query with filters
 $query = "SELECT a.*, ac.full_name, ac.profile_path, p.title as production_title, p.poster_path 
           FROM awards a 
           LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id 
           LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id 
-          ORDER BY a.year DESC, a.category";
+          WHERE 1=1";
 
-$nominations = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+$params = [];
 
-// Get unique years for filter
-$years = array_unique(array_column($nominations, 'year'));
-rsort($years);
+if ($selectedYear) {
+    $query .= " AND a.year = :year";
+    $params[':year'] = $selectedYear;
+}
 
-// Get unique categories for filter
-$categories = array_unique(array_column($nominations, 'category'));
-sort($categories);
+if ($selectedCategory) {
+    $query .= " AND a.category = :category";
+    $params[':category'] = $selectedCategory;
+}
 
-// Calculate statistics for the charts
+if ($selectedResult) {
+    $query .= " AND a.won = :result";
+    $params[':result'] = $selectedResult;
+}
+
+if ($searchQuery) {
+    $query .= " AND (ac.full_name LIKE :search OR a.show LIKE :search)";
+    $params[':search'] = "%$searchQuery%";
+}
+
+$query .= " ORDER BY a.year DESC, a.category";
+
+// Prepare and execute the query
+$stmt = $db->prepare($query);
+$stmt->execute($params);
+$nominations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Get unique years and categories for filters
+$query = "SELECT DISTINCT year FROM awards ORDER BY year DESC";
+$years = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
+
+$query = "SELECT DISTINCT category FROM awards ORDER BY category";
+$categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
+
+// Calculate statistics
 $categoryCounts = array_count_values(array_column($nominations, 'category'));
 $yearCounts = array_count_values(array_column($nominations, 'year'));
 ?>
@@ -44,14 +76,17 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
 
         <!-- Filters Section -->
         <div class="filters-section">
-            <form class="filters-form" id="filtersForm">
+            <form class="filters-form" method="POST">
                 <div class="filters-grid">
                     <div class="filter-group">
                         <label for="yearFilter">Year:</label>
                         <select id="yearFilter" name="year">
                             <option value="">All Years</option>
                             <?php foreach ($years as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                                <option value="<?php echo htmlspecialchars($year); ?>" 
+                                    <?php echo $selectedYear === $year ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($year); ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -60,7 +95,10 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
                         <select id="categoryFilter" name="category">
                             <option value="">All Categories</option>
                             <?php foreach ($categories as $category): ?>
-                                <option value="<?php echo htmlspecialchars($category); ?>"><?php echo htmlspecialchars($category); ?></option>
+                                <option value="<?php echo htmlspecialchars($category); ?>"
+                                    <?php echo $selectedCategory === $category ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($category); ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -68,14 +106,20 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
                         <label for="resultFilter">Result:</label>
                         <select id="resultFilter" name="result">
                             <option value="">All Results</option>
-                            <option value="Won">Won</option>
-                            <option value="Nominated">Nominated</option>
+                            <option value="Won" <?php echo $selectedResult === 'Won' ? 'selected' : ''; ?>>Won</option>
+                            <option value="Nominated" <?php echo $selectedResult === 'Nominated' ? 'selected' : ''; ?>>Nominated</option>
                         </select>
                     </div>
                     <div class="filter-group">
                         <label for="searchInput">Search:</label>
-                        <input type="text" id="searchInput" name="search" placeholder="Search actor or show...">
+                        <input type="text" id="searchInput" name="search" 
+                               placeholder="Search actor or show..."
+                               value="<?php echo htmlspecialchars($searchQuery); ?>">
                     </div>
+                </div>
+                <div class="filter-buttons">
+                    <button type="submit" class="filter-button">Apply Filters</button>
+                    <a href="nominations.php" class="reset-button">Reset</a>
                 </div>
             </form>
         </div>
@@ -147,14 +191,11 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
         <div class="nominations-list">
             <?php if (empty($nominations)): ?>
                 <div class="no-results">
-                    <p>No nominations found.</p>
+                    <p>No nominations found matching your criteria.</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($nominations as $nomination): ?>
-                    <div class="nomination-card" 
-                         data-year="<?php echo htmlspecialchars($nomination['year']); ?>"
-                         data-category="<?php echo htmlspecialchars($nomination['category']); ?>"
-                         data-result="<?php echo htmlspecialchars($nomination['won']); ?>">
+                    <div class="nomination-card">
                         <div class="nomination-content">
                             <div class="nomination-image">
                                 <?php if ($nomination['profile_path']): ?>
@@ -183,44 +224,5 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
     </div>
 
     <?php include '../includes/footer.php'; ?>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filters = ['yearFilter', 'categoryFilter', 'resultFilter', 'searchInput'];
-            
-            filters.forEach(filterId => {
-                const element = document.getElementById(filterId);
-                if (element) {
-                    element.addEventListener('change', filterNominations);
-                }
-            });
-
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.addEventListener('input', filterNominations);
-            }
-        });
-
-        function filterNominations() {
-            const year = document.getElementById('yearFilter').value;
-            const category = document.getElementById('categoryFilter').value;
-            const result = document.getElementById('resultFilter').value;
-            const search = document.getElementById('searchInput').value.toLowerCase();
-
-            document.querySelectorAll('.nomination-card').forEach(card => {
-                const cardYear = card.dataset.year;
-                const cardCategory = card.dataset.category;
-                const cardResult = card.dataset.result;
-                const cardText = card.textContent.toLowerCase();
-
-                const yearMatch = !year || cardYear === year;
-                const categoryMatch = !category || cardCategory === category;
-                const resultMatch = !result || cardResult === result;
-                const searchMatch = !search || cardText.includes(search);
-
-                card.style.display = yearMatch && categoryMatch && resultMatch && searchMatch ? 'block' : 'none';
-            });
-        }
-    </script>
 </body>
 </html>

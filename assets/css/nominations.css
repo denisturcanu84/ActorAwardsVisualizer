@@ -28,6 +28,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .filter-group {
@@ -56,6 +57,44 @@ body {
     outline: none;
     border-color: #4A90E2;
     box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.filter-button,
+.reset-button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: var(--p-size);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-button {
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+}
+
+.filter-button:hover {
+    background-color: #357ABD;
+}
+
+.reset-button {
+    background-color: #f8f9fa;
+    color: #243B55;
+    border: 1px solid #dee2e6;
+}
+
+.reset-button:hover {
+    background-color: #e9ecef;
 }
 
 /* Statistics Section */
@@ -240,6 +279,16 @@ body {
 
     .nomination-info p {
         font-size: 0.9rem;
+    }
+
+    .filter-buttons {
+        flex-direction: column;
+    }
+
+    .filter-button,
+    .reset-button {
+        width: 100%;
+        text-align: center;
     }
 }
 
