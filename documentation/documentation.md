@@ -20,9 +20,7 @@ Conținut:
 
 Introducere despre proiect. 
 
-Selectare perioadă (ultimii A ani). 
-
-Navigare către celelalte secțiuni (vizualizări, actori, producții, statistici). 
+Navigare către celelalte secțiuni (nominalizari, actori, producții, statistici). 
 
  
 

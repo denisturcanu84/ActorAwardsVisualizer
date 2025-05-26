@@ -1,0 +1,361 @@
+:root {
+  --primary-color: #4A90E2;
+  --primary-hover: #357ABD;
+  --text-color: #243B55;
+  --text-secondary: #576a7e;
+  --background: linear-gradient(120deg, #E0F7FF 60%, #ffffff 100%);
+  --card-background: #ffffff;
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  --spacing: 2.5rem;
+  --border-radius: 16px;
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--background);
+  margin: 0;
+  color: var(--text-color);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 80px auto 40px;
+  padding: 0 1.5rem;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: var(--spacing);
+  margin-top: 2rem;
+}
+
+.profile-card, 
+.right-col.news-section {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.profile-card {
+  padding: 0;
+}
+
+.profile-header {
+  display: flex;
+  gap: 2.5rem;
+  padding: var(--spacing);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.profile-img {
+  width: 200px;
+  height: 280px;
+  border-radius: calc(var(--border-radius) - 4px);
+  background: #e8edf2 center/cover no-repeat;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.profile-img:hover {
+  transform: scale(1.02);
+}
+
+.profile-info {
+  flex: 1;
+  padding-top: 0.5rem;
+}
+
+.profile-info h1 {
+  margin: 0 0 1rem 0;
+  font-size: 2.8rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: var(--text-color);
+}
+
+.profile-info .bio {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-info .biography {
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 1.5rem 0;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.profile-info .popularity {
+  display: inline-block;
+  background: #E0F7FF;
+  color: #357ABD;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-size: 0.95rem;
+}
+
+.profile-info .tmdb-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: white;
+  background: var(--primary-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.profile-info .tmdb-link:hover {
+  background: var(--primary-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.awards-section, 
+.movies-section {
+  padding: var(--spacing);
+}
+
+.awards-section h2,
+.movies-section h2,
+.news-section h2 {
+  font-size: 1.8rem;
+  margin: 0 0 1.5rem;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.awards-section h2:after,
+.movies-section h2:after,
+.news-section h2:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 4px;
+  background: var(--primary-color);
+  border-radius: 2px;
+}
+
+.awards-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.awards-list li {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 1.2rem;
+  border-radius: 12px;
+  transition: var(--transition);
+}
+
+.awards-list li:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-3px);
+}
+
+.award-year {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.award-cat {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.award-show {
+  display: block;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.movies-section {
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+
+.movies-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.movie-item {
+  transition: var(--transition);
+}
+
+.movie-item:hover {
+  transform: translateY(-5px);
+}
+
+.movie-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.movie-poster {
+  height: 270px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.movie-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.movie-poster img:hover {
+  transform: scale(1.05);
+}
+
+.movie-info {
+  padding: 1rem 0.5rem;
+}
+
+.movie-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.movie-year {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-left: 0.25rem;
+}
+
+/* News section */
+.right-col.news-section {
+  padding: var(--spacing);
+  align-self: start;
+}
+
+.news-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.news-list li {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.news-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.news-list a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+  transition: var(--transition);
+}
+
+.news-list a:hover {
+  color: var(--primary-hover);
+}
+
+.news-date {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 2fr 1fr;
+  }
+  
+  .profile-header {
+    gap: 2rem;
+  }
+  
+  .profile-img {
+    width: 180px;
+    height: 250px;
+  }
+  
+  .profile-info h1 {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-img {
+    width: 160px;
+    height: 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .profile-img {
+    width: 180px;
+    height: 250px;
+  }
+  
+  .profile-info {
+    text-align: center;
+  }
+  
+  .awards-list,
+  .movies-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .awards-section h2:after,
+  .movies-section h2:after,
+  .news-section h2:after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
