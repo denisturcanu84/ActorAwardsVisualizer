@@ -207,14 +207,14 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
                                 <?php endif; ?>
                             </div>
                             <div class="nomination-details">
-                                <h3><?php echo htmlspecialchars($nomination['full_name']); ?></h3>
+                                <h3><?php echo htmlspecialchars($nomination['full_name'] ?? 'Unknown Actor'); ?></h3>
                                 <div class="nomination-info">
-                                    <p><strong>Year:</strong> <?php echo htmlspecialchars($nomination['year']); ?></p>
-                                    <p><strong>Category:</strong> <?php echo htmlspecialchars($nomination['category']); ?></p>
-                                    <p><strong>Show:</strong> <?php echo htmlspecialchars($nomination['show']); ?></p>
+                                    <p><strong>Year:</strong> <?php echo htmlspecialchars($nomination['year'] ?? 'N/A'); ?></p>
+                                    <p><strong>Category:</strong> <?php echo htmlspecialchars($nomination['category'] ?? 'N/A'); ?></p>
+                                    <p><strong>Show:</strong> <?php echo htmlspecialchars($nomination['show'] ?? 'N/A'); ?></p>
                                     <p><strong>Result:</strong> 
-                                        <span class="result-badge <?php echo $nomination['won'] === 'Won' ? 'won' : 'nominated'; ?>">
-                                            <?php echo htmlspecialchars($nomination['won']); ?>
+                                        <span class="result-badge <?php echo ($nomination['won'] ?? 'Nominated') === 'Won' ? 'won' : 'nominated'; ?>">
+                                            <?php echo htmlspecialchars($nomination['won'] ?? 'Nominated'); ?>
                                         </span>
                                     </p>
                                 </div>
