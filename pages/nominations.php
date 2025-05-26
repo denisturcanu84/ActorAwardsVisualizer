@@ -17,12 +17,12 @@ $selectedCategory = $_POST['category'] ?? '';
 $selectedResult = $_POST['result'] ?? '';
 $searchQuery = $_POST['search'] ?? '';
 
-// Convert Won/Nominated to true/false for database query
+// Convert Won/Nominated to True/False for database query
 $resultBoolean = null;
 if ($selectedResult === 'Won') {
-    $resultBoolean = true;
+    $resultBoolean = 'True';  // Using 'True' to match database format
 } elseif ($selectedResult === 'Nominated') {
-    $resultBoolean = false;
+    $resultBoolean = 'False';  // Using 'False' to match database format
 }
 
 // Build the query with filters
@@ -269,8 +269,8 @@ unset($nomination);
                                     <p><strong>Category:</strong> <?php echo htmlspecialchars($nomination['category'] ?? 'N/A'); ?></p>
                                     <p><strong>Show:</strong> <?php echo htmlspecialchars($nomination['show'] ?? 'N/A'); ?></p>
                                     <p><strong>Result:</strong> 
-                                        <span class="result-badge <?php echo $nomination['won'] ? 'won' : 'nominated'; ?>">
-                                            <?php echo $nomination['won'] ? 'Won' : 'Nominated'; ?>
+                                        <span class="result-badge <?php echo $nomination['won'] === 'True' ? 'won' : 'nominated'; ?>">
+                                            <?php echo $nomination['won'] === 'True' ? 'Won' : 'Nominated'; ?>
                                         </span>
                                     </p>
                                 </div>
