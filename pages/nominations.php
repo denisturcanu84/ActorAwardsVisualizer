@@ -67,18 +67,36 @@ $yearCounts = array_count_values(array_column($nominations, 'year'));
 
 // Get TMDB data for actors without profile images
 foreach ($nominations as &$nomination) {
-    if (empty($nomination['profile_path']) && !empty($nomination['tmdb_id'])) {
-        $actor_data = getActorDetailsTmdb($nomination['tmdb_id'], $api_key);
-        if ($actor_data) {
-            $nomination['profile_path'] = $actor_data['profile_path'] ?? null;
-            // Update the actor in the database
-            upsertActor($db, [
-                'full_name' => $actor_data['name'] ?? $nomination['full_name'],
-                'tmdb_id' => $nomination['tmdb_id'],
-                'bio' => $actor_data['biography'] ?? '',
-                'profile_path' => $nomination['profile_path'],
-                'popularity' => $actor_data['popularity'] ?? 0
-            ]);
+    if (empty($nomination['profile_path'])) {
+        // First try to find the actor in our database
+        $actor_db = findActorByTmdbId($db, $nomination['tmdb_actor_id']);
+        
+        if (!$actor_db || empty($actor_db['profile_path'])) {
+            // If not found or no profile image, search TMDB
+            $actor_data = searchActorTmdb($nomination['full_name'], $api_key);
+            
+            if ($actor_data) {
+                // Get detailed actor info
+                $actor_details = getActorDetailsTmdb($actor_data['id'], $api_key);
+                
+                if ($actor_details) {
+                    // Update the actor in our database
+                    upsertActor($db, [
+                        'full_name' => $actor_details['name'] ?? $nomination['full_name'],
+                        'tmdb_id' => $actor_data['id'],
+                        'bio' => $actor_details['biography'] ?? '',
+                        'profile_path' => $actor_details['profile_path'] ?? null,
+                        'popularity' => $actor_details['popularity'] ?? 0
+                    ]);
+                    
+                    // Update the nomination with the new profile path
+                    $nomination['profile_path'] = $actor_details['profile_path'] ?? null;
+                    $nomination['tmdb_id'] = $actor_data['id'];
+                }
+            }
+        } else {
+            // Use the profile path from our database
+            $nomination['profile_path'] = $actor_db['profile_path'];
         }
     }
 }
