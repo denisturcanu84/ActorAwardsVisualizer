@@ -19,6 +19,10 @@ rsort($years);
 // Get unique categories for filter
 $categories = array_unique(array_column($nominations, 'category'));
 sort($categories);
+
+// Calculate statistics for the charts
+$categoryCounts = array_count_values(array_column($nominations, 'category'));
+$yearCounts = array_count_values(array_column($nominations, 'year'));
 ?>
 
 <!DOCTYPE html>
@@ -31,64 +35,109 @@ sort($categories);
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/nominations.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <?php include '../includes/navbar.php'; ?>
 
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Award Nominations</h1>
+    <div class="container">
+        <h1 class="text-center">Award Nominations</h1>
 
         <!-- Filters Section -->
-        <div class="filters-section mb-4">
-            <div class="row">
-                <div class="col-md-3">
-                    <select class="form-select" id="yearFilter">
-                        <option value="">All Years</option>
-                        <?php foreach ($years as $year): ?>
-                            <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
-                        <?php endforeach; ?>
-                    </select>
+        <div class="filters-section">
+            <form class="filters-form" id="filtersForm">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="yearFilter">Year:</label>
+                        <select id="yearFilter" name="year">
+                            <option value="">All Years</option>
+                            <?php foreach ($years as $year): ?>
+                                <option value="<?php echo htmlspecialchars($year); ?>"><?php echo htmlspecialchars($year); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="categoryFilter">Category:</label>
+                        <select id="categoryFilter" name="category">
+                            <option value="">All Categories</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?php echo htmlspecialchars($category); ?>"><?php echo htmlspecialchars($category); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="resultFilter">Result:</label>
+                        <select id="resultFilter" name="result">
+                            <option value="">All Results</option>
+                            <option value="Won">Won</option>
+                            <option value="Nominated">Nominated</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchInput">Search:</label>
+                        <input type="text" id="searchInput" name="search" placeholder="Search actor or show...">
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="categoryFilter">
-                        <option value="">All Categories</option>
-                        <?php foreach ($categories as $category): ?>
-                            <option value="<?php echo htmlspecialchars($category); ?>"><?php echo htmlspecialchars($category); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="resultFilter">
-                        <option value="">All Results</option>
-                        <option value="Won">Won</option>
-                        <option value="Nominated">Nominated</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control" id="searchInput" placeholder="Search actor or show...">
-                </div>
-            </div>
+            </form>
         </div>
 
         <!-- Statistics Section -->
-        <div class="statistics-section mb-4">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Nominations by Category</h5>
-                            <canvas id="categoryChart"></canvas>
-                        </div>
+        <div class="statistics-section">
+            <div class="stats-grid">
+                <!-- Category Statistics -->
+                <div class="stats-card">
+                    <h2>Nominations by Category</h2>
+                    <div class="stats-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Count</th>
+                                    <th>Visual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($categoryCounts as $category => $count): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($category); ?></td>
+                                        <td><?php echo $count; ?></td>
+                                        <td>
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: <?php echo ($count / max($categoryCounts)) * 100; ?>%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Nominations by Year</h5>
-                            <canvas id="yearChart"></canvas>
-                        </div>
+
+                <!-- Year Statistics -->
+                <div class="stats-card">
+                    <h2>Nominations by Year</h2>
+                    <div class="stats-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Count</th>
+                                    <th>Visual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($yearCounts as $year => $count): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($year); ?></td>
+                                        <td><?php echo $count; ?></td>
+                                        <td>
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: <?php echo ($count / max($yearCounts)) * 100; ?>%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -102,26 +151,25 @@ sort($categories);
                 </div>
             <?php else: ?>
                 <?php foreach ($nominations as $nomination): ?>
-                    <div class="card mb-3 nomination-card" 
+                    <div class="nomination-card" 
                          data-year="<?php echo htmlspecialchars($nomination['year']); ?>"
                          data-category="<?php echo htmlspecialchars($nomination['category']); ?>"
                          data-result="<?php echo htmlspecialchars($nomination['won']); ?>">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <?php if ($nomination['profile_path']): ?>
-                                        <img src="https://image.tmdb.org/t/p/w200<?php echo htmlspecialchars($nomination['profile_path']); ?>" 
-                                             class="img-fluid rounded" alt="<?php echo htmlspecialchars($nomination['full_name']); ?>">
-                                    <?php endif; ?>
-                                </div>
-                                <div class="col-md-10">
-                                    <h5 class="card-title"><?php echo htmlspecialchars($nomination['full_name']); ?></h5>
-                                    <p class="card-text">
-                                        <strong>Year:</strong> <?php echo htmlspecialchars($nomination['year']); ?><br>
-                                        <strong>Category:</strong> <?php echo htmlspecialchars($nomination['category']); ?><br>
-                                        <strong>Show:</strong> <?php echo htmlspecialchars($nomination['show']); ?><br>
-                                        <strong>Result:</strong> 
-                                        <span class="badge <?php echo $nomination['won'] === 'Won' ? 'bg-success' : 'bg-secondary'; ?>">
+                        <div class="nomination-content">
+                            <div class="nomination-image">
+                                <?php if ($nomination['profile_path']): ?>
+                                    <img src="https://image.tmdb.org/t/p/w200<?php echo htmlspecialchars($nomination['profile_path']); ?>" 
+                                         alt="<?php echo htmlspecialchars($nomination['full_name']); ?>">
+                                <?php endif; ?>
+                            </div>
+                            <div class="nomination-details">
+                                <h3><?php echo htmlspecialchars($nomination['full_name']); ?></h3>
+                                <div class="nomination-info">
+                                    <p><strong>Year:</strong> <?php echo htmlspecialchars($nomination['year']); ?></p>
+                                    <p><strong>Category:</strong> <?php echo htmlspecialchars($nomination['category']); ?></p>
+                                    <p><strong>Show:</strong> <?php echo htmlspecialchars($nomination['show']); ?></p>
+                                    <p><strong>Result:</strong> 
+                                        <span class="result-badge <?php echo $nomination['won'] === 'Won' ? 'won' : 'nominated'; ?>">
                                             <?php echo htmlspecialchars($nomination['won']); ?>
                                         </span>
                                     </p>
@@ -136,19 +184,21 @@ sort($categories);
 
     <?php include '../includes/footer.php'; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Initialize charts and filters
         document.addEventListener('DOMContentLoaded', function() {
-            // Filter functionality
             const filters = ['yearFilter', 'categoryFilter', 'resultFilter', 'searchInput'];
+            
             filters.forEach(filterId => {
-                document.getElementById(filterId).addEventListener('change', filterNominations);
+                const element = document.getElementById(filterId);
+                if (element) {
+                    element.addEventListener('change', filterNominations);
+                }
             });
-            document.getElementById('searchInput').addEventListener('input', filterNominations);
 
-            // Initialize charts
-            initializeCharts();
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', filterNominations);
+            }
         });
 
         function filterNominations() {
@@ -169,68 +219,6 @@ sort($categories);
                 const searchMatch = !search || cardText.includes(search);
 
                 card.style.display = yearMatch && categoryMatch && resultMatch && searchMatch ? 'block' : 'none';
-            });
-        }
-
-        function initializeCharts() {
-            // Category Chart
-            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-            new Chart(categoryCtx, {
-                type: 'pie',
-                data: {
-                    labels: <?php echo json_encode($categories); ?>,
-                    datasets: [{
-                        data: <?php 
-                            $categoryCounts = array_count_values(array_column($nominations, 'category'));
-                            echo json_encode(array_values($categoryCounts));
-                        ?>,
-                        backgroundColor: [
-                            '#4A90E2',
-                            '#357ABD',
-                            '#243B55',
-                            '#E0F7FF',
-                            '#2c3e50'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-
-            // Year Chart
-            const yearCtx = document.getElementById('yearChart').getContext('2d');
-            new Chart(yearCtx, {
-                type: 'bar',
-                data: {
-                    labels: <?php echo json_encode($years); ?>,
-                    datasets: [{
-                        label: 'Nominations per Year',
-                        data: <?php 
-                            $yearCounts = array_count_values(array_column($nominations, 'year'));
-                            echo json_encode(array_values($yearCounts));
-                        ?>,
-                        backgroundColor: '#4A90E2'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
             });
         }
     </script>

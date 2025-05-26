@@ -12,56 +12,125 @@ body {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 2rem 0;
 }
 
 /* Filters Section */
 .filters-section {
     background-color: white;
-    padding: 20px;
+    padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     margin-bottom: 2rem;
 }
 
-.form-select, .form-control {
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 0.6rem 1.2rem;
-    font-size: var(--p-size);
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-weight: 500;
     color: #243B55;
 }
 
-.form-select:focus, .form-control:focus {
+.filter-group select,
+.filter-group input {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: var(--p-size);
+    color: #243B55;
+    background-color: white;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
     border-color: #4A90E2;
-    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
 }
 
 /* Statistics Section */
-.statistics-section .card {
+.statistics-section {
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.stats-card {
     background-color: white;
-    border: none;
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-    margin-bottom: 20px;
     padding: 1.5rem;
 }
 
-.card-title {
+.stats-card h2 {
     color: #243B55;
     font-size: var(--h2-size);
     margin-bottom: 1rem;
     font-weight: bold;
 }
 
+.stats-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.stats-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stats-table th,
+.stats-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.stats-table th {
+    font-weight: 600;
+    color: #243B55;
+}
+
+.bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    background-color: #4A90E2;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
 /* Nominations List */
+.nominations-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
 .nomination-card {
     background-color: white;
-    transition: transform 0.3s ease;
-    border: none;
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
 }
 
 .nomination-card:hover {
@@ -69,92 +138,57 @@ body {
     box-shadow: 0 6px 28px rgba(0, 0, 0, 0.15);
 }
 
-.nomination-card .card-body {
+.nomination-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
     padding: 1.5rem;
 }
 
-.nomination-card img {
+.nomination-image {
+    width: 100%;
+}
+
+.nomination-image img {
     width: 100%;
     height: auto;
-    object-fit: cover;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.nomination-card .card-title {
+.nomination-details h3 {
     color: #243B55;
     font-size: var(--h2-size);
     margin-bottom: 1rem;
     font-weight: bold;
 }
 
-.nomination-card .card-text {
+.nomination-info {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.nomination-info p {
     color: #243B55;
-    line-height: 1.6;
     font-size: var(--p-size);
 }
 
-.badge {
-    padding: 0.6rem 1.2rem;
+.result-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
     font-weight: 500;
-    border-radius: 8px;
-    font-size: var(--p-size);
+    font-size: 0.9em;
 }
 
-.bg-success {
-    background-color: #4A90E2 !important;
+.result-badge.won {
+    background-color: #4A90E2;
+    color: white;
 }
 
-.bg-secondary {
-    background-color: #357ABD !important;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        width: 95%;
-        padding: 0 10px;
-    }
-
-    .filters-section {
-        padding: 15px;
-    }
-
-    .filters-section .row > div {
-        margin-bottom: 10px;
-    }
-
-    .statistics-section .card {
-        margin-bottom: 15px;
-    }
-
-    .nomination-card .row {
-        flex-direction: column;
-    }
-
-    .nomination-card .col-md-2 {
-        margin-bottom: 15px;
-        text-align: center;
-    }
-
-    .nomination-card img {
-        max-width: 150px;
-        margin: 0 auto;
-    }
-
-    .card-title {
-        font-size: 1.3rem;
-    }
-
-    .card-text {
-        font-size: 0.9rem;
-    }
-}
-
-/* Chart Responsiveness */
-canvas {
-    max-width: 100%;
-    height: auto !important;
+.result-badge.nominated {
+    background-color: #357ABD;
+    color: white;
 }
 
 /* Loading State */
@@ -174,6 +208,39 @@ canvas {
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     font-size: var(--p-size);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 1rem 0;
+    }
+
+    .filters-section {
+        padding: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nomination-content {
+        grid-template-columns: 1fr;
+    }
+
+    .nomination-image {
+        max-width: 200px;
+        margin: 0 auto;
+    }
+
+    .nomination-details h3 {
+        font-size: 1.3rem;
+    }
+
+    .nomination-info p {
+        font-size: 0.9rem;
+    }
 }
 
 /* Animation */
