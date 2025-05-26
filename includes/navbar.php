@@ -1,5 +1,6 @@
+<?php
 <nav class="navbar">
-    <input type="checkbox" id="nav-toggle" class="nav-toggle">
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" style="display:none;">
     <a href="/" class="logo">Actor Awards Visualizer</a>
     
     <label for="nav-toggle" class="nav-toggle-label">
@@ -15,3 +16,4 @@
         <a href="/pages/stats.php">Statistics</a>
     </div>
 </nav>
+?>
