@@ -12,7 +12,7 @@ $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 $db = getDbConnection();
 
 // Get filter values from POST or set defaults
-$selectedYear = $_POST['year'] ?? '';
+$selectedYear = $_POST['year'] ?? '2019';
 $selectedCategory = $_POST['category'] ?? '';
 $selectedResult = $_POST['result'] ?? '';
 $searchQuery = $_POST['search'] ?? '';
