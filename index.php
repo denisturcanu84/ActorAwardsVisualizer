@@ -67,7 +67,7 @@
                 <h2>Quick Overview</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">2,500+</div>
+                        <div class="stat-number">5,900+</div>
                         <div class="stat-label">Total Nominations</div>
                     </div>
                     <div class="stat-item">
@@ -79,7 +79,7 @@
                         <div class="stat-label">Award Categories</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">30+</div>
+                        <div class="stat-number">40+</div>
                         <div class="stat-label">Years of Data</div>
                     </div>
                 </div>
