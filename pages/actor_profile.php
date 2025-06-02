@@ -8,135 +8,92 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 
+// verificam ce actor a fost cautat
 if (!isset($_GET['name']) && !isset($_GET['tmdb_id'])) {
     die('Actor not specified.');
 }
 
 $actor_name = isset($_GET['name']) ? trim($_GET['name']) : '';
 $tmdb_id_param = isset($_GET['tmdb_id']) ? intval($_GET['tmdb_id']) : 0;
-
 $db = getDbConnection();
 
-// Prima dată verificăm dacă actorul există deja în baza de date (verificăm și după tmdb_id acum)
-$actor_exists = false;
-$actor_db = null;
+$actor_db = findActorInDatabase($db, $tmdb_id_param, $actor_name);
 
-// Dacă avem un TMDB ID, îl căutăm direct
-if ($tmdb_id_param > 0) {
-    $actor_query = $db->prepare("SELECT * FROM actors WHERE tmdb_id = ?");
-    $actor_query->execute([$tmdb_id_param]);
-    $actor_db = $actor_query->fetch(PDO::FETCH_ASSOC);
-    if ($actor_db) {
-        $actor_exists = true;
-    }
-}
-
-// Dacă nu am găsit după ID, căutăm după nume
-if (!$actor_exists && !empty($actor_name)) {
-    // Încercăm întâi o potrivire exactă
-    $actor_query = $db->prepare("SELECT * FROM actors WHERE LOWER(full_name) = LOWER(?)");
-    $actor_query->execute([trim($actor_name)]);
-    $actor_db = $actor_query->fetch(PDO::FETCH_ASSOC);
-    
-    // Dacă nu găsim, încercăm o potrivire parțială
-    if (!$actor_db) {
-        $actor_query = $db->prepare("SELECT * FROM actors WHERE LOWER(full_name) LIKE LOWER(?)");
-        $actor_query->execute(['%' . trim($actor_name) . '%']);
-        $actor_db = $actor_query->fetch(PDO::FETCH_ASSOC);
-    }
-    
-    if ($actor_db) {
-        $actor_exists = true;
-    }
-}
-
-// Dacă actorul există în baza de date, folosim datele existente
-if ($actor_exists && $actor_db) {
+if ($actor_db) {
+    // folosim datele din baza de date
     $tmdb_id = $actor_db['tmdb_id'];
     $actor_name = $actor_db['full_name'];
     $profile_path = $actor_db['profile_path'];
     $bio = $actor_db['bio'];
     $popularity = $actor_db['popularity'];
     
-    // Verificăm dacă datele sunt vechi și necesită actualizare
+    // actualizam datele in baza de date daca sunt vechi
     if (isOutdated($actor_db['last_updated'], '7 days')) {
-        // Actualizează doar la 7 zile
         $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
         if ($tmdb_data) {
             $profile_path = $tmdb_data['profile_path'] ?? $profile_path;
             $bio = $tmdb_data['biography'] ?? $bio;
             $popularity = $tmdb_data['popularity'] ?? $popularity;
             
-            // Actualizare în baza de date, dar mai rar
             $update = $db->prepare("UPDATE actors SET bio=?, profile_path=?, popularity=?, last_updated=CURRENT_TIMESTAMP WHERE tmdb_id=?");
             $update->execute([$bio, $profile_path, $popularity, $tmdb_id]);
         }
     }
 } else {
-    // Dacă actorul nu există în baza de date, facem o căutare TMDB
-    if ($tmdb_id_param > 0) {
-        // Dacă avem deja un ID TMDB, folosim direct
-        $tmdb_id = $tmdb_id_param;
-        $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
-    } else {
-        // Altfel căutăm după nume
-        $actor = searchActorTmdb($actor_name, $api_key);
-        
-        if (!$actor) {
-            die('Actor not found in TMDB database.');
+    // daca actorul nu este in baza de date, incercam sa il cautam cu TMDB API
+    try {
+        if ($tmdb_id_param > 0) {
+            $tmdb_id = $tmdb_id_param;
+            $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
+        } else {
+            $actor = searchActorTmdb($actor_name, $api_key);
+            if (!$actor) {
+                die('Actor not found in TMDB database.');
+            }
+            $tmdb_id = $actor['id'];
+            $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
         }
         
-        $tmdb_id = $actor['id'];
-        $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
-    }
-    
-    if (!$tmdb_data) {
-        die('Could not retrieve actor details from TMDB.');
-    }
-    
-    // Verificăm acum dacă există deja un actor cu acest TMDB ID în baza de date
-    $check_query = $db->prepare("SELECT id FROM actors WHERE tmdb_id = ?");
-    $check_query->execute([$tmdb_id]);
-    $existing = $check_query->fetch(PDO::FETCH_ASSOC);
-    
-    if ($existing) {
-        // Actorul există deja, redirecționăm la pagina cu ID-ul corect
-        header("Location: actor_profile.php?tmdb_id=" . $tmdb_id);
-        exit;
-    }
-    
-    $actor_name = $tmdb_data['name'] ?? '';
-    $profile_path = $tmdb_data['profile_path'] ?? '';
-    $bio = $tmdb_data['biography'] ?? '';
-    $popularity = $tmdb_data['popularity'] ?? '';
-    
-    // Doar pentru actori noi, îi adăugăm în baza de date
-    try {
-        $insert = $db->prepare("INSERT INTO actors (full_name, tmdb_id, bio, profile_path, popularity, last_updated) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
+        if (!$tmdb_data) {
+            die('Could not retrieve actor details from TMDB.');
+        }
+        
+        // verificam daca actorul exista deja in baza de date dupa ID-ul TMDB
+        $actor_db = findActorInDatabase($db, $tmdb_id);
+        if ($actor_db) {
+            header("Location: actor_profile.php?tmdb_id=" . $tmdb_id);
+            exit;
+        }
+        
+        // salvam datele actorului in baza de date
+        $actor_name = $tmdb_data['name'] ?? '';
+        $profile_path = $tmdb_data['profile_path'] ?? '';
+        $bio = $tmdb_data['biography'] ?? '';
+        $popularity = $tmdb_data['popularity'] ?? '';
+        
+        $insert = $db->prepare("INSERT INTO actors (full_name, tmdb_id, bio, profile_path, popularity, last_updated) 
+                                VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
         $insert->execute([$actor_name, $tmdb_id, $bio, $profile_path, $popularity]);
     } catch (PDOException $e) {
-        // Dacă inserarea eșuează, poate că actorul există deja (race condition)
-        // Încercăm să îl obținem din nou
-        $actor_query = $db->prepare("SELECT * FROM actors WHERE tmdb_id = ?");
-        $actor_query->execute([$tmdb_id]);
-        $actor_db = $actor_query->fetch(PDO::FETCH_ASSOC);
-        
+        // daca apare o eroare la interogarea TMDB, incercam sa gasim actorul in baza de date
+        $actor_db = findActorInDatabase($db, $tmdb_id);
         if ($actor_db) {
             $actor_name = $actor_db['full_name'];
             $profile_path = $actor_db['profile_path'];
             $bio = $actor_db['bio'];
             $popularity = $actor_db['popularity'];
         } else {
-            die('Error adding actor to database: ' . $e->getMessage());
+            die('Error processing actor: ' . $e->getMessage());
         }
     }
 }
 
+// pregatim datele pentru afisare
 $tmdb_link = "https://www.themoviedb.org/person/$tmdb_id";
 $profile_path = getProfileImageUrl($profile_path);
 
+// informatii aditionale
 $awards = getActorAwards($db, $actor_name);
-$consecutive = getConsecutiveNominationYears($db, $actor_name);
 $movies = getActorMovies($tmdb_id, $api_key, 4);
 $news = getActorNews($actor_name);
 ?>

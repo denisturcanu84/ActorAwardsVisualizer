@@ -1,4 +1,7 @@
 <?php
+// FUNCTII CE TIN DE BAZA DE DATE
+
+
 function getDbConnection($path = null) {
     $dbPath = $path ?? (__DIR__ . '/../database/app.db');
     $db = new PDO('sqlite:' . $dbPath);
@@ -31,27 +34,5 @@ function getActorAwards($db, $actor_name) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// testing, not working properly
-function getConsecutiveNominationYears($db, $actor_name) {
-    $stmt = $db->prepare("SELECT DISTINCT year FROM awards WHERE UPPER(full_name) = UPPER(?) ORDER BY year ASC");
-    $stmt->execute([$actor_name]);
-    $years = array_map('intval', array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'year'));
-    if (empty($years)) {
-        return 0;
-    }
-
-    $maxStreak = $streak = 1;
-    for ($i = 1; $i < count($years); $i++) {
-        if ($years[$i] == $years[$i-1] + 1) {
-            $streak++;
-            if ($streak > $maxStreak) {
-                $maxStreak = $streak;
-            }
-        } else {
-            $streak = 1;
-        }
-    }
-    return $maxStreak;
-}
 
 
