@@ -125,7 +125,21 @@ function generateSVG($data, $filename) {
     $padding = 50;
     $barWidth = 40;
     $barSpacing = 20;
-    $maxValue = max(array_column($data, 'total_nominations'));
+    
+    // Determine the label and value fields based on data type
+    $labelField = 'category';
+    $valueField = 'total_nominations';
+    
+    // Check if this is actor or production data
+    if (isset($data[0]['full_name'])) {
+        $labelField = 'full_name';
+        $valueField = 'total_wins';
+    } elseif (isset($data[0]['title'])) {
+        $labelField = 'title';
+        $valueField = 'total_wins';
+    }
+    
+    $maxValue = max(array_column($data, $valueField));
     $scale = ($height - 2 * $padding) / $maxValue;
     
     $svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
@@ -140,11 +154,20 @@ function generateSVG($data, $filename) {
     // Bars
     $x = $padding;
     foreach ($data as $row) {
-        $barHeight = $row['total_nominations'] * $scale;
+        $barHeight = $row[$valueField] * $scale;
         $y = $height - $padding - $barHeight;
         
         $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $barWidth . '" height="' . $barHeight . '" fill="#4A90E2"/>';
-        $svg .= '<text x="' . ($x + $barWidth/2) . '" y="' . ($height - $padding + 20) . '" text-anchor="middle" font-family="Arial" font-size="12" fill="#243B55">' . htmlspecialchars($row['category']) . '</text>';
+        
+        // Add label with text wrapping for long names
+        $label = htmlspecialchars($row[$labelField]);
+        if (strlen($label) > 15) {
+            $label = substr($label, 0, 12) . '...';
+        }
+        $svg .= '<text x="' . ($x + $barWidth/2) . '" y="' . ($height - $padding + 20) . '" text-anchor="middle" font-family="Arial" font-size="12" fill="#243B55">' . $label . '</text>';
+        
+        // Add value above bar
+        $svg .= '<text x="' . ($x + $barWidth/2) . '" y="' . ($y - 5) . '" text-anchor="middle" font-family="Arial" font-size="12" fill="#243B55">' . $row[$valueField] . '</text>';
         
         $x += $barWidth + $barSpacing;
     }
