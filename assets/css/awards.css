@@ -144,7 +144,7 @@ body {
     color: #243B55;
 }
 
-/* Nominations List */
+/* Cards List */
 .nominations-list {
     display: grid;
     gap: 1.5rem;
@@ -197,22 +197,12 @@ body {
     font-size: var(--p-size);
 }
 
-.result-badge {
-    display: inline-block;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    font-weight: 500;
-    font-size: 0.9em;
-}
-
-.result-badge.won {
-    background-color: #4A90E2;
-    color: white;
-}
-
-.result-badge.nominated {
-    background-color: #357ABD;
-    color: white;
+.no-image {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 8px;
+    color: #6c757d;
 }
 
 /* Loading State */
@@ -254,41 +244,7 @@ body {
     }
 
     .nomination-image {
-        max-width: 200px;
+        max-width: 300px;
         margin: 0 auto;
     }
-
-    .nomination-details h3 {
-        font-size: 1.3rem;
-    }
-
-    .nomination-info p {
-        font-size: 0.9rem;
-    }
-
-    .filter-buttons {
-        flex-direction: column;
-    }
-
-    .filter-button,
-    .reset-button {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-/* Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.nomination-card {
-    animation: fadeIn 0.3s ease-out;
 } 

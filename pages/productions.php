@@ -101,7 +101,7 @@ foreach ($productions as $production) {
     <link rel="stylesheet" href="../assets/css/index.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/nominations.css">
+    <link rel="stylesheet" href="../assets/css/awards.css">
 </head>
 <body>
     <?php include '../includes/navbar.php'; ?>
