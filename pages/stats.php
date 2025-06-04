@@ -100,10 +100,8 @@ if (isset($_GET['export'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics - Actor Awards Visualizer</title>
-    <link rel="stylesheet" href="../assets/css/index.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/awards.css">
     <link rel="stylesheet" href="../assets/css/stats.css">
    
 </head>

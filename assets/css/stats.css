@@ -1,19 +1,123 @@
+/* Base Styles */
+:root {
+    --primary-color: #4A90E2;
+    --primary-dark: #357ABD;
+    --text-color: #243B55;
+    --text-light: #666;
+    --bg-light: #f8f9fa;
+    --border-color: #e9ecef;
+    --white: #fff;
+    --spacing: clamp(0.5rem, 2vw, 1rem);
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-light);
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary-color);
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    height: 60px;
+    box-sizing: border-box;
+}
+
+.logo {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+}
+
+.nav-links a:hover {
+    color: var(--white);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Footer Styles */
+.footer {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: calc(var(--spacing) * 1) 0;
+    text-align: center;
+    margin-top: auto;
+    width: 100%;
+    position: relative;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing);
+    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+}
+
+.footer p {
+    margin: calc(var(--spacing) * 0.25) 0;
+    opacity: 0.9;
+}
+
+.footer a {
+    color: #E0F7FF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--white);
+}
+
 /* Statistics Page Styles */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
+    margin-top: 60px; /* Account for fixed navbar */
 }
 
 h1 {
     text-align: center;
-    color: #243B55;
+    color: var(--text-color);
     margin-bottom: 2rem;
 }
 
 /* Filter Section */
 .filter-section {
-    background: white;
+    background: var(--white);
     padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -32,7 +136,7 @@ h1 {
 .filter-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: #243B55;
+    color: var(--text-color);
     font-weight: 500;
     font-size: 0.9rem;
 }
@@ -40,22 +144,22 @@ h1 {
 .filter-select {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--border-color);
     border-radius: 6px;
-    background: white;
-    color: #243B55;
+    background: var(--white);
+    color: var(--text-color);
     font-size: 0.9rem;
     cursor: pointer;
     transition: border-color 0.2s ease;
 }
 
 .filter-select:hover {
-    border-color: #4A90E2;
+    border-color: var(--primary-color);
 }
 
 .filter-select:focus {
     outline: none;
-    border-color: #4A90E2;
+    border-color: var(--primary-color);
 }
 
 .range-inputs {
@@ -65,14 +169,14 @@ h1 {
 }
 
 .range-inputs span {
-    color: #666;
+    color: var(--text-light);
     font-size: 0.9rem;
 }
 
 .filter-button {
     padding: 0.75rem 1.5rem;
-    background: #4A90E2;
-    color: white;
+    background: var(--primary-color);
+    color: var(--white);
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -84,7 +188,7 @@ h1 {
 }
 
 .filter-button:hover {
-    background: #357ABD;
+    background: var(--primary-dark);
 }
 
 /* Visualization Selector */
@@ -94,7 +198,7 @@ h1 {
     gap: 1rem;
     margin-bottom: 2rem;
     padding: 1rem;
-    background: white;
+    background: var(--white);
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
@@ -104,38 +208,38 @@ h1 {
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: white;
-    border: 2px solid #e9ecef;
+    background: var(--white);
+    border: 2px solid var(--border-color);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #243B55;
+    color: var(--text-color);
     font-weight: 500;
 }
 
 .viz-option i {
     font-size: 1.1rem;
-    color: #4A90E2;
+    color: var(--primary-color);
 }
 
 .viz-option:hover {
-    border-color: #4A90E2;
-    background: #f8f9fa;
+    border-color: var(--primary-color);
+    background: var(--bg-light);
 }
 
 .viz-option.active {
-    background: #4A90E2;
-    border-color: #4A90E2;
-    color: white;
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
 }
 
 .viz-option.active i {
-    color: white;
+    color: var(--white);
 }
 
 /* Chart Container */
 .chart-container {
-    background: white;
+    background: var(--white);
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
@@ -150,7 +254,7 @@ h1 {
 
 .chart-header h2 {
     margin: 0;
-    color: #243B55;
+    color: var(--text-color);
     font-size: 1.5rem;
 }
 
@@ -161,8 +265,8 @@ h1 {
 
 .export-button {
     padding: 0.5rem 1rem;
-    background: #4A90E2;
-    color: white;
+    background: var(--primary-color);
+    color: var(--white);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -175,7 +279,7 @@ h1 {
 }
 
 .export-button:hover {
-    background: #357ABD;
+    background: var(--primary-dark);
 }
 
 .visualization-container {
@@ -184,7 +288,7 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #f8f9fa;
+    background: var(--bg-light);
     border-radius: 8px;
     padding: 1rem;
 }
@@ -237,6 +341,41 @@ h1 {
 
     .visualization-container {
         height: 400px;
+    }
+
+    /* Mobile Navbar */
+    .nav-toggle-label {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: var(--primary-dark);
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: var(--spacing) 0;
     }
 }
 
