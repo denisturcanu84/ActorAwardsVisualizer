@@ -77,6 +77,9 @@ function generateCSV($data, $filename) {
 
 // Function to generate WebP
 function generateWebP($data, $filename) {
+    // Start output buffering
+    ob_start();
+    
     // Create an image
     $width = 800;
     $height = 600;
@@ -97,29 +100,50 @@ function generateWebP($data, $filename) {
     $titleX = ($width - $titleWidth) / 2;
     imagestring($image, $fontSize, $titleX, 20, $title, $textColor);
     
+    // Determine the value field based on data type
+    $valueField = 'total_nominations';
+    if (isset($data[0]['total_wins'])) {
+        $valueField = 'total_wins';
+    }
+    
     // Add data visualization
     $barWidth = 40;
     $barSpacing = 20;
-    $maxValue = max(array_column($data, 'total_nominations'));
+    $maxValue = max(array_column($data, $valueField));
     $scale = ($height - 100) / $maxValue;
     
     $x = 50;
     foreach ($data as $row) {
-        $barHeight = $row['total_nominations'] * $scale;
+        if (!isset($row[$valueField])) {
+            continue; // Skip invalid data
+        }
+        
+        $barHeight = $row[$valueField] * $scale;
         imagefilledrectangle($image, $x, $height - $barHeight - 50, $x + $barWidth, $height - 50, $barColor);
         $x += $barWidth + $barSpacing;
     }
     
-    // Output as WebP
+    // Clear any previous output
+    ob_clean();
+    
+    // Set headers
     header('Content-Type: image/webp');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
+    
+    // Output WebP
     imagewebp($image);
     imagedestroy($image);
+    
+    // End output buffering
+    ob_end_flush();
     exit;
 }
 
 // Function to generate SVG
 function generateSVG($data, $filename) {
+    // Start output buffering to prevent header issues
+    ob_start();
+    
     $width = 800;
     $height = 600;
     $padding = 50;
@@ -137,6 +161,9 @@ function generateSVG($data, $filename) {
     } elseif (isset($data[0]['title'])) {
         $labelField = 'title';
         $valueField = 'total_wins';
+    } elseif (isset($data[0]['year'])) {
+        $labelField = 'year';
+        $valueField = 'total_nominations';
     }
     
     $maxValue = max(array_column($data, $valueField));
@@ -154,6 +181,10 @@ function generateSVG($data, $filename) {
     // Bars
     $x = $padding;
     foreach ($data as $row) {
+        if (!isset($row[$labelField]) || !isset($row[$valueField])) {
+            continue; // Skip invalid data
+        }
+        
         $barHeight = $row[$valueField] * $scale;
         $y = $height - $padding - $barHeight;
         
@@ -174,14 +205,26 @@ function generateSVG($data, $filename) {
     
     $svg .= '</svg>';
     
+    // Clear any previous output
+    ob_clean();
+    
+    // Set headers
     header('Content-Type: image/svg+xml');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
+    
+    // Output SVG
     echo $svg;
+    
+    // End output buffering
+    ob_end_flush();
     exit;
 }
 
 // Handle exports
 if (isset($_GET['export']) && isset($_GET['format'])) {
+    // Start output buffering
+    ob_start();
+    
     $format = $_GET['format'];
     $type = $_GET['export'];
     
@@ -205,6 +248,9 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
         default:
             exit('Invalid export type');
     }
+    
+    // Clear any previous output
+    ob_clean();
     
     switch ($format) {
         case 'csv':
