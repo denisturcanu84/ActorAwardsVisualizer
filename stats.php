@@ -11,43 +11,43 @@
     <div class="container">
         <h1>Actor Awards Statistics</h1>
         
+        <!-- Visualization Selector -->
+        <div class="viz-selector">
+            <button class="viz-option active" data-viz="pie">
+                <i class="fas fa-chart-pie"></i>
+                <span>Category Distribution</span>
+            </button>
+            <button class="viz-option" data-viz="bar">
+                <i class="fas fa-chart-bar"></i>
+                <span>Award Trends</span>
+            </button>
+            <button class="viz-option" data-viz="line">
+                <i class="fas fa-chart-line"></i>
+                <span>Performance Analysis</span>
+            </button>
+        </div>
+
         <!-- Main Visualization Section -->
         <section class="stats-section">
             <div class="chart-container">
-                <div class="chart-content">
-                    <div class="chart-title">
-                        <h2>Award Statistics</h2>
-                        <div class="export-options">
-                            <a href="export.php?type=stats&format=csv" class="export-button">
-                                <i class="fas fa-file-csv"></i> CSV
-                            </a>
-                            <a href="export.php?type=stats&format=webp" class="export-button">
-                                <i class="fas fa-file-image"></i> WebP
-                            </a>
-                            <a href="export.php?type=stats&format=svg" class="export-button">
-                                <i class="fas fa-file-code"></i> SVG
-                            </a>
-                        </div>
-                    </div>
-                    <div class="visualization-container">
-                        <svg id="mainChart" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
-                            <!-- SVG content will be dynamically updated -->
-                        </svg>
+                <div class="chart-header">
+                    <h2 id="chartTitle">Category Distribution</h2>
+                    <div class="export-options">
+                        <a href="export.php?type=stats&format=csv" class="export-button">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </a>
+                        <a href="export.php?type=stats&format=webp" class="export-button">
+                            <i class="fas fa-file-image"></i> WebP
+                        </a>
+                        <a href="export.php?type=stats&format=svg" class="export-button">
+                            <i class="fas fa-file-code"></i> SVG
+                        </a>
                     </div>
                 </div>
-                <div class="visualization-selector">
-                    <h3>Visualization Type</h3>
-                    <div class="visualization-buttons">
-                        <button class="viz-button active" data-viz="pie">
-                            <i class="fas fa-chart-pie"></i> Pie Chart
-                        </button>
-                        <button class="viz-button" data-viz="bar">
-                            <i class="fas fa-chart-bar"></i> Bar Chart
-                        </button>
-                        <button class="viz-button" data-viz="line">
-                            <i class="fas fa-chart-line"></i> Line Chart
-                        </button>
-                    </div>
+                <div class="visualization-container">
+                    <svg id="mainChart" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+                        <!-- SVG content will be dynamically updated -->
+                    </svg>
                 </div>
             </div>
         </section>
@@ -71,7 +71,7 @@
         // Function to create pie chart
         function createPieChart() {
             const svg = document.getElementById('mainChart');
-            svg.innerHTML = ''; // Clear existing content
+            svg.innerHTML = '';
 
             let total = chartData.values.reduce((a, b) => a + b, 0);
             let currentAngle = 0;
@@ -237,31 +237,32 @@
         createPieChart();
 
         // Add event listeners for visualization buttons
-        document.querySelectorAll('.visualization-buttons').forEach(buttonGroup => {
-            buttonGroup.addEventListener('click', (e) => {
-                if (e.target.classList.contains('viz-button')) {
-                    // Remove active class from all buttons
-                    buttonGroup.querySelectorAll('.viz-button').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    // Add active class to clicked button
-                    e.target.classList.add('active');
-                    
-                    // Get the visualization type
-                    const vizType = e.target.dataset.viz;
-                    
-                    // Update visualization based on type
-                    switch(vizType) {
-                        case 'pie':
-                            createPieChart();
-                            break;
-                        case 'bar':
-                            createBarChart();
-                            break;
-                        case 'line':
-                            createLineChart();
-                            break;
-                    }
+        document.querySelectorAll('.viz-option').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.viz-option').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Get the visualization type
+                const vizType = button.dataset.viz;
+                
+                // Update chart title
+                document.getElementById('chartTitle').textContent = button.querySelector('span').textContent;
+                
+                // Update visualization based on type
+                switch(vizType) {
+                    case 'pie':
+                        createPieChart();
+                        break;
+                    case 'bar':
+                        createBarChart();
+                        break;
+                    case 'line':
+                        createLineChart();
+                        break;
                 }
             });
         });
