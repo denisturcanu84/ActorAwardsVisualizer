@@ -64,7 +64,7 @@ $productions = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    <?php include __DIR__ . '/../includes/header.php'; ?>
+    <?php include __DIR__ . '/../includes/navbar.php'; ?>
     
     <div class="container">
         <h1>Productions</h1>
