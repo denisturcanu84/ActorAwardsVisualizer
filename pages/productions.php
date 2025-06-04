@@ -107,7 +107,7 @@ foreach ($productions as $production) {
     <?php include '../includes/navbar.php'; ?>
 
     <div class="container">
-        <h1 class="text-center">Award Productions</h1>
+        <h1 class="text-center">Productions</h1>
 
         <!-- Filters Section -->
         <div class="filters-section">

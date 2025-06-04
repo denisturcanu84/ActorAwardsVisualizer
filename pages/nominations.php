@@ -126,7 +126,7 @@ unset($nomination);
     <?php include '../includes/navbar.php'; ?>
 
     <div class="container">
-        <h1 class="text-center">Award Nominations</h1>
+        <h1 class="text-center">Nominations</h1>
 
         <!-- Filters Section -->
         <div class="filters-section">
