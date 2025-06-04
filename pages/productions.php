@@ -19,8 +19,8 @@ $searchQuery = $_POST['search'] ?? '';
 
 // Build the query with filters
 $query = "SELECT p.*, p.title as production_title, p.poster_path, 
-          COUNT(DISTINCT a.award_id) as award_count,
-          COUNT(DISTINCT CASE WHEN a.won = 'True' THEN a.award_id END) as won_count
+          COUNT(DISTINCT a.id) as award_count,
+          COUNT(DISTINCT CASE WHEN a.won = 'True' THEN a.id END) as won_count
           FROM productions p 
           LEFT JOIN awards a ON p.tmdb_id = a.tmdb_show_id 
           WHERE 1=1";
