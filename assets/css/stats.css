@@ -17,6 +17,12 @@
     flex: 1;
 }
 
+.visualization-container {
+    height: 400px;
+    position: relative;
+    margin: 1rem 0;
+}
+
 .visualization-selector {
     width: 250px;
     background: #f8f9fa;
@@ -45,6 +51,14 @@
     cursor: pointer;
     text-align: left;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.viz-button i {
+    width: 20px;
+    text-align: center;
 }
 
 .viz-button:hover {
@@ -89,6 +103,27 @@
 
 .export-button:hover {
     background: #357ABD;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chart-container {
+        flex-direction: column;
+    }
+
+    .visualization-selector {
+        width: 100%;
+    }
+
+    .visualization-buttons {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .viz-button {
+        flex: 1;
+        min-width: 120px;
+    }
 }
 
 /* Line Chart */
