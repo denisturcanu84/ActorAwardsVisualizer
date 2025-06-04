@@ -122,7 +122,26 @@ if (isset($_GET['export'])) {
                             <h2>Award Trends Over Time</h2>
                             <p class="section-description">Track nomination and win patterns across years</p>
                         </div>
-                        <a href="?export=yearly" class="export-button">Export CSV</a>
+                        <div class="export-wrapper">
+                            <button class="export-button" id="exportYearlyButton">
+                                <i class="fas fa-download"></i>
+                                Export As...
+                            </button>
+                            <div class="export-dropdown" id="exportYearlyDropdown">
+                                <a href="?export=yearly&format=csv" class="export-option">
+                                    <i class="fas fa-file-csv"></i>
+                                    Export as CSV
+                                </a>
+                                <a href="?export=yearly&format=webp" class="export-option">
+                                    <i class="fas fa-file-image"></i>
+                                    Export as WebP
+                                </a>
+                                <a href="?export=yearly&format=svg" class="export-option">
+                                    <i class="fas fa-file-code"></i>
+                                    Export as SVG
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="chart-and-table">
@@ -177,7 +196,26 @@ if (isset($_GET['export'])) {
                             <h2>Category Distribution</h2>
                             <p class="section-description">Analysis of nominations and wins by award category</p>
                         </div>
-                        <a href="?export=categories" class="export-button">Export CSV</a>
+                        <div class="export-wrapper">
+                            <button class="export-button" id="exportCategoryButton">
+                                <i class="fas fa-download"></i>
+                                Export As...
+                            </button>
+                            <div class="export-dropdown" id="exportCategoryDropdown">
+                                <a href="?export=categories&format=csv" class="export-option">
+                                    <i class="fas fa-file-csv"></i>
+                                    Export as CSV
+                                </a>
+                                <a href="?export=categories&format=webp" class="export-option">
+                                    <i class="fas fa-file-image"></i>
+                                    Export as WebP
+                                </a>
+                                <a href="?export=categories&format=svg" class="export-option">
+                                    <i class="fas fa-file-code"></i>
+                                    Export as SVG
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="chart-and-table">
@@ -305,5 +343,42 @@ if (isset($_GET['export'])) {
     </main>
 
     <?php include '../includes/footer.php'; ?>
+
+    <script>
+    // Export dropdown functionality
+    function setupExportDropdown(buttonId, dropdownId) {
+        const button = document.getElementById(buttonId);
+        const dropdown = document.getElementById(dropdownId);
+        const overlay = document.createElement('div');
+        overlay.className = 'export-overlay';
+        document.body.appendChild(overlay);
+
+        function toggleDropdown() {
+            dropdown.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown();
+        });
+
+        overlay.addEventListener('click', () => {
+            toggleDropdown();
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+    }
+
+    // Initialize export dropdowns
+    setupExportDropdown('exportYearlyButton', 'exportYearlyDropdown');
+    setupExportDropdown('exportCategoryButton', 'exportCategoryDropdown');
+    </script>
 </body>
 </html>
