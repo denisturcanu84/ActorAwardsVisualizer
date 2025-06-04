@@ -9,6 +9,52 @@
     border-radius: 8px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     margin-bottom: 1.5rem;
+    display: flex;
+    gap: 2rem;
+}
+
+.chart-content {
+    flex: 1;
+}
+
+.visualization-selector {
+    width: 250px;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.visualization-selector h3 {
+    margin: 0 0 1rem 0;
+    color: #243B55;
+    font-size: 1.1rem;
+}
+
+.visualization-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.viz-button {
+    padding: 0.75rem 1rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.viz-button:hover {
+    background: #e9ecef;
+}
+
+.viz-button.active {
+    background: #4A90E2;
+    color: white;
+    border-color: #4A90E2;
 }
 
 .chart-title {
@@ -22,6 +68,11 @@
     margin: 0;
 }
 
+.export-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
 .export-button {
     padding: 0.5rem 1rem;
     background: #4A90E2;
@@ -31,6 +82,9 @@
     cursor: pointer;
     text-decoration: none;
     font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .export-button:hover {
@@ -85,6 +139,46 @@
     transform: translateX(-50%) rotate(-45deg);
     font-size: 0.8rem;
     white-space: nowrap;
+}
+
+/* Pie Chart */
+.pie-chart {
+    height: 300px;
+    position: relative;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pie-segment {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    clip-path: polygon(50% 50%, 100% 0, 100% 100%);
+    transform-origin: center;
+}
+
+.pie-legend {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
 }
 
 /* Top Performers */
