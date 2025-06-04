@@ -75,21 +75,126 @@ function generateCSV($data, $filename) {
     exit;
 }
 
-// Handle CSV export
-if (isset($_GET['export'])) {
-    switch ($_GET['export']) {
+// Function to generate WebP
+function generateWebP($data, $filename) {
+    // Create an image
+    $width = 800;
+    $height = 600;
+    $image = imagecreatetruecolor($width, $height);
+    
+    // Set colors
+    $bg = imagecolorallocate($image, 255, 255, 255);
+    $textColor = imagecolorallocate($image, 36, 59, 85);
+    $barColor = imagecolorallocate($image, 74, 144, 226);
+    
+    // Fill background
+    imagefilledrectangle($image, 0, 0, $width, $height, $bg);
+    
+    // Add title
+    $title = "Award Statistics";
+    $fontSize = 5;
+    $titleWidth = imagefontwidth($fontSize) * strlen($title);
+    $titleX = ($width - $titleWidth) / 2;
+    imagestring($image, $fontSize, $titleX, 20, $title, $textColor);
+    
+    // Add data visualization
+    $barWidth = 40;
+    $barSpacing = 20;
+    $maxValue = max(array_column($data, 'total_nominations'));
+    $scale = ($height - 100) / $maxValue;
+    
+    $x = 50;
+    foreach ($data as $row) {
+        $barHeight = $row['total_nominations'] * $scale;
+        imagefilledrectangle($image, $x, $height - $barHeight - 50, $x + $barWidth, $height - 50, $barColor);
+        $x += $barWidth + $barSpacing;
+    }
+    
+    // Output as WebP
+    header('Content-Type: image/webp');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    imagewebp($image);
+    imagedestroy($image);
+    exit;
+}
+
+// Function to generate SVG
+function generateSVG($data, $filename) {
+    $width = 800;
+    $height = 600;
+    $padding = 50;
+    $barWidth = 40;
+    $barSpacing = 20;
+    $maxValue = max(array_column($data, 'total_nominations'));
+    $scale = ($height - 2 * $padding) / $maxValue;
+    
+    $svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
+    $svg .= '<svg width="' . $width . '" height="' . $height . '" xmlns="http://www.w3.org/2000/svg">';
+    
+    // Background
+    $svg .= '<rect width="100%" height="100%" fill="#ffffff"/>';
+    
+    // Title
+    $svg .= '<text x="50%" y="40" text-anchor="middle" font-family="Arial" font-size="24" fill="#243B55">Award Statistics</text>';
+    
+    // Bars
+    $x = $padding;
+    foreach ($data as $row) {
+        $barHeight = $row['total_nominations'] * $scale;
+        $y = $height - $padding - $barHeight;
+        
+        $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $barWidth . '" height="' . $barHeight . '" fill="#4A90E2"/>';
+        $svg .= '<text x="' . ($x + $barWidth/2) . '" y="' . ($height - $padding + 20) . '" text-anchor="middle" font-family="Arial" font-size="12" fill="#243B55">' . htmlspecialchars($row['category']) . '</text>';
+        
+        $x += $barWidth + $barSpacing;
+    }
+    
+    $svg .= '</svg>';
+    
+    header('Content-Type: image/svg+xml');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    echo $svg;
+    exit;
+}
+
+// Handle exports
+if (isset($_GET['export']) && isset($_GET['format'])) {
+    $format = $_GET['format'];
+    $type = $_GET['export'];
+    
+    switch ($type) {
         case 'yearly':
-            generateCSV($yearlyStats, 'yearly_statistics.csv');
+            $data = $yearlyStats;
+            $filename = 'yearly_statistics';
             break;
         case 'categories':
-            generateCSV($categoryStats, 'category_statistics.csv');
+            $data = $categoryStats;
+            $filename = 'category_statistics';
             break;
         case 'actors':
-            generateCSV($topActors, 'top_actors.csv');
+            $data = $topActors;
+            $filename = 'top_actors';
             break;
         case 'productions':
-            generateCSV($topProductions, 'top_productions.csv');
+            $data = $topProductions;
+            $filename = 'top_productions';
             break;
+        default:
+            exit('Invalid export type');
+    }
+    
+    switch ($format) {
+        case 'csv':
+            generateCSV($data, $filename . '.csv');
+            break;
+        case 'webp':
+            generateWebP($data, $filename . '.webp');
+            break;
+        case 'svg':
+            generateSVG($data, $filename . '.svg');
+            break;
+        default:
+            exit('Invalid format');
     }
 }
 ?>
