@@ -11,6 +11,56 @@
     <div class="container">
         <h1>Actor Awards Statistics</h1>
         
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label for="yearFilter">Year Range</label>
+                <div class="range-inputs">
+                    <select id="startYear" class="filter-select">
+                        <option value="">Start Year</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                    <span>to</span>
+                    <select id="endYear" class="filter-select">
+                        <option value="">End Year</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label for="categoryFilter">Category</label>
+                <select id="categoryFilter" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="drama">Drama</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="action">Action</option>
+                    <option value="romance">Romance</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="awardType">Award Type</label>
+                <select id="awardType" class="filter-select">
+                    <option value="">All Awards</option>
+                    <option value="sag">SAG Awards</option>
+                    <option value="oscar">Oscars</option>
+                    <option value="golden-globe">Golden Globes</option>
+                </select>
+            </div>
+
+            <button id="applyFilters" class="filter-button">
+                <i class="fas fa-filter"></i>
+                Apply Filters
+            </button>
+        </div>
+
         <!-- Visualization Selector -->
         <div class="viz-selector">
             <button class="viz-option active" data-viz="pie">
@@ -60,6 +110,36 @@
             values: [30, 25, 15, 20, 10],
             colors: ['#4A90E2', '#50E3C2', '#F5A623', '#D0021B', '#9013FE']
         };
+
+        // Filter handling
+        document.getElementById('applyFilters').addEventListener('click', () => {
+            const startYear = document.getElementById('startYear').value;
+            const endYear = document.getElementById('endYear').value;
+            const category = document.getElementById('categoryFilter').value;
+            const awardType = document.getElementById('awardType').value;
+
+            // Here you would typically make an AJAX call to get filtered data
+            console.log('Applying filters:', { startYear, endYear, category, awardType });
+            
+            // For now, we'll just update the current visualization
+            updateVisualization();
+        });
+
+        // Function to update visualization with filtered data
+        function updateVisualization() {
+            const activeViz = document.querySelector('.viz-option.active').dataset.viz;
+            switch(activeViz) {
+                case 'pie':
+                    createPieChart();
+                    break;
+                case 'bar':
+                    createBarChart();
+                    break;
+                case 'line':
+                    createLineChart();
+                    break;
+            }
+        }
 
         // SVG dimensions
         const width = 400;
