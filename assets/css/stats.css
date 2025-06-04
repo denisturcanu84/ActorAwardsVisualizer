@@ -123,30 +123,38 @@
   /* Chart and Table Layout */
   .chart-and-table {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 400px 1fr;
     gap: 2rem;
     padding: 2rem;
+    align-items: start;
   }
   
   .chart-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
+    height: 350px;
     background: var(--bg-light);
     border-radius: var(--border-radius);
     padding: 1.5rem;
+    overflow: auto;
+    position: sticky;
+    top: 2rem;
   }
   
   .table-wrapper {
     display: flex;
     flex-direction: column;
+    min-height: 350px;
   }
   
   .table-container {
     overflow-x: auto;
+    overflow-y: auto;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
+    max-height: 500px;
+    flex: 1;
   }
   
   /* Table Styles */
@@ -393,8 +401,17 @@
       gap: 1.5rem;
     }
   
-    .performers-grid {
-      grid-template-columns: 1fr;
+    .chart-wrapper {
+      position: static;
+      height: 300px;
+    }
+  
+    .table-wrapper {
+      min-height: auto;
+    }
+  
+    .table-container {
+      max-height: 400px;
     }
   }
   
