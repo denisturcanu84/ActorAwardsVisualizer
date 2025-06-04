@@ -28,7 +28,7 @@
                     <div class="card">
                         <div class="card-icon">🎭</div>
                         <h3>Nominations</h3>
-                        <p>Browse nominations by year, category, actor, or production</p>
+                        <p>Browse nominations by year, category, actor, or productions</p>
                         <a href="pages/nominations.php" class="card-button">View Nominations</a>
                     </div>
 
@@ -43,7 +43,7 @@
                         <div class="card-icon">🎬</div>
                         <h3>Productions</h3>
                         <p>Discover movies and TV shows with their nominations</p>
-                        <a href="pages/production.php" class="card-button">View Productions</a>
+                        <a href="pages/productions.php" class="card-button">View Productions</a>
                     </div>
                     
                     <div class="card">
