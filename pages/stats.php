@@ -103,159 +103,207 @@ if (isset($_GET['export'])) {
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/stats.css">
-   
 </head>
 <body>
     <?php include '../includes/navbar.php'; ?>
 
-    <div class="container">
-        <h1 class="text-center">Award Statistics</h1>
+    <main class="main-content">
+        <div class="container">
+            <header class="page-header">
+                <h1>Award Statistics</h1>
+                <p class="page-subtitle">Comprehensive analysis of award trends, categories, and top performers</p>
+            </header>
 
-        <!-- Yearly Trends -->
-        <section class="stats-section">
-            <div class="chart-container">
-                <div class="chart-title">
-                    <h2>Award Trends Over Time</h2>
-                    <a href="?export=yearly" class="export-button">Export CSV</a>
-                </div>
-                <div class="line-chart">
-                    <?php
-                    $maxNominations = max(array_column($yearlyStats, 'total_nominations'));
-                    $years = array_column($yearlyStats, 'year');
-                    $nominations = array_column($yearlyStats, 'total_nominations');
-                    $wins = array_column($yearlyStats, 'total_wins');
-                    
-                    for ($i = 0; $i < count($years); $i++) {
-                        $x = ($i / (count($years) - 1)) * 100;
-                        $y = ($nominations[$i] / $maxNominations) * 100;
-                        echo "<div class='point' style='left: {$x}%; bottom: {$y}%;' title='{$years[$i]}: {$nominations[$i]} nominations'></div>";
-                    }
-                    ?>
-                </div>
-                <div class="stats-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Year</th>
-                                <th>Total Nominations</th>
-                                <th>Total Wins</th>
-                                <th>Win Rate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($yearlyStats as $stat): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($stat['year']); ?></td>
-                                    <td><?php echo $stat['total_nominations']; ?></td>
-                                    <td><?php echo $stat['total_wins']; ?></td>
-                                    <td><?php echo round(($stat['total_wins'] / $stat['total_nominations']) * 100, 1); ?>%</td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Category Analysis -->
-        <section class="stats-section">
-            <div class="chart-container">
-                <div class="chart-title">
-                    <h2>Category Distribution</h2>
-                    <a href="?export=categories" class="export-button">Export CSV</a>
-                </div>
-                <div class="bar-chart">
-                    <?php foreach ($categoryStats as $stat): ?>
-                        <div class="bar" style="height: <?php echo ($stat['total_nominations'] / $categoryStats[0]['total_nominations']) * 100; ?>%">
-                            <div class="bar-label"><?php echo htmlspecialchars($stat['category']); ?></div>
+            <div class="stats-grid">
+                <!-- Yearly Trends Section -->
+                <section class="stats-section yearly-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Award Trends Over Time</h2>
+                            <p class="section-description">Track nomination and win patterns across years</p>
                         </div>
-                    <?php endforeach; ?>
-                </div>
-                <div class="stats-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>Total Nominations</th>
-                                <th>Total Wins</th>
-                                <th>Win Rate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($categoryStats as $stat): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($stat['category']); ?></td>
-                                    <td><?php echo $stat['total_nominations']; ?></td>
-                                    <td><?php echo $stat['total_wins']; ?></td>
-                                    <td><?php echo $stat['win_rate']; ?>%</td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Top Performers -->
-        <section class="stats-section">
-            <div class="top-performers">
-                <!-- Top Actors -->
-                <div class="performer-card">
-                    <div class="chart-title">
-                        <h3>Top Actors</h3>
-                        <a href="?export=actors" class="export-button">Export CSV</a>
+                        <a href="?export=yearly" class="export-button">Export CSV</a>
                     </div>
-                    <ul class="performer-list">
-                        <?php foreach ($topActors as $actor): ?>
-                            <li class="performer-item">
-                                <?php if ($actor['profile_path']): ?>
-                                    <img src="<?php echo "https://image.tmdb.org/t/p/w92" . htmlspecialchars($actor['profile_path']); ?>" 
-                                         alt="<?php echo htmlspecialchars($actor['full_name']); ?>"
-                                         class="performer-image">
-                                <?php else: ?>
-                                    <div class="performer-image" style="background: #eee;"></div>
-                                <?php endif; ?>
-                                <div class="performer-info">
-                                    <div class="performer-name"><?php echo htmlspecialchars($actor['full_name']); ?></div>
-                                    <div class="performer-stats">
-                                        <?php echo $actor['total_wins']; ?> wins / <?php echo $actor['total_nominations']; ?> nominations
-                                    </div>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-
-                <!-- Top Productions -->
-                <div class="performer-card">
-                    <div class="chart-title">
-                        <h3>Top Productions</h3>
-                        <a href="?export=productions" class="export-button">Export CSV</a>
+                    
+                    <div class="chart-and-table">
+                        <div class="chart-wrapper">
+                            <div class="line-chart">
+                                <?php
+                                $maxNominations = max(array_column($yearlyStats, 'total_nominations'));
+                                $years = array_column($yearlyStats, 'year');
+                                $nominations = array_column($yearlyStats, 'total_nominations');
+                                $wins = array_column($yearlyStats, 'total_wins');
+                                
+                                for ($i = 0; $i < count($years); $i++) {
+                                    $x = ($i / (count($years) - 1)) * 100;
+                                    $y = ($nominations[$i] / $maxNominations) * 100;
+                                    echo "<div class='point' style='left: {$x}%; bottom: {$y}%;' title='{$years[$i]}: {$nominations[$i]} nominations'></div>";
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        
+                        <div class="table-wrapper">
+                            <div class="table-container">
+                                <table class="stats-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Year</th>
+                                            <th>Nominations</th>
+                                            <th>Wins</th>
+                                            <th>Win Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($yearlyStats as $stat): ?>
+                                            <tr>
+                                                <td data-label="Year"><?php echo htmlspecialchars($stat['year']); ?></td>
+                                                <td data-label="Nominations"><?php echo $stat['total_nominations']; ?></td>
+                                                <td data-label="Wins"><?php echo $stat['total_wins']; ?></td>
+                                                <td data-label="Win Rate"><?php echo round(($stat['total_wins'] / $stat['total_nominations']) * 100, 1); ?>%</td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <ul class="performer-list">
-                        <?php foreach ($topProductions as $production): ?>
-                            <li class="performer-item">
-                                <?php if ($production['poster_path']): ?>
-                                    <img src="<?php echo "https://image.tmdb.org/t/p/w92" . htmlspecialchars($production['poster_path']); ?>" 
-                                         alt="<?php echo htmlspecialchars($production['title']); ?>"
-                                         class="performer-image">
-                                <?php else: ?>
-                                    <div class="performer-image" style="background: #eee;"></div>
-                                <?php endif; ?>
-                                <div class="performer-info">
-                                    <div class="performer-name"><?php echo htmlspecialchars($production['title']); ?></div>
-                                    <div class="performer-stats">
-                                        <?php echo $production['total_wins']; ?> wins / <?php echo $production['total_nominations']; ?> nominations
+                </section>
+
+                <!-- Category Analysis Section -->
+                <section class="stats-section category-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Category Distribution</h2>
+                            <p class="section-description">Analysis of nominations and wins by award category</p>
+                        </div>
+                        <a href="?export=categories" class="export-button">Export CSV</a>
+                    </div>
+                    
+                    <div class="chart-and-table">
+                        <div class="chart-wrapper">
+                            <div class="bar-chart">
+                                <?php foreach ($categoryStats as $stat): ?>
+                                    <div class="bar-container">
+                                        <div class="bar" style="height: <?php echo ($stat['total_nominations'] / $categoryStats[0]['total_nominations']) * 100; ?>%">
+                                            <div class="bar-value"><?php echo $stat['total_nominations']; ?></div>
+                                        </div>
+                                        <div class="bar-label"><?php echo htmlspecialchars($stat['category']); ?></div>
                                     </div>
-                                </div>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        
+                        <div class="table-wrapper">
+                            <div class="table-container">
+                                <table class="stats-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Nominations</th>
+                                            <th>Wins</th>
+                                            <th>Win Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($categoryStats as $stat): ?>
+                                            <tr>
+                                                <td data-label="Category"><?php echo htmlspecialchars($stat['category']); ?></td>
+                                                <td data-label="Nominations"><?php echo $stat['total_nominations']; ?></td>
+                                                <td data-label="Wins"><?php echo $stat['total_wins']; ?></td>
+                                                <td data-label="Win Rate"><?php echo $stat['win_rate']; ?>%</td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Top Performers Section -->
+                <section class="stats-section performers-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Top Performers</h2>
+                            <p class="section-description">Leading actors and productions by awards received</p>
+                        </div>
+                    </div>
+                    
+                    <div class="performers-grid">
+                        <!-- Top Actors -->
+                        <div class="performer-card">
+                            <div class="card-header">
+                                <h3>Top Actors</h3>
+                                <a href="?export=actors" class="export-button">Export CSV</a>
+                            </div>
+                            <div class="performer-list-container">
+                                <ul class="performer-list">
+                                    <?php foreach ($topActors as $index => $actor): ?>
+                                        <li class="performer-item">
+                                            <div class="performer-rank"><?php echo $index + 1; ?></div>
+                                            <div class="performer-image-container">
+                                                <?php if ($actor['profile_path']): ?>
+                                                    <img src="<?php echo "https://image.tmdb.org/t/p/w92" . htmlspecialchars($actor['profile_path']); ?>" 
+                                                         alt="<?php echo htmlspecialchars($actor['full_name']); ?>"
+                                                         class="performer-image">
+                                                <?php else: ?>
+                                                    <div class="performer-image performer-placeholder"></div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="performer-info">
+                                                <div class="performer-name"><?php echo htmlspecialchars($actor['full_name']); ?></div>
+                                                <div class="performer-stats">
+                                                    <span class="wins"><?php echo $actor['total_wins']; ?> wins</span>
+                                                    <span class="separator">•</span>
+                                                    <span class="nominations"><?php echo $actor['total_nominations']; ?> nominations</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Top Productions -->
+                        <div class="performer-card">
+                            <div class="card-header">
+                                <h3>Top Productions</h3>
+                                <a href="?export=productions" class="export-button">Export CSV</a>
+                            </div>
+                            <div class="performer-list-container">
+                                <ul class="performer-list">
+                                    <?php foreach ($topProductions as $index => $production): ?>
+                                        <li class="performer-item">
+                                            <div class="performer-rank"><?php echo $index + 1; ?></div>
+                                            <div class="performer-image-container">
+                                                <?php if ($production['poster_path']): ?>
+                                                    <img src="<?php echo "https://image.tmdb.org/t/p/w92" . htmlspecialchars($production['poster_path']); ?>" 
+                                                         alt="<?php echo htmlspecialchars($production['title']); ?>"
+                                                         class="performer-image">
+                                                <?php else: ?>
+                                                    <div class="performer-image performer-placeholder"></div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="performer-info">
+                                                <div class="performer-name"><?php echo htmlspecialchars($production['title']); ?></div>
+                                                <div class="performer-stats">
+                                                    <span class="wins"><?php echo $production['total_wins']; ?> wins</span>
+                                                    <span class="separator">•</span>
+                                                    <span class="nominations"><?php echo $production['total_nominations']; ?> nominations</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
-        </section>
-    </div>
+        </div>
+    </main>
 
     <?php include '../includes/footer.php'; ?>
 </body>
-</html> 
+</html>
