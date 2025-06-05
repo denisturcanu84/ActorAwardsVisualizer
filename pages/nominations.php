@@ -16,11 +16,11 @@ $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 // Initialize database connection
 $db = getDbConnection();
 
-// Get filter values from POST
-$selectedYear = $_POST['year'] ?? '2020';
-$selectedCategory = $_POST['category'] ?? '';
-$selectedResult = $_POST['result'] ?? '';
-$searchQuery = $_POST['search'] ?? '';
+// Get filter values - prioritize GET parameters if they exist, then POST
+$selectedYear = $_GET['year'] ?? $_POST['year'] ?? '2020';
+$selectedCategory = $_GET['category'] ?? $_POST['category'] ?? '';
+$selectedResult = $_GET['result'] ?? $_POST['result'] ?? '';
+$searchQuery = $_GET['search'] ?? $_POST['search'] ?? '';
 
 // Convert Won/Nominated to True/False for database query
 $resultBoolean = null;
@@ -30,10 +30,24 @@ if ($selectedResult === 'Won') {
     $resultBoolean = 'False';
 }
 
-// Reset pagination to page 1 when filters are applied via POST
-$currentPage = 1;
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['page'])) {
-    $currentPage = max(1, intval($_GET['page']));
+// Get current page
+$currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+
+// If POST request (new filters applied), redirect to GET with parameters to maintain state
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $redirect_params = [];
+    if (!empty($_POST['year'])) $redirect_params['year'] = $_POST['year'];
+    if (!empty($_POST['category'])) $redirect_params['category'] = $_POST['category'];
+    if (!empty($_POST['result'])) $redirect_params['result'] = $_POST['result'];
+    if (!empty($_POST['search'])) $redirect_params['search'] = $_POST['search'];
+    
+    $redirect_url = 'nominations.php';
+    if (!empty($redirect_params)) {
+        $redirect_url .= '?' . http_build_query($redirect_params);
+    }
+    
+    header('Location: ' . $redirect_url);
+    exit;
 }
 
 // Build the query with filters
@@ -351,7 +365,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
     <div class="pagination-wrapper">
       <nav class="pagination">
         <?php
-          // Build base parameters for pagination - exclude 'page' to avoid conflicts
+          // Build base parameters for pagination
           $base = [];
           if (!empty($selectedYear)) $base['year'] = $selectedYear;
           if (!empty($selectedCategory)) $base['category'] = $selectedCategory;
