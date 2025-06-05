@@ -157,7 +157,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
     <div class="container">
       <h1>Award Nominations</h1>
       <p class="page-description">
-        Explore award nominations and wins from major entertainment industry awards. 
+        Explore the SAG awards nominations and wins. 
         Filter by year, category, or search for specific actors and productions to discover 
         outstanding achievements in film and television.
       </p>
