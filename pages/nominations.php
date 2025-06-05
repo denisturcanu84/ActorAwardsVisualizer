@@ -17,7 +17,7 @@ $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 $db = getDbConnection();
 
 // Get filter values - prioritize GET parameters if they exist, then POST
-$selectedYear = $_GET['year'] ?? $_POST['year'] ?? '2020';
+$selectedYear = $_GET['year'] ?? $_POST['year'] ?? '';
 $selectedCategory = $_GET['category'] ?? $_POST['category'] ?? '';
 $selectedResult = $_GET['result'] ?? $_POST['result'] ?? '';
 $searchQuery = $_GET['search'] ?? $_POST['search'] ?? '';
@@ -174,12 +174,13 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
              <div class="filter-group">
                <label for="yearFilter">Year:</label>
                <select id="yearFilter" name="year">
-                  <?php foreach ($years as $year): ?>
+                   <option value="">All Years</option>
+                   <?php foreach ($years as $year): ?>
                      <option value="<?php echo htmlspecialchars($year); ?>" 
                          <?php echo $selectedYear === $year ? 'selected' : ''; ?>>
                          <?php echo htmlspecialchars($year); ?>
                      </option>
-                  <?php endforeach; ?>
+                   <?php endforeach; ?>
                </select>
              </div>
              <div class="filter-group">
@@ -371,17 +372,42 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
           if (!empty($selectedCategory)) $base['category'] = $selectedCategory;
           if (!empty($selectedResult)) $base['result'] = $selectedResult;
           if (!empty($searchQuery)) $base['search'] = $searchQuery;
+          
+          // Smart pagination - show limited page numbers
+          $showPages = 7; // Maximum pages to show
+          $startPage = max(1, $currentPage - floor($showPages / 2));
+          $endPage = min($totalPages, $startPage + $showPages - 1);
+          
+          // Adjust start if we're near the end
+          if ($endPage - $startPage < $showPages - 1) {
+              $startPage = max(1, $endPage - $showPages + 1);
+          }
         ?>
+        
         <?php if($currentPage > 1): ?>
           <a href="?<?php echo http_build_query($base + ['page' => $currentPage - 1]); ?>">&laquo; Prev</a>
         <?php endif; ?>
 
-        <?php for($i = 1; $i <= $totalPages; $i++): ?>
+        <?php if($startPage > 1): ?>
+          <a href="?<?php echo http_build_query($base + ['page' => 1]); ?>">1</a>
+          <?php if($startPage > 2): ?>
+            <span class="pagination-dots">...</span>
+          <?php endif; ?>
+        <?php endif; ?>
+
+        <?php for($i = $startPage; $i <= $endPage; $i++): ?>
           <a class="<?php echo $i === $currentPage ? 'active' : ''; ?>"
              href="?<?php echo http_build_query($base + ['page' => $i]); ?>">
             <?php echo $i; ?>
           </a>
         <?php endfor; ?>
+
+        <?php if($endPage < $totalPages): ?>
+          <?php if($endPage < $totalPages - 1): ?>
+            <span class="pagination-dots">...</span>
+          <?php endif; ?>
+          <a href="?<?php echo http_build_query($base + ['page' => $totalPages]); ?>"><?php echo $totalPages; ?></a>
+        <?php endif; ?>
 
         <?php if($currentPage < $totalPages): ?>
           <a href="?<?php echo http_build_query($base + ['page' => $currentPage + 1]); ?>">Next &raquo;</a>

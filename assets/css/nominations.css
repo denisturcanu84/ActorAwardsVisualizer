@@ -334,6 +334,12 @@
   font-weight: 600;
 }
 
+.pagination-dots {
+  padding: 0.75rem 0.5rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
 @media (max-width: 1024px) {
   .main-grid {
     display: block;
