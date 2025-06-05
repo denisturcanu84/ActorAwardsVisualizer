@@ -30,6 +30,12 @@ if ($selectedResult === 'Won') {
     $resultBoolean = 'False';
 }
 
+// Reset pagination to page 1 when filters are applied via POST
+$currentPage = 1;
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['page'])) {
+    $currentPage = max(1, intval($_GET['page']));
+}
+
 // Build the query with filters
 $query = "SELECT a.*, 
                  a.full_name, 
@@ -68,7 +74,6 @@ if ($searchQuery) {
 }
 
 // --- pagination setup ----
-$currentPage = isset($_GET['page']) ? max(1,intval($_GET['page'])) : 1;
 $itemsPerPage = 10; // Increase items per page to reduce pagination overhead
 
 // build COUNT query with the same filters
@@ -346,26 +351,26 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
     <div class="pagination-wrapper">
       <nav class="pagination">
         <?php
-          $base = [
-            'year'=>$selectedYear,
-            'category'=>$selectedCategory,
-            'result'=>$selectedResult,
-            'search'=>$searchQuery
-          ];
+          // Build base parameters for pagination - exclude 'page' to avoid conflicts
+          $base = [];
+          if (!empty($selectedYear)) $base['year'] = $selectedYear;
+          if (!empty($selectedCategory)) $base['category'] = $selectedCategory;
+          if (!empty($selectedResult)) $base['result'] = $selectedResult;
+          if (!empty($searchQuery)) $base['search'] = $searchQuery;
         ?>
-        <?php if($currentPage>1): ?>
-          <a href="?<?php echo http_build_query($base+['page'=>$currentPage-1]); ?>">&laquo; Prev</a>
+        <?php if($currentPage > 1): ?>
+          <a href="?<?php echo http_build_query($base + ['page' => $currentPage - 1]); ?>">&laquo; Prev</a>
         <?php endif; ?>
 
-        <?php for($i=1; $i<=$totalPages; $i++): ?>
-          <a class="<?php echo $i===$currentPage?'active':''; ?>"
-             href="?<?php echo http_build_query($base+['page'=>$i]); ?>">
+        <?php for($i = 1; $i <= $totalPages; $i++): ?>
+          <a class="<?php echo $i === $currentPage ? 'active' : ''; ?>"
+             href="?<?php echo http_build_query($base + ['page' => $i]); ?>">
             <?php echo $i; ?>
           </a>
         <?php endfor; ?>
 
-        <?php if($currentPage<$totalPages): ?>
-          <a href="?<?php echo http_build_query($base+['page'=>$currentPage+1]); ?>">Next &raquo;</a>
+        <?php if($currentPage < $totalPages): ?>
+          <a href="?<?php echo http_build_query($base + ['page' => $currentPage + 1]); ?>">Next &raquo;</a>
         <?php endif; ?>
       </nav>
     </div>
