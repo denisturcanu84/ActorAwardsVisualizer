@@ -447,7 +447,26 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                         <div class="performer-card">
                             <div class="card-header">
                                 <h3>Top Actors</h3>
-                                <a href="?export=actors" class="export-button">Export CSV</a>
+                                <div class="export-wrapper">
+                                    <button class="export-button" id="exportActorsButton">
+                                        <i class="fas fa-download"></i>
+                                        Export As...
+                                    </button>
+                                    <div class="export-dropdown" id="exportActorsDropdown">
+                                        <a href="?export=actors&format=csv" class="export-option">
+                                            <i class="fas fa-file-csv"></i>
+                                            Export as CSV
+                                        </a>
+                                        <a href="?export=actors&format=webp" class="export-option">
+                                            <i class="fas fa-file-image"></i>
+                                            Export as WebP
+                                        </a>
+                                        <a href="?export=actors&format=svg" class="export-option">
+                                            <i class="fas fa-file-code"></i>
+                                            Export as SVG
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="performer-list-container">
                                 <ul class="performer-list">
@@ -481,7 +500,26 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                         <div class="performer-card">
                             <div class="card-header">
                                 <h3>Top Productions</h3>
-                                <a href="?export=productions" class="export-button">Export CSV</a>
+                                <div class="export-wrapper">
+                                    <button class="export-button" id="exportProductionsButton">
+                                        <i class="fas fa-download"></i>
+                                        Export As...
+                                    </button>
+                                    <div class="export-dropdown" id="exportProductionsDropdown">
+                                        <a href="?export=productions&format=csv" class="export-option">
+                                            <i class="fas fa-file-csv"></i>
+                                            Export as CSV
+                                        </a>
+                                        <a href="?export=productions&format=webp" class="export-option">
+                                            <i class="fas fa-file-image"></i>
+                                            Export as WebP
+                                        </a>
+                                        <a href="?export=productions&format=svg" class="export-option">
+                                            <i class="fas fa-file-code"></i>
+                                            Export as SVG
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="performer-list-container">
                                 <ul class="performer-list">
@@ -553,6 +591,8 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
     // Initialize export dropdowns
     setupExportDropdown('exportYearlyButton', 'exportYearlyDropdown');
     setupExportDropdown('exportCategoryButton', 'exportCategoryDropdown');
+    setupExportDropdown('exportActorsButton', 'exportActorsDropdown');
+    setupExportDropdown('exportProductionsButton', 'exportProductionsDropdown');
     </script>
 </body>
 </html>
