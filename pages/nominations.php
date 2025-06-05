@@ -1,4 +1,9 @@
 <?php
+// Enabled error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/tmdb.php';
 require_once __DIR__ . '/../includes/functions.php';
@@ -20,17 +25,24 @@ $searchQuery = $_POST['search'] ?? '';
 // Convert Won/Nominated to True/False for database query
 $resultBoolean = null;
 if ($selectedResult === 'Won') {
-    $resultBoolean = 'True';  // Using 'True' to match database format
+    $resultBoolean = 'True';
 } elseif ($selectedResult === 'Nominated') {
-    $resultBoolean = 'False';  // Using 'False' to match database format
+    $resultBoolean = 'False';
 }
 
 // Build the query with filters
-$query = "SELECT a.*, a.full_name, ac.profile_path, ac.tmdb_id, p.title as production_title, p.poster_path 
+$query = "SELECT a.*, 
+                 a.full_name, 
+                 ac.profile_path, 
+                 ac.tmdb_id AS actor_tmdb_id, 
+                 p.title as production_title, 
+                 p.poster_path AS local_db_poster_path, 
+                 p.tmdb_id AS production_tmdb_id,
+                 p.type AS production_type 
           FROM awards a 
           LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id 
           LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id 
-          WHERE 1=1";
+          WHERE a.full_name IS NOT NULL AND a.full_name <> ''";
 
 $params = [];
 
@@ -50,12 +62,49 @@ if ($resultBoolean !== null) {
 }
 
 if ($searchQuery) {
-    $query .= " AND (a.full_name LIKE ? OR a.show LIKE ?)";
+    $query .= " AND (a.full_name LIKE ? OR p.title LIKE ?)";
     $params[] = "%$searchQuery%";
     $params[] = "%$searchQuery%";
 }
 
-$query .= " ORDER BY a.year DESC, a.category";
+// --- pagination setup ----
+$currentPage = isset($_GET['page']) ? max(1,intval($_GET['page'])) : 1;
+$itemsPerPage = 10; // Increase items per page to reduce pagination overhead
+
+// build COUNT query with the same filters
+$countSql = "SELECT COUNT(*) 
+             FROM awards a 
+             LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id 
+             WHERE a.full_name IS NOT NULL AND a.full_name <> ''";
+$countParams = [];
+if ($selectedYear) {
+    $countSql .= " AND a.year = ?";
+    $countParams[] = $selectedYear;
+}
+if ($selectedCategory) {
+    $countSql .= " AND a.category = ?";
+    $countParams[] = $selectedCategory;
+}
+if ($resultBoolean !== null) {
+    $countSql .= " AND a.won = ?";
+    $countParams[] = $resultBoolean;
+}
+if ($searchQuery) {
+    $countSql .= " AND (a.full_name LIKE ? OR p.title LIKE ?)";
+    $countParams[] = "%$searchQuery%";
+    $countParams[] = "%$searchQuery%";
+}
+
+$countStmt = $db->prepare($countSql);
+$countStmt->execute($countParams);
+$totalItems = (int)$countStmt->fetchColumn();
+$totalPages = (int)ceil($totalItems / $itemsPerPage);
+
+// complete main query with LIMIT/OFFSET
+$query .= " ORDER BY a.year DESC, a.category
+            LIMIT ? OFFSET ?";
+$params[] = $itemsPerPage;
+$params[] = ($currentPage - 1) * $itemsPerPage;
 
 // Prepare and execute the query
 $stmt = $db->prepare($query);
@@ -68,207 +117,260 @@ $years = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
 
 $query = "SELECT DISTINCT category FROM awards ORDER BY category";
 $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
-
-// Calculate statistics
-$categoryCounts = array_count_values(array_column($nominations, 'category'));
-$yearCounts = array_count_values(array_column($nominations, 'year'));
-
-// Get TMDB data for actors without profile images
-foreach ($nominations as &$nomination) {
-    if (empty($nomination['profile_path'])) {
-        // First try to find the actor in our database
-        $actor_db = findActorByTmdbId($db, $nomination['tmdb_actor_id']);
-        
-        if (!$actor_db || empty($actor_db['profile_path'])) {
-            // If not found or no profile image, search TMDB
-            $actor = searchActorTmdb($nomination['full_name'], $api_key);
-            
-            if ($actor) {
-                $tmdb_id = $actor['id'];
-                $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
-                
-                if ($tmdb_data) {
-                    // Update the actor in our database
-                    upsertActor($db, [
-                        'full_name' => $tmdb_data['name'] ?? $nomination['full_name'],
-                        'tmdb_id' => $tmdb_id,
-                        'bio' => $tmdb_data['biography'] ?? '',
-                        'profile_path' => $tmdb_data['profile_path'] ?? null,
-                        'popularity' => $tmdb_data['popularity'] ?? 0
-                    ]);
-                    
-                    // Update the nomination with the new profile path
-                    $nomination['profile_path'] = $tmdb_data['profile_path'] ?? null;
-                    $nomination['tmdb_id'] = $tmdb_id;
-                }
-            }
-        } else {
-            // Use the profile path from our database
-            $nomination['profile_path'] = $actor_db['profile_path'];
-        }
-    }
-}
-unset($nomination);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actor Awards - Nominations</title>
-    <link rel="stylesheet" href="../assets/css/index.css">
-    <link rel="stylesheet" href="../assets/css/navbar.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/awards.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actor Awards - Nominations</title>
+  <link rel="stylesheet" href="../assets/css/index.css">
+  <link rel="stylesheet" href="../assets/css/navbar.css">
+  <link rel="stylesheet" href="../assets/css/footer.css">
+  <link rel="stylesheet" href="../assets/css/nominations.css">
 </head>
 <body>
-    <?php include '../includes/navbar.php'; ?>
-
+  <?php include '../includes/navbar.php'; ?>
+  
+  <!-- Page Header -->
+  <div class="page-header">
     <div class="container">
-        <h1 class="text-center">Nominations</h1>
+      <h1>Award Nominations</h1>
+      <p class="page-description">
+        Explore award nominations and wins from major entertainment industry awards. 
+        Filter by year, category, or search for specific actors and productions to discover 
+        outstanding achievements in film and television.
+      </p>
+    </div>
+  </div>
 
+  <div class="container">
+    <div class="main-grid">
+      <div class="side-panel">
         <!-- Filters Section -->
         <div class="filters-section">
-            <form class="filters-form" method="POST">
-                <div class="filters-grid">
-                    <div class="filter-group">
-                        <label for="yearFilter">Year:</label>
-                        <select id="yearFilter" name="year">
-                            <?php foreach ($years as $year): ?>
-                                <option value="<?php echo htmlspecialchars($year); ?>" 
-                                    <?php echo $selectedYear === $year ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($year); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="categoryFilter">Category:</label>
-                        <select id="categoryFilter" name="category">
-                            <option value="">All Categories</option>
-                            <?php foreach ($categories as $category): ?>
-                                <option value="<?php echo htmlspecialchars($category); ?>"
-                                    <?php echo $selectedCategory === $category ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($category); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="resultFilter">Result:</label>
-                        <select id="resultFilter" name="result">
-                            <option value="">All Results</option>
-                            <option value="Won" <?php echo $selectedResult === 'Won' ? 'selected' : ''; ?>>Won</option>
-                            <option value="Nominated" <?php echo $selectedResult === 'Nominated' ? 'selected' : ''; ?>>Nominated</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label for="searchInput">Search:</label>
-                        <input type="text" id="searchInput" name="search" 
-                               placeholder="Search actor or show..."
-                               value="<?php echo htmlspecialchars($searchQuery); ?>">
-                    </div>
-                </div>
-                <div class="filter-buttons">
-                    <button type="submit" class="filter-button">Apply Filters</button>
-                    <a href="nominations.php" class="reset-button">Reset</a>
-                </div>
-            </form>
+         <form class="filters-form" method="POST">
+           <div class="filters-grid">
+             <div class="filter-group">
+               <label for="yearFilter">Year:</label>
+               <select id="yearFilter" name="year">
+                  <?php foreach ($years as $year): ?>
+                     <option value="<?php echo htmlspecialchars($year); ?>" 
+                         <?php echo $selectedYear === $year ? 'selected' : ''; ?>>
+                         <?php echo htmlspecialchars($year); ?>
+                     </option>
+                  <?php endforeach; ?>
+               </select>
+             </div>
+             <div class="filter-group">
+               <label for="categoryFilter">Category:</label>
+               <select id="categoryFilter" name="category">
+                   <option value="">All Categories</option>
+                   <?php foreach ($categories as $category): ?>
+                       <option value="<?php echo htmlspecialchars($category); ?>"
+                           <?php echo $selectedCategory === $category ? 'selected' : ''; ?>>
+                           <?php echo htmlspecialchars($category); ?>
+                       </option>
+                   <?php endforeach; ?>
+               </select>
+             </div>
+             <div class="filter-group">
+               <label for="resultFilter">Result:</label>
+               <select id="resultFilter" name="result">
+                   <option value="">All Results</option>
+                   <option value="Won" <?php echo $selectedResult === 'Won' ? 'selected' : ''; ?>>Won</option>
+                   <option value="Nominated" <?php echo $selectedResult === 'Nominated' ? 'selected' : ''; ?>>Nominated</option>
+               </select>
+             </div>
+             <div class="filter-group">
+               <label for="searchInput">Search:</label>
+               <input type="text" id="searchInput" name="search" 
+                      placeholder="Search actor or show..."
+                      value="<?php echo htmlspecialchars($searchQuery); ?>">
+             </div>
+           </div>
+           <div class="filter-buttons">
+             <button type="submit" class="filter-button">Apply Filters</button>
+             <a href="nominations.php" class="reset-button">Reset</a>
+           </div>
+         </form>
         </div>
-
-        <!-- Statistics Section -->
-        <div class="statistics-section">
-            <div class="stats-grid">
-                <!-- Category Statistics -->
-                <div class="stats-card">
-                    <h2>Nominations by Category</h2>
-                    <div class="stats-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Category</th>
-                                    <th>Count</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($categoryCounts as $category => $count): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($category); ?></td>
-                                        <td><?php echo $count; ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Year Statistics -->
-                <div class="stats-card">
-                    <h2>Nominations by Year</h2>
-                    <div class="stats-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Year</th>
-                                    <th>Count</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($yearCounts as $year => $count): ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($year); ?></td>
-                                        <td><?php echo $count; ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+      </div>
+      
+      <div class="content-panel">
+        <!-- Results Info -->
+        <div class="results-info">
+          <p>Showing <?php echo count($nominations); ?> of <?php echo $totalItems; ?> nominations</p>
         </div>
 
         <!-- Nominations List -->
         <div class="nominations-list">
-            <?php if (empty($nominations)): ?>
-                <div class="no-results">
-                    <p>No nominations found matching your criteria.</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($nominations as $nomination): ?>
-                    <div class="nomination-card">
-                        <div class="nomination-content">
-                            <div class="nomination-image">
-                                <?php 
-                                $profile_image = getProfileImageUrl($nomination['profile_path']);
-                                if ($profile_image): 
-                                ?>
-                                    <img src="<?php echo htmlspecialchars($profile_image); ?>" 
-                                         alt="<?php echo htmlspecialchars($nomination['full_name'] ?? 'Unknown Actor'); ?>">
-                                <?php else: ?>
-                                    <div class="no-image">No Image Available</div>
-                                <?php endif; ?>
-                            </div>
-                            <div class="nomination-details">
-                                <h3><?php echo htmlspecialchars($nomination['full_name'] ?? 'Unknown Actor'); ?></h3>
-                                <div class="nomination-info">
-                                    <p><strong>Year:</strong> <?php echo htmlspecialchars($nomination['year'] ?? 'N/A'); ?></p>
-                                    <p><strong>Category:</strong> <?php echo htmlspecialchars($nomination['category'] ?? 'N/A'); ?></p>
-                                    <p><strong>Show:</strong> <?php echo htmlspecialchars($nomination['show'] ?? 'N/A'); ?></p>
-                                    <p><strong>Result:</strong> 
-                                        <span class="result-badge <?php echo $nomination['won'] === 'True' ? 'won' : 'nominated'; ?>">
-                                            <?php echo $nomination['won'] === 'True' ? 'Won' : 'Nominated'; ?>
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-    </div>
+         <?php if (empty($nominations)): ?>
+             <div class="no-results">
+               <p>No nominations found matching your criteria.</p>
+             </div>
+           <?php else: ?>
+           <?php foreach ($nominations as $nomination): ?>
+             <div class="nomination-card">
+               <div class="nomination-images">
+                 <div class="image-wrapper">
+                   <?php
+                   // Enhanced actor image loading with TMDB fallback
+                   $actor_image = null;
+                   
+                   // First try database
+                   if (!empty($nomination['profile_path'])) {
+                       $actor_image = getProfileImageUrl($nomination['profile_path']);
+                   }
+                   
+                   // If no image and we have TMDB actor ID, try API
+                   if (!$actor_image && !empty($nomination['actor_tmdb_id'])) {
+                       $actor_details = getActorDetailsTmdb($nomination['actor_tmdb_id'], $api_key);
+                       if (is_array($actor_details) && !empty($actor_details['profile_path'])) {
+                           $actor_image = getProfileImageUrl($actor_details['profile_path']);
+                       }
+                   }
+                   
+                   // If still no image, try searching by name
+                   if (!$actor_image && !empty($nomination['full_name'])) {
+                       $actor_search = searchActorTmdb($nomination['full_name'], $api_key);
+                       if ($actor_search && !empty($actor_search['profile_path'])) {
+                           $actor_image = getProfileImageUrl($actor_search['profile_path']);
+                       }
+                   }
+                   ?>
+                   <?php if ($actor_image): ?>
+                     <img class="actor-img" src="<?php echo htmlspecialchars($actor_image); ?>" alt="<?php echo htmlspecialchars($nomination['full_name'] ?? 'Actor'); ?>">
+                   <?php else: ?>
+                     <div class="no-image actor-no-image">No Actor Image</div>
+                   <?php endif; ?>
+                   <span class="image-label">Actor</span>
+                 </div>
+               </div>
+ 
+               <div class="nomination-details">
+                 <?php
+                     $displayName = $nomination['full_name'];
+                     $profileUrl = "actor_profile.php?"; 
+                     if (!empty($nomination['actor_tmdb_id'])) { 
+                       $profileUrl .= 'tmdb_id=' . intval($nomination['actor_tmdb_id']); 
+                     } elseif (!empty($displayName)) { 
+                       $profileUrl .= 'name=' . urlencode($displayName);
+                     }
+                   ?>
+                   <h3>
+                     <a href="<?php echo htmlspecialchars($profileUrl); ?>">
+                       <?php echo htmlspecialchars($displayName); ?>
+                     </a>
+                   </h3>
+      
+                 <div class="nomination-info">
+                   <p><strong>Year:</strong> <?php echo htmlspecialchars($nomination['year'] ?? 'N/A'); ?></p>
+                   <p><strong>Category:</strong> <?php echo htmlspecialchars($nomination['category'] ?? 'N/A'); ?></p>
+                   
+                     <?php
+                       $showName = $nomination['production_title'] 
+                                   ?? ($nomination['show'] ?? 'Unknown Show');
+                     ?>
+                     <p><strong>Show:</strong>
+                       <?php echo htmlspecialchars($showName); ?>
+                     </p>
+                     
+                   <p><strong>Result:</strong>
+                     <span class="result-badge <?php echo $nomination['won'] === 'True' ? 'won' : 'nominated'; ?>">
+                       <?php echo $nomination['won'] === 'True' ? 'Won' : 'Nominated'; ?>
+                     </span>
+                   </p>
+                 </div>
+               </div>
 
-    <?php include '../includes/footer.php'; ?>
+               <div class="image-wrapper">
+                 <?php
+                 // Enhanced poster image loading with TMDB fallback
+                 $poster_image = null;
+                 
+                 // First try database
+                 if (!empty($nomination['local_db_poster_path'])) {
+                     $poster_image = getPosterImageUrl($nomination['local_db_poster_path']);
+                 }
+                 
+                 // If no poster and we have production TMDB ID
+                 if (!$poster_image && !empty($nomination['production_tmdb_id'])) {
+                     $production_type = $nomination['production_type'] ?? 'movie';
+                     
+                     if (strtolower($production_type) === 'tv') {
+                         $details = getTvShowDetailsTmdb($nomination['production_tmdb_id'], $api_key);
+                     } else {
+                         $details = getMovieDetailsTmdb($nomination['production_tmdb_id'], $api_key);
+                     }
+                     
+                     if (is_array($details) && !empty($details['poster_path'])) {
+                         $poster_image = getPosterImageUrl($details['poster_path']);
+                     }
+                 }
+                 
+                 // If still no poster, try searching by title
+                 if (!$poster_image) {
+                     $search_title = $nomination['production_title'] ?? $nomination['show'] ?? null;
+                     if ($search_title) {
+                         // Try movie search first
+                         $movie_search = searchMovieTmdb($search_title, $api_key);
+                         if ($movie_search && !empty($movie_search['poster_path'])) {
+                             $poster_image = getPosterImageUrl($movie_search['poster_path']);
+                         } else {
+                             // Try TV search
+                             $tv_search = searchTvShowTmdb($search_title, $api_key);
+                             if ($tv_search && !empty($tv_search['poster_path'])) {
+                                 $poster_image = getPosterImageUrl($tv_search['poster_path']);
+                             }
+                         }
+                     }
+                 }
+                 ?>
+                 <?php if ($poster_image): ?>
+                   <img class="poster-img" src="<?php echo htmlspecialchars($poster_image); ?>" alt="<?php echo htmlspecialchars($nomination['production_title'] ?? $nomination['show'] ?? 'Poster'); ?>">
+                 <?php else: ?>
+                   <div class="no-image poster-no-image">No Poster</div>
+                 <?php endif; ?>
+                 <span class="image-label">Production</span>
+               </div>
+             </div>
+           <?php endforeach; ?>
+           <?php endif; ?>
+        </div>
+      </div>
+    </div>
+    
+    <?php if ($totalPages > 1): ?>
+    <div class="pagination-wrapper">
+      <nav class="pagination">
+        <?php
+          $base = [
+            'year'=>$selectedYear,
+            'category'=>$selectedCategory,
+            'result'=>$selectedResult,
+            'search'=>$searchQuery
+          ];
+        ?>
+        <?php if($currentPage>1): ?>
+          <a href="?<?php echo http_build_query($base+['page'=>$currentPage-1]); ?>">&laquo; Prev</a>
+        <?php endif; ?>
+
+        <?php for($i=1; $i<=$totalPages; $i++): ?>
+          <a class="<?php echo $i===$currentPage?'active':''; ?>"
+             href="?<?php echo http_build_query($base+['page'=>$i]); ?>">
+            <?php echo $i; ?>
+          </a>
+        <?php endfor; ?>
+
+        <?php if($currentPage<$totalPages): ?>
+          <a href="?<?php echo http_build_query($base+['page'=>$currentPage+1]); ?>">Next &raquo;</a>
+        <?php endif; ?>
+      </nav>
+    </div>
+    <?php endif; ?>
+  </div>
+  <?php include '../includes/footer.php'; ?>
 </body>
 </html>

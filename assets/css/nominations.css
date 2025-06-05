@@ -1,0 +1,411 @@
+@import "./actor_profile.css";
+
+.page-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: white;
+  padding: 60px 0 40px;
+  margin-top: 0;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  color: white;
+}
+
+.page-description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0 auto;
+  opacity: 0.95;
+  max-width: 600px;
+  color: rgba(255,255,255,0.95);
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto 40px;
+  padding: 0 1.5rem;
+}
+
+.filters-section,
+.nominations-list {
+  margin-bottom: var(--spacing);
+}
+
+.filters-form {
+  background: var(--card-background);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 1.25rem;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.filter-group select,
+.filter-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #dde2e7;
+  border-radius: 8px;
+  transition: var(--transition);
+  background-color: #f8f9fa;
+  font-size: 0.9rem;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.filter-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.filter-button,
+.reset-button {
+  padding: 0.7rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.filter-button {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.filter-button:hover {
+  background: var(--primary-hover);
+}
+
+.reset-button {
+  background: #e9ecef;
+  color: var(--text-secondary);
+  border: 1px solid #dde2e7;
+}
+
+.reset-button:hover {
+  background: #dfe3e6;
+  border-color: #cfd5db;
+}
+
+.results-info {
+  background: var(--card-background);
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.results-info p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.content-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.nominations-list {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.nomination-card {
+  background: var(--card-background);
+  display: flex; 
+  align-items: center;
+  gap: 1.5rem; 
+  padding: 1.25rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+  transition: var(--transition);
+  margin-bottom: 1.5rem;
+}
+
+.nomination-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.nomination-images {
+  display: flex; 
+  align-items: center;
+  flex-shrink: 0; 
+}
+
+.image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 80px; 
+}
+
+.image-label {
+  font-size: 0.7rem;
+  color: #777;
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+.actor-img {
+  width: 80px; 
+  height: 120px; 
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: var(--transition);
+}
+
+.actor-img:hover {
+  transform: scale(1.05);
+}
+
+.poster-img {
+  width: 80px; 
+  height: 120px; 
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: var(--transition);
+}
+
+.poster-img:hover {
+  transform: scale(1.05);
+}
+
+.actor-no-image,
+.poster-no-image {
+  width: 80px;
+  height: 120px;
+  background-color: #f0f0f0;
+  border: 1px dashed #d0d0d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 0.65rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.nomination-details {
+  flex: 1; 
+  padding-top: 0; 
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.nomination-details h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.nomination-details h3 a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.nomination-details h3 a:hover {
+  color: var(--primary-color);
+}
+
+.nomination-info p {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.nomination-info p strong {
+  color: #333;
+  font-weight: 500;
+}
+
+.result-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.result-badge.won {
+  background: #28a745;
+}
+
+.result-badge.nominated {
+  background: #ffc107;
+}
+
+.pagination-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+}
+
+.pagination a {
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  color: var(--text-color);
+  transition: var(--transition);
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+  background: var(--card-background);
+}
+
+.pagination a:hover,
+.pagination a.active {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.pagination a.active {
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .main-grid {
+    display: block;
+    width: 100%;
+  }
+  .side-panel {
+    margin-bottom: 1.5rem;
+  }
+  
+  .content-panel {
+    width: 100%;
+  }
+  
+  .pagination-wrapper {
+    width: 100%;
+    margin: 2rem 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    padding: 40px 0 30px;
+    margin-top: 0;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+  }
+  
+  .page-description {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  
+  .pagination-wrapper {
+    width: 100%;
+    margin: 2rem 0;
+  }
+  
+  .pagination {
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .pagination a {
+    padding: 0.5rem 0.75rem;
+    min-width: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .nomination-card {
+    flex-direction: column;
+    align-items: center; 
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .nomination-images { 
+    justify-content: center;
+    align-self: center;
+    margin-bottom: 0.25rem; 
+  }
+
+  .nomination-details {
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .nomination-card > .image-wrapper { 
+    margin-top: 0.5rem; 
+    align-self: center;
+  }
+}

@@ -40,6 +40,12 @@ function getActorMovies($tmdb_id, $api_key, $limit = 4) {
     return array_slice($data['cast'], 0, $limit);
 }
 
+// returneaza URL pentru poster-ul productiei
+function getPosterImageUrl($poster_path, $size = 'w200') {
+    return $poster_path 
+        ? 'https://image.tmdb.org/t/p/' . $size . $poster_path 
+        : null;
+}
 
 // cauta actorul in baza de date folosind ID-ul TMDB sau numele
 function findActorInDatabase($db, $tmdb_id = 0, $name = '') {
@@ -64,4 +70,36 @@ function findActorInDatabase($db, $tmdb_id = 0, $name = '') {
     }
     
     return null;
+}
+
+// cauta film dupa titlu
+function searchMovieTmdb($title, $api_key) {
+    $url  = 'https://api.themoviedb.org/3/search/movie?api_key=' . $api_key
+          . '&query=' . urlencode($title);
+    $json = @file_get_contents($url);
+    $data = $json ? json_decode($json, true) : [];
+    return $data['results'][0] ?? null;
+}
+
+// returneaza detalii despre film folosind ID-ul TMDB
+function getMovieDetailsTmdb($tmdb_id, $api_key) {
+    $url  = 'https://api.themoviedb.org/3/movie/' . $tmdb_id
+          . '?api_key=' . $api_key;
+    $json = @file_get_contents($url);
+    return $json ? json_decode($json, true) : [];
+}
+
+// cauta serial TV dupa titlu
+function searchTvShowTmdb($title, $api_key) {
+    $url = 'https://api.themoviedb.org/3/search/tv?api_key=' . $api_key . '&query=' . urlencode($title);
+    $json = @file_get_contents($url);
+    $data = $json ? json_decode($json, true) : [];
+    return $data['results'][0] ?? null;
+}
+
+// returneaza detalii despre serial TV folosind ID-ul TMDB
+function getTvShowDetailsTmdb($tmdb_id, $api_key) {
+    $url = 'https://api.themoviedb.org/3/tv/' . $tmdb_id . '?api_key=' . $api_key;
+    $json = @file_get_contents($url);
+    return $json ? json_decode($json, true) : [];
 }
