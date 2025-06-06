@@ -1,23 +1,327 @@
 <?php
+// enabled error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../src/config/config.php';
 require_once __DIR__ . '/../../src/includes/db.php';
 require_once __DIR__ . '/../../src/includes/functions.php';
 
+use Intervention\Image\ImageManagerStatic as Image;
+use SVG\SVG;
+use SVG\Nodes\Shapes\SVGRect;
+use SVG\Nodes\Shapes\SVGLine;
+use SVG\Nodes\Texts\SVGText;
+
 // initialize database connection
 $db = getDbConnection();
 
-// get yearly statistics
+// Handle exports
+if (isset($_GET['export']) && isset($_GET['format'])) {
+    $exportType = $_GET['export'];
+    $format = $_GET['format'];
+    
+    try {
+        switch ($exportType) {
+            case 'yearly':
+                $data = $db->query("
+                    SELECT 
+                        year,
+                        COUNT(*) as total_nominations,
+                        SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) as total_wins,
+                        ROUND(SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as win_rate
+                    FROM awards 
+                    GROUP BY year 
+                    ORDER BY year DESC
+                ")->fetchAll(PDO::FETCH_ASSOC);
+                $filename = "yearly_statistics";
+                break;
+                
+            case 'category':
+                $data = $db->query("
+                    SELECT 
+                        category,
+                        COUNT(*) as total_nominations,
+                        SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) as total_wins,
+                        ROUND(SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as win_rate
+                    FROM awards 
+                    GROUP BY category 
+                    ORDER BY total_nominations DESC
+                ")->fetchAll(PDO::FETCH_ASSOC);
+                $filename = "category_statistics";
+                break;
+                
+            case 'performers':
+                $data = $db->query("
+                    SELECT 
+                        a.full_name,
+                        COUNT(*) as total_nominations,
+                        SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) as total_wins,
+                        ROUND(SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as win_rate
+                    FROM awards a
+                    WHERE a.full_name IS NOT NULL AND a.full_name <> ''
+                    GROUP BY a.full_name
+                    ORDER BY total_wins DESC, total_nominations DESC
+                    LIMIT 10
+                ")->fetchAll(PDO::FETCH_ASSOC);
+                $filename = "top_performers";
+                break;
+                
+            default:
+                throw new Exception('Invalid export type');
+        }
+
+        if (empty($data)) {
+            throw new Exception('No data available for export');
+        }
+        
+        switch ($format) {
+            case 'csv':
+                // Clear any previous output
+                if (ob_get_level()) ob_end_clean();
+                
+                // Set headers for CSV download
+                header('Content-Type: text/csv');
+                header('Content-Disposition: attachment; filename="' . $filename . '.csv"');
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                // Open output stream
+                $output = fopen('php://output', 'w');
+                if ($output === false) {
+                    throw new Exception('Failed to open output stream');
+                }
+                
+                // Add UTF-8 BOM for Excel compatibility
+                fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Write headers
+                fputcsv($output, array_keys($data[0]));
+                
+                // Write data
+                foreach ($data as $row) {
+                    fputcsv($output, $row);
+                }
+                
+                // Close the output stream
+                fclose($output);
+                exit;
+                
+            case 'webp':
+                // Clear any previous output
+                if (ob_get_level()) ob_end_clean();
+                
+                // Set headers for WebP download
+                header('Content-Type: image/webp');
+                header('Content-Disposition: attachment; filename="' . $filename . '.webp"');
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                // Generate WebP image
+                $width = 800;
+                $height = 600;
+                $padding = 40;
+                
+                // Create a new image
+                $image = Image::canvas($width, $height, '#ffffff');
+                
+                // Add title
+                $image->text(ucfirst($exportType) . ' Statistics', $padding, $padding, function($font) {
+                    $font->file(__DIR__ . '/../../public/assets/fonts/Arial.ttf');
+                    $font->size(24);
+                    $font->color('#243B55');
+                });
+                
+                // Calculate max values for scaling
+                $maxValue = 0;
+                foreach ($data as $row) {
+                    $maxValue = max($maxValue, $row['total_nominations'], $row['total_wins']);
+                }
+                
+                // Draw chart
+                $chartStartY = $padding + 50;
+                $chartHeight = $height - $chartStartY - $padding;
+                $barWidth = ($width - (2 * $padding)) / (count($data) * 3);
+                
+                foreach ($data as $index => $row) {
+                    $x = $padding + ($index * $barWidth * 3);
+                    
+                    // Draw nominations bar
+                    $nomHeight = ($row['total_nominations'] / $maxValue) * $chartHeight;
+                    $image->rectangle(
+                        $x,
+                        $height - $padding - $nomHeight,
+                        $x + $barWidth,
+                        $height - $padding,
+                        function($draw) {
+                            $draw->background('#4a90e2');
+                        }
+                    );
+                    
+                    // Draw wins bar
+                    $winsHeight = ($row['total_wins'] / $maxValue) * $chartHeight;
+                    $image->rectangle(
+                        $x + $barWidth + 5,
+                        $height - $padding - $winsHeight,
+                        $x + (2 * $barWidth),
+                        $height - $padding,
+                        function($draw) {
+                            $draw->background('#357abd');
+                        }
+                    );
+                    
+                    // Add labels
+                    $label = isset($row['year']) ? $row['year'] : 
+                            (isset($row['category']) ? substr($row['category'], 0, 10) : 
+                            substr($row['full_name'], 0, 10));
+                    
+                    $image->text($label, $x, $height - $padding + 15, function($font) {
+                        $font->file(__DIR__ . '/../../public/assets/fonts/Arial.ttf');
+                        $font->size(10);
+                        $font->color('#666666');
+                        $font->angle(45);
+                    });
+                }
+                
+                echo $image->encode('webp', 90);
+                exit;
+                
+            case 'svg':
+                // Clear any previous output
+                if (ob_get_level()) ob_end_clean();
+                
+                // Set headers for SVG download
+                header('Content-Type: image/svg+xml');
+                header('Content-Disposition: attachment; filename="' . $filename . '.svg"');
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                // Generate SVG
+                $width = 800;
+                $height = 600;
+                $padding = 40;
+                
+                // Create SVG document
+                $image = new SVG($width, $height);
+                $doc = $image->getDocument();
+                
+                // Add white background
+                $doc->addChild(
+                    (new SVGRect(0, 0, $width, $height))
+                        ->setStyle('fill', '#ffffff')
+                );
+                
+                // Add title
+                $doc->addChild(
+                    (new SVGText(ucfirst($exportType) . ' Statistics', $padding, $padding))
+                        ->setStyle('font-family', 'Arial')
+                        ->setStyle('font-size', '24px')
+                        ->setStyle('fill', '#243B55')
+                );
+                
+                // Calculate max values for scaling
+                $maxValue = 0;
+                foreach ($data as $row) {
+                    $maxValue = max($maxValue, $row['total_nominations'], $row['total_wins']);
+                }
+                
+                // Draw chart
+                $chartStartY = $padding + 50;
+                $chartHeight = $height - $chartStartY - $padding;
+                $barWidth = ($width - (2 * $padding)) / (count($data) * 3);
+                
+                // Draw grid lines
+                for ($i = 0; $i <= 5; $i++) {
+                    $y = $height - $padding - ($i * $chartHeight / 5);
+                    $doc->addChild(
+                        (new SVGLine($padding, $y, $width - $padding, $y))
+                            ->setStyle('stroke', '#eeeeee')
+                            ->setStyle('stroke-width', '1')
+                    );
+                    
+                    $value = round($maxValue * $i / 5);
+                    $doc->addChild(
+                        (new SVGText($value, $padding - 5, $y))
+                            ->setStyle('font-family', 'Arial')
+                            ->setStyle('font-size', '10px')
+                            ->setStyle('fill', '#666666')
+                            ->setStyle('text-anchor', 'end')
+                    );
+                }
+                
+                foreach ($data as $index => $row) {
+                    $x = $padding + ($index * $barWidth * 3);
+                    
+                    // Draw nominations bar
+                    $nomHeight = ($row['total_nominations'] / $maxValue) * $chartHeight;
+                    $doc->addChild(
+                        (new SVGRect(
+                            $x,
+                            $height - $padding - $nomHeight,
+                            $barWidth,
+                            $nomHeight
+                        ))
+                        ->setStyle('fill', '#4a90e2')
+                    );
+                    
+                    // Draw wins bar
+                    $winsHeight = ($row['total_wins'] / $maxValue) * $chartHeight;
+                    $doc->addChild(
+                        (new SVGRect(
+                            $x + $barWidth + 5,
+                            $height - $padding - $winsHeight,
+                            $barWidth,
+                            $winsHeight
+                        ))
+                        ->setStyle('fill', '#357abd')
+                    );
+                    
+                    // Add labels
+                    $label = isset($row['year']) ? $row['year'] : 
+                            (isset($row['category']) ? substr($row['category'], 0, 10) : 
+                            substr($row['full_name'], 0, 10));
+                    
+                    $doc->addChild(
+                        (new SVGText($label, $x, $height - $padding + 15))
+                            ->setStyle('font-family', 'Arial')
+                            ->setStyle('font-size', '10px')
+                            ->setStyle('fill', '#666666')
+                            ->setStyle('transform', 'rotate(45, ' . $x . ', ' . ($height - $padding + 15) . ')')
+                    );
+                }
+                
+                echo $image;
+                exit;
+                
+            default:
+                throw new Exception('Invalid format type');
+        }
+    } catch (Exception $e) {
+        // Log the error
+        error_log('Export error: ' . $e->getMessage());
+        
+        // Return error response
+        header('HTTP/1.1 500 Internal Server Error');
+        echo 'Error during export: ' . $e->getMessage();
+        exit;
+    }
+}
+
+// Get yearly statistics
 $yearlyStats = $db->query("
     SELECT 
         year,
         COUNT(*) as total_nominations,
-        SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) as total_wins
+        SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) as total_wins,
+        ROUND(SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as win_rate
     FROM awards 
     GROUP BY year 
     ORDER BY year DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// get category statistics
+// Get category statistics
 $categoryStats = $db->query("
     SELECT 
         category,
@@ -29,233 +333,30 @@ $categoryStats = $db->query("
     ORDER BY total_nominations DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// get top actors
-$topActors = $db->query("
-    SELECT 
-        a.full_name,
-        COUNT(*) as total_nominations,
-        SUM(CASE WHEN a.won = 'True' THEN 1 ELSE 0 END) as total_wins,
-        ac.profile_path
-    FROM awards a
-    LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id
-    GROUP BY a.full_name, ac.profile_path
-    ORDER BY total_wins DESC, total_nominations DESC
-    LIMIT 10
-")->fetchAll(PDO::FETCH_ASSOC);
+// Get top actors
+$actorsQuery = "SELECT 
+    a.full_name as name,
+    ac.profile_path as image_url,
+    COUNT(*) as nominations,
+    SUM(CASE WHEN a.won = 'True' THEN 1 ELSE 0 END) as wins
+FROM awards a
+LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id
+WHERE a.full_name IS NOT NULL AND a.full_name <> ''
+GROUP BY a.full_name, ac.profile_path
+ORDER BY wins DESC, nominations DESC
+LIMIT 10";
 
-// get top productions
-$topProductions = $db->query("
-    SELECT 
-        p.title,
-        COUNT(*) as total_nominations,
-        SUM(CASE WHEN a.won = 'True' THEN 1 ELSE 0 END) as total_wins,
-        p.poster_path
-    FROM awards a
-    JOIN productions p ON a.tmdb_show_id = p.tmdb_id
-    GROUP BY p.title, p.poster_path
-    ORDER BY total_wins DESC, total_nominations DESC
-    LIMIT 10
-")->fetchAll(PDO::FETCH_ASSOC);
-
-// function to generate CSV
-function generateCSV($data, $filename) {
-    header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    
-    $output = fopen('php://output', 'w');
-    
-    // Write headers
-    fputcsv($output, array_keys($data[0]));
-    
-    // Write data
-    foreach ($data as $row) {
-        fputcsv($output, $row);
-    }
-    
-    fclose($output);
-    exit;
-}
-
-// function to generate WebP
-function generateWebP($data, $filename) {
-    // Start output buffering
-    ob_start();
-    
-    // Create an image
-    $width = 800;
-    $height = 600;
-    $image = imagecreatetruecolor($width, $height);
-    
-    // Set colors
-    $bg = imagecolorallocate($image, 255, 255, 255);
-    $textColor = imagecolorallocate($image, 36, 59, 85);
-    $barColor = imagecolorallocate($image, 74, 144, 226);
-    
-    // Fill background
-    imagefilledrectangle($image, 0, 0, $width, $height, $bg);
-    
-    // Add title
-    $title = "Award Statistics";
-    $fontSize = 5;
-    $titleWidth = imagefontwidth($fontSize) * strlen($title);
-    $titleX = ($width - $titleWidth) / 2;
-    imagestring($image, $fontSize, $titleX, 20, $title, $textColor);
-    
-    // Determine the value field based on data type
-    $valueField = isset($data[0]['total_wins']) ? 'total_wins' : 'total_nominations';
-    
-    // Add data visualization
-    $barWidth = 40;
-    $barSpacing = 20;
-    $maxValue = max(array_column($data, $valueField));
-    $scale = ($height - 100) / ($maxValue ?: 1); // Avoid division by zero
-    
-    $x = 50;
-    foreach ($data as $row) {
-        if (!isset($row[$valueField])) {
-            continue; // Skip invalid data
-        }
-        
-        $barHeight = $row[$valueField] * $scale;
-        imagefilledrectangle($image, $x, $height - $barHeight - 50, $x + $barWidth, $height - 50, $barColor);
-        $x += $barWidth + $barSpacing;
-    }
-    
-    // Clear any previous output
-    ob_clean();
-    
-    // Set headers
-    header('Content-Type: image/webp');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    
-    // Output WebP
-    imagewebp($image);
-    imagedestroy($image);
-    
-    // End output buffering
-    ob_end_flush();
-    exit;
-}
-
-// function to generate SVG
-function generateSVG($data, $filename) {
-    // Start output buffering to prevent header issues
-    ob_start();
-    
-    $width = 800;
-    $height = 600;
-    $padding = 50;
-    $barWidth = 40;
-    $barSpacing = 20;
-    
-    // Determine the label and value fields based on data type
-    $labelField = 'category';
-    $valueField = 'total_nominations';
-    
-    // Check if this is actor or production data
-    if (isset($data[0]['full_name'])) {
-        $labelField = 'full_name';
-        $valueField = 'total_wins';
-    } elseif (isset($data[0]['title'])) {
-        $labelField = 'title';
-        $valueField = 'total_wins';
-    } elseif (isset($data[0]['year'])) {
-        $labelField = 'year';
-        $valueField = 'total_nominations';
-    }
-    
-    $maxValue = max(array_column($data, $valueField));
-    $scale = ($height - 2 * $padding) / ($maxValue ?: 1); // Avoid division by zero
-    
-    header('Content-Type: image/svg+xml');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    
-    $svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
-    $svg .= '<svg width="' . $width . '" height="' . $height . '" xmlns="http://www.w3.org/2000/svg">';
-    
-    // Background
-    $svg .= '<rect width="100%" height="100%" fill="#ffffff"/>';
-    
-    // Title
-    $svg .= '<text x="50%" y="40" text-anchor="middle" font-family="Arial" font-size="24" fill="#243B55">Award Statistics</text>';
-    
-    // Bars
-    $x = $padding;
-    foreach ($data as $row) {
-        if (!isset($row[$labelField]) || !isset($row[$valueField])) {
-            continue; // Skip invalid data
-        }
-        
-        $barHeight = $row[$valueField] * $scale;
-        $y = $height - $padding - $barHeight;
-        
-        $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $barWidth . '" height="' . $barHeight . '" fill="#4A90E2"/>';
-        
-        // Add label with text wrapping for long names
-        $label = htmlspecialchars($row[$labelField]);
-        if (strlen($label) > 15) {
-            $label = substr($label, 0, 12) . '...';
-        }
-        $svg .= '<text x="' . ($x + $barWidth/2) . '" y="' . ($height - $padding + 20) . '" text-anchor="middle" font-family="Arial" font-size="12" fill="#243B55">' . $label . '</text>';
-        
-        // Add value above bar
-        $svg .= '<text x="' . ($x + $barWidth/2) . '" y="' . ($y - 5) . '" text-anchor="middle" font-family="Arial" font-size="12" fill="#243B55">' . $row[$valueField] . '</text>';
-        
-        $x += $barWidth + $barSpacing;
-    }
-    
-    $svg .= '</svg>';
-    
-    echo $svg;
-    exit;
-}
-
-// handle exports
-if (isset($_GET['export']) && isset($_GET['format'])) {
-    // Start output buffering
-    ob_start();
-    
-    $format = $_GET['format'];
-    $type = $_GET['export'];
-    
-    switch ($type) {
-        case 'yearly':
-            $data = $yearlyStats;
-            $filename = 'yearly_statistics';
-            break;
-        case 'categories':
-            $data = $categoryStats;
-            $filename = 'category_statistics';
-            break;
-        case 'actors':
-            $data = $topActors;
-            $filename = 'top_actors';
-            break;
-        case 'productions':
-            $data = $topProductions;
-            $filename = 'top_productions';
-            break;
-        default:
-            exit('Invalid export type');
-    }
-    
-    // Clear any previous output
-    ob_clean();
-    
-    switch ($format) {
-        case 'csv':
-            generateCSV($data, $filename . '.csv');
-            break;
-        case 'webp':
-            generateWebP($data, $filename . '.webp');
-            break;
-        case 'svg':
-            generateSVG($data, $filename . '.svg');
-            break;
-        default:
-            exit('Invalid format');
-    }
-}
+// Get top productions
+$productionsQuery = "SELECT 
+    p.title,
+    p.poster_path as image_url,
+    COUNT(*) as nominations,
+    SUM(CASE WHEN a.won = 'True' THEN 1 ELSE 0 END) as wins
+FROM awards a
+JOIN productions p ON a.tmdb_show_id = p.tmdb_id
+GROUP BY p.title, p.poster_path
+ORDER BY wins DESC, nominations DESC
+LIMIT 10";
 ?>
 
 <!DOCTYPE html>
@@ -269,321 +370,285 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/stats.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <?php include '../../src/includes/navbar.php'; ?>
-    <main class="main-content">
-        <div class="container">
-            <header class="page-header">
-                <h1>Award Statistics</h1>
-                <p class="page-subtitle">Comprehensive analysis of award trends, categories, and top performers</p>
-            </header>
 
-            <div class="stats-grid">
-                <!-- yearly trends section -->
-                <section class="stats-section yearly-section">
+    <div class="page-header">
+        <div class="container">
+            <h1>Statistics</h1>
+            <p class="page-description">Explore performance statistics and trends across awards seasons</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="charts-section">
+                <div class="stats-section">
                     <div class="section-header">
                         <div class="section-title">
-                            <h2>Award Trends Over Time</h2>
-                            <p class="section-description">Track nomination and win patterns across years</p>
+                            <h2>Awards by Year</h2>
+                            <p class="section-description">Distribution of awards across years</p>
                         </div>
                         <div class="export-wrapper">
-                            <button class="export-button" id="exportYearlyButton">
+                            <button class="export-button">
                                 <i class="fas fa-download"></i>
-                                Export As...
+                                Export
                             </button>
-                            <div class="export-dropdown" id="exportYearlyDropdown">
-                                <a href="?export=yearly&format=csv" class="export-option">
+                            <div class="export-dropdown">
+                                <a href="stats.php?export=yearly&format=csv" class="export-option" download>
                                     <i class="fas fa-file-csv"></i>
-                                    Export as CSV
+                                    CSV
                                 </a>
-                                <a href="?export=yearly&format=webp" class="export-option">
-                                    <i class="fas fa-file-image"></i>
-                                    Export as WebP
+                                <a href="stats.php?export=yearly&format=webp" class="export-option" download>
+                                    <i class="fas fa-image"></i>
+                                    WebP
                                 </a>
-                                <a href="?export=yearly&format=svg" class="export-option">
-                                    <i class="fas fa-file-code"></i>
-                                    Export as SVG
+                                <a href="stats.php?export=yearly&format=svg" class="export-option" download>
+                                    <i class="fas fa-bezier-curve"></i>
+                                    SVG
                                 </a>
                             </div>
                         </div>
                     </div>
-                    
                     <div class="chart-and-table">
                         <div class="chart-wrapper">
-                            <div class="line-chart">
-                                <?php
-                                $maxNominations = max(array_column($yearlyStats, 'total_nominations'));
-                                $years = array_column($yearlyStats, 'year');
-                                $nominations = array_column($yearlyStats, 'total_nominations');
-                                $wins = array_column($yearlyStats, 'total_wins');
-                                
-                                for ($i = 0; $i < count($years); $i++) {
-                                    $x = ($i / (count($years) - 1)) * 100;
-                                    $y = ($nominations[$i] / $maxNominations) * 100;
-                                    echo "<div class='point' style='left: {$x}%; bottom: {$y}%;' title='{$years[$i]}: {$nominations[$i]} nominations'></div>";
-                                }
-                                ?>
-                            </div>
+                            <canvas id="awardsChart"></canvas>
                         </div>
-                        
-                        <div class="table-wrapper">
-                            <div class="table-container">
-                                <table class="stats-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Year</th>
-                                            <th>Nominations</th>
-                                            <th>Wins</th>
-                                            <th>Win Rate</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($yearlyStats as $stat): ?>
-                                            <tr>
-                                                <td data-label="Year"><?php echo htmlspecialchars($stat['year']); ?></td>
-                                                <td data-label="Nominations"><?php echo $stat['total_nominations']; ?></td>
-                                                <td data-label="Wins"><?php echo $stat['total_wins']; ?></td>
-                                                <td data-label="Win Rate"><?php echo round(($stat['total_wins'] / $stat['total_nominations']) * 100, 1); ?>%</td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="table-wrapper collapsed">
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Total Awards</th>
+                                        <th>Nominations</th>
+                                        <th>Win Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($yearlyStats as $stat): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($stat['year']); ?></td>
+                                        <td><?php echo $stat['total_wins']; ?></td>
+                                        <td><?php echo $stat['total_nominations']; ?></td>
+                                        <td><?php echo $stat['win_rate']; ?>%</td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="show-more-container">
+                            <button class="show-more-btn">
+                                Show More
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- category analysis section -->
-                <section class="stats-section category-section">
+                <div class="stats-section">
                     <div class="section-header">
                         <div class="section-title">
                             <h2>Category Distribution</h2>
-                            <p class="section-description">Analysis of nominations and wins by award category</p>
+                            <p class="section-description">Awards by category type</p>
                         </div>
                         <div class="export-wrapper">
-                            <button class="export-button" id="exportCategoryButton">
+                            <button class="export-button">
                                 <i class="fas fa-download"></i>
-                                Export As...
+                                Export
                             </button>
-                            <div class="export-dropdown" id="exportCategoryDropdown">
-                                <a href="?export=categories&format=csv" class="export-option">
+                            <div class="export-dropdown">
+                                <a href="stats.php?export=category&format=csv" class="export-option" download>
                                     <i class="fas fa-file-csv"></i>
-                                    Export as CSV
+                                    CSV
                                 </a>
-                                <a href="?export=categories&format=webp" class="export-option">
-                                    <i class="fas fa-file-image"></i>
-                                    Export as WebP
+                                <a href="stats.php?export=category&format=webp" class="export-option" download>
+                                    <i class="fas fa-image"></i>
+                                    WebP
                                 </a>
-                                <a href="?export=categories&format=svg" class="export-option">
-                                    <i class="fas fa-file-code"></i>
-                                    Export as SVG
+                                <a href="stats.php?export=category&format=svg" class="export-option" download>
+                                    <i class="fas fa-bezier-curve"></i>
+                                    SVG
                                 </a>
                             </div>
                         </div>
                     </div>
-                    
                     <div class="chart-and-table">
                         <div class="chart-wrapper">
-                            <div class="bar-chart">
-                                <?php foreach ($categoryStats as $stat): ?>
-                                    <div class="bar-container">
-                                        <div class="bar" style="height: <?php echo ($stat['total_nominations'] / $categoryStats[0]['total_nominations']) * 100; ?>%">
-                                            <div class="bar-value"><?php echo $stat['total_nominations']; ?></div>
-                                        </div>
-                                        <div class="bar-label"><?php echo htmlspecialchars($stat['category']); ?></div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
+                            <canvas id="categoriesChart"></canvas>
                         </div>
-                        
-                        <div class="table-wrapper">
-                            <div class="table-container">
-                                <table class="stats-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Category</th>
-                                            <th>Nominations</th>
-                                            <th>Wins</th>
-                                            <th>Win Rate</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($categoryStats as $stat): ?>
-                                            <tr>
-                                                <td data-label="Category"><?php echo htmlspecialchars($stat['category']); ?></td>
-                                                <td data-label="Nominations"><?php echo $stat['total_nominations']; ?></td>
-                                                <td data-label="Wins"><?php echo $stat['total_wins']; ?></td>
-                                                <td data-label="Win Rate"><?php echo $stat['win_rate']; ?>%</td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="table-wrapper collapsed">
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Total Awards</th>
+                                        <th>Nominations</th>
+                                        <th>Win Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($categoryStats as $stat): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($stat['category']); ?></td>
+                                        <td><?php echo $stat['total_wins']; ?></td>
+                                        <td><?php echo $stat['total_nominations']; ?></td>
+                                        <td><?php echo $stat['win_rate']; ?>%</td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="show-more-container">
+                            <button class="show-more-btn">
+                                Show More
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
                         </div>
                     </div>
-                </section>
-
-                <!-- top performers section -->
-                <section class="stats-section performers-section">
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="performers-section">
                     <div class="section-header">
                         <div class="section-title">
                             <h2>Top Performers</h2>
-                            <p class="section-description">Leading actors and productions by awards received</p>
+                            <p class="section-description">Most awarded actors and productions</p>
+                        </div>
+                        <div class="export-wrapper">
+                            <button class="export-button">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                            <div class="export-dropdown">
+                                <a href="stats.php?export=performers&format=csv" class="export-option" download>
+                                    <i class="fas fa-file-csv"></i>
+                                    CSV
+                                </a>
+                                <a href="stats.php?export=performers&format=webp" class="export-option" download>
+                                    <i class="fas fa-image"></i>
+                                    WebP
+                                </a>
+                                <a href="stats.php?export=performers&format=svg" class="export-option" download>
+                                    <i class="fas fa-bezier-curve"></i>
+                                    SVG
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="performers-grid">
-                        <!-- top actors -->
-                        <div class="performer-card">
-                            <div class="card-header">
-                                <h3>Top Actors</h3>
-                                <div class="export-wrapper">
-                                    <button class="export-button" id="exportActorsButton">
-                                        <i class="fas fa-download"></i>
-                                        Export As...
-                                    </button>
-                                    <div class="export-dropdown" id="exportActorsDropdown">
-                                        <a href="?export=actors&format=csv" class="export-option">
-                                            <i class="fas fa-file-csv"></i>
-                                            Export as CSV
-                                        </a>
-                                        <a href="?export=actors&format=webp" class="export-option">
-                                            <i class="fas fa-file-image"></i>
-                                            Export as WebP
-                                        </a>
-                                        <a href="?export=actors&format=svg" class="export-option">
-                                            <i class="fas fa-file-code"></i>
-                                            Export as SVG
-                                        </a>
+                    <div class="performers-container">
+                        <div class="performer-list">
+                            <?php
+                            $topActors = $db->query($actorsQuery)->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($topActors as $index => $actor):
+                            ?>
+                            <div class="performer-item">
+                                <span class="performer-rank"><?php echo $index + 1; ?></span>
+                                <div class="performer-image">
+                                    <?php if ($actor['image_url']): ?>
+                                        <img src="https://image.tmdb.org/t/p/w185<?php echo htmlspecialchars($actor['image_url']); ?>" alt="<?php echo htmlspecialchars($actor['name']); ?>">
+                                    <?php else: ?>
+                                        <div class="no-image">No Image</div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="performer-info">
+                                    <h4 class="performer-name"><?php echo htmlspecialchars($actor['name']); ?></h4>
+                                    <div class="performer-stats">
+                                        <span class="wins"><?php echo $actor['wins']; ?> wins</span>
+                                        <span class="separator">•</span>
+                                        <span class="nominations"><?php echo $actor['nominations']; ?> nominations</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="performer-list-container">
-                                <ul class="performer-list">
-                                    <?php foreach ($topActors as $index => $actor): ?>
-                                        <li class="performer-item">
-                                            <div class="performer-rank"><?php echo $index + 1; ?></div>
-                                            <div class="performer-image-container">
-                                                <?php if ($actor['profile_path']): ?>
-                                                    <img src="<?php echo "https://image.tmdb.org/t/p/w92" . htmlspecialchars($actor['profile_path']); ?>" 
-                                                         alt="<?php echo htmlspecialchars($actor['full_name']); ?>"
-                                                         class="performer-image">
-                                                <?php else: ?>
-                                                    <div class="performer-image performer-placeholder"></div>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="performer-info">
-                                                <div class="performer-name"><?php echo htmlspecialchars($actor['full_name']); ?></div>
-                                                <div class="performer-stats">
-                                                    <span class="wins"><?php echo $actor['total_wins']; ?> wins</span>
-                                                    <span class="separator">•</span>
-                                                    <span class="nominations"><?php echo $actor['total_nominations']; ?> nominations</span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- top productions -->
-                        <div class="performer-card">
-                            <div class="card-header">
-                                <h3>Top Productions</h3>
-                                <div class="export-wrapper">
-                                    <button class="export-button" id="exportProductionsButton">
-                                        <i class="fas fa-download"></i>
-                                        Export As...
-                                    </button>
-                                    <div class="export-dropdown" id="exportProductionsDropdown">
-                                        <a href="?export=productions&format=csv" class="export-option">
-                                            <i class="fas fa-file-csv"></i>
-                                            Export as CSV
-                                        </a>
-                                        <a href="?export=productions&format=webp" class="export-option">
-                                            <i class="fas fa-file-image"></i>
-                                            Export as WebP
-                                        </a>
-                                        <a href="?export=productions&format=svg" class="export-option">
-                                            <i class="fas fa-file-code"></i>
-                                            Export as SVG
-                                        </a>
+                <div class="productions-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <h2>Top Productions</h2>
+                            <p class="section-description">Most awarded TV shows</p>
+                        </div>
+                    </div>
+                    <div class="productions-container">
+                        <div class="performer-list">
+                            <?php
+                            $topProductions = $db->query($productionsQuery)->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($topProductions as $index => $production):
+                            ?>
+                            <div class="performer-item">
+                                <span class="performer-rank"><?php echo $index + 1; ?></span>
+                                <div class="performer-image">
+                                    <?php if ($production['image_url']): ?>
+                                        <img src="https://image.tmdb.org/t/p/w185<?php echo htmlspecialchars($production['image_url']); ?>" alt="<?php echo htmlspecialchars($production['title']); ?>">
+                                    <?php else: ?>
+                                        <div class="no-image">No Image</div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="performer-info">
+                                    <h4 class="performer-name"><?php echo htmlspecialchars($production['title']); ?></h4>
+                                    <div class="performer-stats">
+                                        <span class="wins"><?php echo $production['wins']; ?> wins</span>
+                                        <span class="separator">•</span>
+                                        <span class="nominations"><?php echo $production['nominations']; ?> nominations</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="performer-list-container">
-                                <ul class="performer-list">
-                                    <?php foreach ($topProductions as $index => $production): ?>
-                                        <li class="performer-item">
-                                            <div class="performer-rank"><?php echo $index + 1; ?></div>
-                                            <div class="performer-image-container">
-                                                <?php if ($production['poster_path']): ?>
-                                                    <img src="<?php echo "https://image.tmdb.org/t/p/w92" . htmlspecialchars($production['poster_path']); ?>" 
-                                                         alt="<?php echo htmlspecialchars($production['title']); ?>"
-                                                         class="performer-image">
-                                                <?php else: ?>
-                                                    <div class="performer-image performer-placeholder"></div>
-                                                <?php endif; ?>
-                                            </div>
-                                            <div class="performer-info">
-                                                <div class="performer-name"><?php echo htmlspecialchars($production['title']); ?></div>
-                                                <div class="performer-stats">
-                                                    <span class="wins"><?php echo $production['total_wins']; ?> wins</span>
-                                                    <span class="separator">•</span>
-                                                    <span class="nominations"><?php echo $production['total_nominations']; ?> nominations</span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
-                </section>
+                </div>
             </div>
         </div>
-    </main>
-
-    <?php include '../../src/includes/footer.php'; ?>
+    </div>
 
     <script>
-    // export dropdown functionality
-    function setupExportDropdown(buttonId, dropdownId) {
-        const button = document.getElementById(buttonId);
-        const dropdown = document.getElementById(dropdownId);
-        const overlay = document.createElement('div');
-        overlay.className = 'export-overlay';
-        document.body.appendChild(overlay);
-
-        function toggleDropdown() {
-            dropdown.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-
+    // Export dropdown functionality
+    document.querySelectorAll('.export-button').forEach(button => {
         button.addEventListener('click', (e) => {
             e.stopPropagation();
-            toggleDropdown();
+            const dropdown = button.nextElementSibling;
+            dropdown.classList.toggle('active');
         });
+    });
 
-        overlay.addEventListener('click', () => {
-            toggleDropdown();
-        });
-
-        // close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.export-wrapper')) {
+            document.querySelectorAll('.export-dropdown').forEach(dropdown => {
                 dropdown.classList.remove('active');
-                overlay.classList.remove('active');
-            }
-        });
-    }
+            });
+        }
+    });
 
-    // initialize export dropdowns
-    setupExportDropdown('exportYearlyButton', 'exportYearlyDropdown');
-    setupExportDropdown('exportCategoryButton', 'exportCategoryDropdown');
-    setupExportDropdown('exportActorsButton', 'exportActorsDropdown');
-    setupExportDropdown('exportProductionsButton', 'exportProductionsDropdown');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize show more buttons
+        document.querySelectorAll('.show-more-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const wrapper = this.closest('.chart-and-table').querySelector('.table-wrapper');
+                const isCollapsed = wrapper.classList.contains('collapsed');
+                
+                if (isCollapsed) {
+                    wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
+                    wrapper.classList.remove('collapsed');
+                    this.innerHTML = 'Show Less <i class="fas fa-chevron-up"></i>';
+                    this.classList.add('expanded');
+                } else {
+                    wrapper.style.maxHeight = '400px';
+                    wrapper.classList.add('collapsed');
+                    this.innerHTML = 'Show More <i class="fas fa-chevron-down"></i>';
+                    this.classList.remove('expanded');
+                }
+            });
+        });
+    });
     </script>
+
+    <script src="../assets/js/stats.js"></script>
+
+    <?php include '../../src/includes/footer.php'; ?>
 </body>
 </html>
