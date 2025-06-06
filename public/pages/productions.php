@@ -1,12 +1,13 @@
 <?php
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/tmdb.php';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../src/config/config.php';
+require_once __DIR__ . '/../../src/includes/db.php';
+require_once __DIR__ . '/../../src/includes/tmdb.php';
+require_once __DIR__ . '/../../src/includes/functions.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
-$api_key = $_ENV['TMDB_API_KEY'] ?? '';
+$api_key = TMDB_API_KEY;
 
 // Initialize database connection
 $db = getDbConnection();
@@ -104,7 +105,7 @@ foreach ($productions as $production) {
     <link rel="stylesheet" href="../assets/css/awards.css">
 </head>
 <body>
-    <?php include '../includes/navbar.php'; ?>
+    <?php include '../../src/includes/navbar.php'; ?>
 
     <div class="container">
         <h1 class="text-center">Productions</h1>
@@ -247,6 +248,6 @@ foreach ($productions as $production) {
         </div>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
+    <?php include '../../src/includes/footer.php'; ?>
 </body>
 </html>

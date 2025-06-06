@@ -10,7 +10,6 @@ Require all denied
 # rewrites
 
 RewriteEngine On
-RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /pages/404.html [L]
+RewriteRule ^(.*)$ public/index.php [QSA,L]

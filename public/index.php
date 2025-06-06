@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/css/footer.css">
 </head>
 <body>
-    <?php include 'includes/navbar.php'; ?>
+    <?php include '../src/includes/navbar.php'; ?>
     <main class="main-content">
         <section class="hero">
             <div class="hero-content">
@@ -81,7 +81,7 @@
         </section>
     </main>
 
-    <?php include 'includes/footer.php'; ?>
+    <?php include '../src/includes/footer.php'; ?>
  
 </body>
 </html>

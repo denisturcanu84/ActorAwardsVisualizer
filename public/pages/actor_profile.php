@@ -1,12 +1,13 @@
 <?php
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/tmdb.php';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../src/config/config.php';
+require_once __DIR__ . '/../../src/includes/db.php';
+require_once __DIR__ . '/../../src/includes/tmdb.php';
+require_once __DIR__ . '/../../src/includes/functions.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
-$api_key = $_ENV['TMDB_API_KEY'] ?? '';
+$api_key = TMDB_API_KEY;
 
 // verificam ce actor a fost cautat
 if (!isset($_GET['name']) && !isset($_GET['tmdb_id'])) {
@@ -108,7 +109,7 @@ $news = getActorNews($actor_name);
     <link rel="stylesheet" href="../assets/css/footer.css">
 </head>
 <body>
-    <?php include '../includes/navbar.php'; ?>
+    <?php include '../../src/includes/navbar.php'; ?>
     <div class="container">
         <div class="main-content">
             <!-- COLOANA STANGA -->
@@ -209,6 +210,6 @@ $news = getActorNews($actor_name);
             </div>
         </div>
     </div>
-    <?php include '../includes/footer.php'; ?>
+    <?php include '../../src/includes/footer.php'; ?>
 </body>
 </html>

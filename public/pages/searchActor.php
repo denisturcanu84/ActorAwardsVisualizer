@@ -17,7 +17,7 @@ if ($search !== '') {
     <link rel="stylesheet" href="../assets/css/footer.css">
 </head>
 <body>
-    <?php include '../includes/navbar.php'; ?>
+    <?php include '../../src/includes/navbar.php'; ?>
 
     <div class="container">
         <h1>Search Actor Profile</h1>
@@ -27,6 +27,6 @@ if ($search !== '') {
         </form>
     </div>
 
-    <?php include '../includes/footer.php'; ?>
+    <?php include '../../src/includes/footer.php'; ?>
 </body>
 </html>

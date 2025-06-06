@@ -6,4 +6,8 @@ services:
     environment:
       TMDB_API_KEY: ${TMDB_API_KEY}
     volumes:
-      - .:/var/www/html
+      - ./database:/var/www/html/database
+      - ./public:/var/www/html/public
+      - ./src:/var/www/html/src
+      - ./csv:/var/www/html/csv
+    restart: unless-stopped

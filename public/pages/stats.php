@@ -1,11 +1,12 @@
 <?php
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../../src/config/config.php';
+require_once __DIR__ . '/../../src/includes/db.php';
+require_once __DIR__ . '/../../src/includes/functions.php';
 
-// Initialize database connection
+// initialize database connection
 $db = getDbConnection();
 
-// Get yearly statistics
+// get yearly statistics
 $yearlyStats = $db->query("
     SELECT 
         year,
@@ -16,7 +17,7 @@ $yearlyStats = $db->query("
     ORDER BY year DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// Get category statistics
+// get category statistics
 $categoryStats = $db->query("
     SELECT 
         category,
@@ -28,7 +29,7 @@ $categoryStats = $db->query("
     ORDER BY total_nominations DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// Get top actors
+// get top actors
 $topActors = $db->query("
     SELECT 
         a.full_name,
@@ -42,7 +43,7 @@ $topActors = $db->query("
     LIMIT 10
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// Get top productions
+// get top productions
 $topProductions = $db->query("
     SELECT 
         p.title,
@@ -56,7 +57,7 @@ $topProductions = $db->query("
     LIMIT 10
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// Function to generate CSV
+// function to generate CSV
 function generateCSV($data, $filename) {
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -75,7 +76,7 @@ function generateCSV($data, $filename) {
     exit;
 }
 
-// Function to generate WebP
+// function to generate WebP
 function generateWebP($data, $filename) {
     // Start output buffering
     ob_start();
@@ -101,16 +102,13 @@ function generateWebP($data, $filename) {
     imagestring($image, $fontSize, $titleX, 20, $title, $textColor);
     
     // Determine the value field based on data type
-    $valueField = 'total_nominations';
-    if (isset($data[0]['total_wins'])) {
-        $valueField = 'total_wins';
-    }
+    $valueField = isset($data[0]['total_wins']) ? 'total_wins' : 'total_nominations';
     
     // Add data visualization
     $barWidth = 40;
     $barSpacing = 20;
     $maxValue = max(array_column($data, $valueField));
-    $scale = ($height - 100) / $maxValue;
+    $scale = ($height - 100) / ($maxValue ?: 1); // Avoid division by zero
     
     $x = 50;
     foreach ($data as $row) {
@@ -139,7 +137,7 @@ function generateWebP($data, $filename) {
     exit;
 }
 
-// Function to generate SVG
+// function to generate SVG
 function generateSVG($data, $filename) {
     // Start output buffering to prevent header issues
     ob_start();
@@ -167,7 +165,10 @@ function generateSVG($data, $filename) {
     }
     
     $maxValue = max(array_column($data, $valueField));
-    $scale = ($height - 2 * $padding) / $maxValue;
+    $scale = ($height - 2 * $padding) / ($maxValue ?: 1); // Avoid division by zero
+    
+    header('Content-Type: image/svg+xml');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
     
     $svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
     $svg .= '<svg width="' . $width . '" height="' . $height . '" xmlns="http://www.w3.org/2000/svg">';
@@ -205,22 +206,11 @@ function generateSVG($data, $filename) {
     
     $svg .= '</svg>';
     
-    // Clear any previous output
-    ob_clean();
-    
-    // Set headers
-    header('Content-Type: image/svg+xml');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-    
-    // Output SVG
     echo $svg;
-    
-    // End output buffering
-    ob_end_flush();
     exit;
 }
 
-// Handle exports
+// handle exports
 if (isset($_GET['export']) && isset($_GET['format'])) {
     // Start output buffering
     ob_start();
@@ -274,13 +264,14 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics - Actor Awards Visualizer</title>
+    <link rel="stylesheet" href="../assets/css/index.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
     <link rel="stylesheet" href="../assets/css/stats.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <?php include '../includes/navbar.php'; ?>
-
+    <?php include '../../src/includes/navbar.php'; ?>
     <main class="main-content">
         <div class="container">
             <header class="page-header">
@@ -289,7 +280,7 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
             </header>
 
             <div class="stats-grid">
-                <!-- Yearly Trends Section -->
+                <!-- yearly trends section -->
                 <section class="stats-section yearly-section">
                     <div class="section-header">
                         <div class="section-title">
@@ -363,7 +354,7 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                     </div>
                 </section>
 
-                <!-- Category Analysis Section -->
+                <!-- category analysis section -->
                 <section class="stats-section category-section">
                     <div class="section-header">
                         <div class="section-title">
@@ -433,7 +424,7 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                     </div>
                 </section>
 
-                <!-- Top Performers Section -->
+                <!-- top performers section -->
                 <section class="stats-section performers-section">
                     <div class="section-header">
                         <div class="section-title">
@@ -443,7 +434,7 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                     </div>
                     
                     <div class="performers-grid">
-                        <!-- Top Actors -->
+                        <!-- top actors -->
                         <div class="performer-card">
                             <div class="card-header">
                                 <h3>Top Actors</h3>
@@ -496,7 +487,7 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                             </div>
                         </div>
 
-                        <!-- Top Productions -->
+                        <!-- top productions -->
                         <div class="performer-card">
                             <div class="card-header">
                                 <h3>Top Productions</h3>
@@ -554,10 +545,10 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
         </div>
     </main>
 
-    <?php include '../includes/footer.php'; ?>
+    <?php include '../../src/includes/footer.php'; ?>
 
     <script>
-    // Export dropdown functionality
+    // export dropdown functionality
     function setupExportDropdown(buttonId, dropdownId) {
         const button = document.getElementById(buttonId);
         const dropdown = document.getElementById(dropdownId);
@@ -579,7 +570,7 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
             toggleDropdown();
         });
 
-        // Close dropdown when clicking outside
+        // close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!button.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.remove('active');
@@ -588,7 +579,7 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
         });
     }
 
-    // Initialize export dropdowns
+    // initialize export dropdowns
     setupExportDropdown('exportYearlyButton', 'exportYearlyDropdown');
     setupExportDropdown('exportCategoryButton', 'exportCategoryDropdown');
     setupExportDropdown('exportActorsButton', 'exportActorsDropdown');

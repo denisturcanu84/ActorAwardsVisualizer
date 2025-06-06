@@ -1,28 +1,29 @@
 <?php
-// Enabled error reporting for debugging
+// enabled error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/tmdb.php';
-require_once __DIR__ . '/../includes/functions.php';
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../src/config/config.php';
+require_once __DIR__ . '/../../src/includes/db.php';
+require_once __DIR__ . '/../../src/includes/tmdb.php';
+require_once __DIR__ . '/../../src/includes/functions.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
-$api_key = $_ENV['TMDB_API_KEY'] ?? '';
+$api_key = TMDB_API_KEY;
 
-// Initialize database connection
+// initialize database connection
 $db = getDbConnection();
 
-// Get filter values - prioritize GET parameters if they exist, then POST
+// get filter values - prioritize GET parameters if they exist, then POST
 $selectedYear = $_GET['year'] ?? $_POST['year'] ?? '';
 $selectedCategory = $_GET['category'] ?? $_POST['category'] ?? '';
 $selectedResult = $_GET['result'] ?? $_POST['result'] ?? '';
 $searchQuery = $_GET['search'] ?? $_POST['search'] ?? '';
 
-// Convert Won/Nominated to True/False for database query
+// convert Won/Nominated to True/False for database query
 $resultBoolean = null;
 if ($selectedResult === 'Won') {
     $resultBoolean = 'True';
@@ -30,10 +31,10 @@ if ($selectedResult === 'Won') {
     $resultBoolean = 'False';
 }
 
-// Get current page
+// get current page
 $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 
-// If POST request (new filters applied), redirect to GET with parameters to maintain state
+// if POST request (new filters applied), redirect to GET with parameters to maintain state
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirect_params = [];
     if (!empty($_POST['year'])) $redirect_params['year'] = $_POST['year'];
@@ -50,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Build the query with filters
+// build the query with filters
 $query = "SELECT a.*, 
                  a.full_name, 
                  ac.profile_path, 
@@ -88,7 +89,7 @@ if ($searchQuery) {
 }
 
 // --- pagination setup ----
-$itemsPerPage = 10; // Increase items per page to reduce pagination overhead
+$itemsPerPage = 10;
 
 // build COUNT query with the same filters
 $countSql = "SELECT COUNT(*) 
@@ -125,12 +126,12 @@ $query .= " ORDER BY a.year DESC, a.category
 $params[] = $itemsPerPage;
 $params[] = ($currentPage - 1) * $itemsPerPage;
 
-// Prepare and execute the query
+// prepare and execute the query
 $stmt = $db->prepare($query);
 $stmt->execute($params);
 $nominations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Get unique years and categories for filters
+// get unique years and categories for filters
 $query = "SELECT DISTINCT year FROM awards ORDER BY year DESC";
 $years = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
 
@@ -150,9 +151,9 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
   <link rel="stylesheet" href="../assets/css/nominations.css">
 </head>
 <body>
-  <?php include '../includes/navbar.php'; ?>
+  <?php include '../../src/includes/navbar.php'; ?>
   
-  <!-- Page Header -->
+  <!-- page header -->
   <div class="page-header">
     <div class="container">
       <h1>Award Nominations</h1>
@@ -167,7 +168,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
   <div class="container">
     <div class="main-grid">
       <div class="side-panel">
-        <!-- Filters Section -->
+        <!-- filters section -->
         <div class="filters-section">
          <form class="filters-form" method="POST">
            <div class="filters-grid">
@@ -219,12 +220,12 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
       </div>
       
       <div class="content-panel">
-        <!-- Results Info -->
+        <!-- results info -->
         <div class="results-info">
           <p>Showing <?php echo count($nominations); ?> of <?php echo $totalItems; ?> nominations</p>
         </div>
 
-        <!-- Nominations List -->
+        <!-- nominations list -->
         <div class="nominations-list">
          <?php if (empty($nominations)): ?>
              <div class="no-results">
@@ -236,15 +237,14 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                <div class="nomination-images">
                  <div class="image-wrapper">
                    <?php
-                   // Enhanced actor image loading with TMDB fallback
                    $actor_image = null;
                    
-                   // First try database
+                   // first try database
                    if (!empty($nomination['profile_path'])) {
                        $actor_image = getProfileImageUrl($nomination['profile_path']);
                    }
                    
-                   // If no image and we have TMDB actor ID, try API
+                   // if no image and we have TMDB actor ID, try API
                    if (!$actor_image && !empty($nomination['actor_tmdb_id'])) {
                        $actor_details = getActorDetailsTmdb($nomination['actor_tmdb_id'], $api_key);
                        if (is_array($actor_details) && !empty($actor_details['profile_path'])) {
@@ -252,7 +252,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                        }
                    }
                    
-                   // If still no image, try searching by name
+                   // if still no image, try searching by name
                    if (!$actor_image && !empty($nomination['full_name'])) {
                        $actor_search = searchActorTmdb($nomination['full_name'], $api_key);
                        if ($actor_search && !empty($actor_search['profile_path'])) {
@@ -307,15 +307,14 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
 
                <div class="image-wrapper">
                  <?php
-                 // Enhanced poster image loading with TMDB fallback
                  $poster_image = null;
                  
-                 // First try database
+                 // first try database
                  if (!empty($nomination['local_db_poster_path'])) {
                      $poster_image = getPosterImageUrl($nomination['local_db_poster_path']);
                  }
                  
-                 // If no poster and we have production TMDB ID
+                 // if no poster and we have production TMDB ID
                  if (!$poster_image && !empty($nomination['production_tmdb_id'])) {
                      $production_type = $nomination['production_type'] ?? 'movie';
                      
@@ -330,16 +329,16 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                      }
                  }
                  
-                 // If still no poster, try searching by title
+                 // if still no poster, try searching by title
                  if (!$poster_image) {
                      $search_title = $nomination['production_title'] ?? $nomination['show'] ?? null;
                      if ($search_title) {
-                         // Try movie search first
+                         // try movie search first
                          $movie_search = searchMovieTmdb($search_title, $api_key);
                          if ($movie_search && !empty($movie_search['poster_path'])) {
                              $poster_image = getPosterImageUrl($movie_search['poster_path']);
                          } else {
-                             // Try TV search
+                             // try TV search
                              $tv_search = searchTvShowTmdb($search_title, $api_key);
                              if ($tv_search && !empty($tv_search['poster_path'])) {
                                  $poster_image = getPosterImageUrl($tv_search['poster_path']);
@@ -366,19 +365,19 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
     <div class="pagination-wrapper">
       <nav class="pagination">
         <?php
-          // Build base parameters for pagination
+          // build base parameters for pagination
           $base = [];
           if (!empty($selectedYear)) $base['year'] = $selectedYear;
           if (!empty($selectedCategory)) $base['category'] = $selectedCategory;
           if (!empty($selectedResult)) $base['result'] = $selectedResult;
           if (!empty($searchQuery)) $base['search'] = $searchQuery;
           
-          // Smart pagination - show limited page numbers
-          $showPages = 7; // Maximum pages to show
+          // smart pagination - show limited page numbers
+          $showPages = 7; // maximum pages to show
           $startPage = max(1, $currentPage - floor($showPages / 2));
           $endPage = min($totalPages, $startPage + $showPages - 1);
           
-          // Adjust start if we're near the end
+          // adjust start if we're near the end
           if ($endPage - $startPage < $showPages - 1) {
               $startPage = max(1, $endPage - $showPages + 1);
           }
@@ -416,6 +415,6 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
     </div>
     <?php endif; ?>
   </div>
-  <?php include '../includes/footer.php'; ?>
+  <?php include '../../src/includes/footer.php'; ?>
 </body>
 </html>

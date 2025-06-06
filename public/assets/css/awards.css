@@ -1,4 +1,3 @@
-/* General Styles */
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     line-height: 1.6;
@@ -205,7 +204,6 @@ body {
     color: #6c757d;
 }
 
-/* Loading State */
 .loading {
     text-align: center;
     padding: 2rem;
@@ -213,7 +211,6 @@ body {
     font-size: var(--p-size);
 }
 
-/* Empty State */
 .no-results {
     text-align: center;
     padding: 3rem 2rem;
@@ -224,7 +221,6 @@ body {
     font-size: var(--p-size);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .container {
         width: 95%;
