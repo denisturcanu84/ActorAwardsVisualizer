@@ -29,28 +29,28 @@
                         <div class="card-icon">🎭</div>
                         <h3>Nominations</h3>
                         <p>Browse nominations by year, category, actor, or productions</p>
-                        <a href="pages/nominations.php" class="card-button">View Nominations</a>
+                        <a href="/nominations" class="card-button">View Nominations</a>
                     </div>
 
                     <div class="card">
                         <div class="card-icon">👤</div>
                         <h3>Actors</h3>
                         <p>Explore detailed profiles, biographies, and award histories</p>
-                        <a href="pages/searchActor.php" class="card-button">Browse Actors</a>
+                        <a href="/searchActor" class="card-button">Browse Actors</a>
                     </div>
                     
                     <div class="card">
                         <div class="card-icon">🎬</div>
                         <h3>Productions</h3>
                         <p>Discover movies and TV shows with their nominations</p>
-                        <a href="pages/productions.php" class="card-button">View Productions</a>
+                        <a href="/productions" class="card-button">View Productions</a>
                     </div>
                     
                     <div class="card">
                         <div class="card-icon">📊</div>
                         <h3>Statistics</h3>
                         <p>Analyze trends, generate charts, and export data</p>
-                        <a href="pages/stats.php" class="card-button">View Statistics</a>
+                        <a href="/stats" class="card-button">View Statistics</a>
                     </div>
                 </div>
             </div>

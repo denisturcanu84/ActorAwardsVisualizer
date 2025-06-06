@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteBase /
+
+ErrorDocument 404 /pages/404.html
+ErrorDocument 403 /pages/404.html
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+)/?$ pages/$1.php [L]
+
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/+pages/([^/]+)\.php[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L] 
