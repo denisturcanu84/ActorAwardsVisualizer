@@ -18,8 +18,8 @@ use SVG\Nodes\Texts\SVGText;
 // initialize database connection
 $db = getDbConnection();
 
-// Handle exports
 if (isset($_GET['export']) && isset($_GET['format'])) {
+    ob_start();
     $exportType = $_GET['export'];
     $format = $_GET['format'];
     
@@ -79,14 +79,22 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
         
         switch ($format) {
             case 'csv':
-                // Clear any previous output
-                if (ob_get_level()) ob_end_clean();
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
                 
-                // Set headers for CSV download
-                header('Content-Type: text/csv');
+                if (headers_sent($file, $line)) {
+                    throw new Exception("Headers already sent in $file on line $line");
+                }
+                
+                // headers for CSV download
+                header('Content-Type: text/csv; charset=UTF-8');
                 header('Content-Disposition: attachment; filename="' . $filename . '.csv"');
+                header('Cache-Control: no-cache, no-store, must-revalidate');
                 header('Pragma: no-cache');
                 header('Expires: 0');
+                header('X-Content-Type-Options: nosniff');
+                header('Content-Transfer-Encoding: binary');
                 
                 // Open output stream
                 $output = fopen('php://output', 'w');
@@ -110,14 +118,22 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                 exit;
                 
             case 'webp':
-                // Clear any previous output
-                if (ob_get_level()) ob_end_clean();
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
                 
-                // Set headers for WebP download
+                if (headers_sent($file, $line)) {
+                    throw new Exception("Headers already sent in $file on line $line");
+                }
+                
+                // headers for WebP download
                 header('Content-Type: image/webp');
                 header('Content-Disposition: attachment; filename="' . $filename . '.webp"');
+                header('Cache-Control: no-cache, no-store, must-revalidate');
                 header('Pragma: no-cache');
                 header('Expires: 0');
+                header('X-Content-Type-Options: nosniff');
+                header('Content-Transfer-Encoding: binary');
                 
                 // Generate WebP image
                 $width = 800;
@@ -189,14 +205,21 @@ if (isset($_GET['export']) && isset($_GET['format'])) {
                 exit;
                 
             case 'svg':
-                // Clear any previous output
-                if (ob_get_level()) ob_end_clean();
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
                 
-                // Set headers for SVG download
-                header('Content-Type: image/svg+xml');
+                if (headers_sent($file, $line)) {
+                    throw new Exception("Headers already sent in $file on line $line");
+                }
+                // headers for SVG download
+                header('Content-Type: image/svg+xml; charset=UTF-8');
                 header('Content-Disposition: attachment; filename="' . $filename . '.svg"');
+                header('Cache-Control: no-cache, no-store, must-revalidate');
                 header('Pragma: no-cache');
                 header('Expires: 0');
+                header('X-Content-Type-Options: nosniff');
+                header('Content-Transfer-Encoding: binary');
                 
                 // Generate SVG
                 $width = 800;

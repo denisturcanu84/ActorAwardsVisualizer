@@ -12,7 +12,7 @@ EOL
 # Ensure database directory exists and has correct permissions
 mkdir -p /var/www/html/database
 chown -R www-data:www-data /var/www/html/database
-chmod -R 777 /var/www/html/database
+chmod -R 755 /var/www/html/database
 
 # Start Apache
 exec apache2-foreground 
