@@ -4,9 +4,13 @@ RewriteBase /
 ErrorDocument 404 /pages/404.html
 ErrorDocument 403 /pages/404.html
 
+RewriteRule ^actor_profile/?$ pages/actor_profile.php [L]
+RewriteRule ^searchActor/?$ pages/searchActor.php [L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([^/]+)/?$ pages/$1.php [L]
 
+# redirect /pages/ URLs to clean URLs
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/+pages/([^/]+)\.php[\s?] [NC]
 RewriteRule ^ /%1 [R=301,L] 

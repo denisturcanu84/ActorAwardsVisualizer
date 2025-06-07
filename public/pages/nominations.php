@@ -272,7 +272,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                <div class="nomination-details">
                  <?php
                      $displayName = $nomination['full_name'];
-                     $profileUrl = "actor_profile.php?"; 
+                     $profileUrl = "/actor_profile?"; 
                      if (!empty($nomination['actor_tmdb_id'])) { 
                        $profileUrl .= 'tmdb_id=' . intval($nomination['actor_tmdb_id']); 
                      } elseif (!empty($displayName)) { 

@@ -420,15 +420,15 @@ LIMIT 10";
                                 Export
                             </button>
                             <div class="export-dropdown">
-                                <a href="stats.php?export=yearly&format=csv" class="export-option" download>
+                                <a href="/pages/stats.php?export=yearly&format=csv" class="export-option" download>
                                     <i class="fas fa-file-csv"></i>
                                     CSV
                                 </a>
-                                <a href="stats.php?export=yearly&format=webp" class="export-option" download>
+                                <a href="/pages/stats.php?export=yearly&format=webp" class="export-option" download>
                                     <i class="fas fa-image"></i>
                                     WebP
                                 </a>
-                                <a href="stats.php?export=yearly&format=svg" class="export-option" download>
+                                <a href="/pages/stats.php?export=yearly&format=svg" class="export-option" download>
                                     <i class="fas fa-bezier-curve"></i>
                                     SVG
                                 </a>
@@ -482,15 +482,15 @@ LIMIT 10";
                                 Export
                             </button>
                             <div class="export-dropdown">
-                                <a href="stats.php?export=category&format=csv" class="export-option" download>
+                                <a href="/pages/stats.php?export=category&format=csv" class="export-option" download>
                                     <i class="fas fa-file-csv"></i>
                                     CSV
                                 </a>
-                                <a href="stats.php?export=category&format=webp" class="export-option" download>
+                                <a href="/pages/stats.php?export=category&format=webp" class="export-option" download>
                                     <i class="fas fa-image"></i>
                                     WebP
                                 </a>
-                                <a href="stats.php?export=category&format=svg" class="export-option" download>
+                                <a href="/pages/stats.php?export=category&format=svg" class="export-option" download>
                                     <i class="fas fa-bezier-curve"></i>
                                     SVG
                                 </a>
@@ -546,15 +546,15 @@ LIMIT 10";
                                 Export
                             </button>
                             <div class="export-dropdown">
-                                <a href="stats.php?export=performers&format=csv" class="export-option" download>
+                                <a href="/pages/stats.php?export=performers&format=csv" class="export-option" download>
                                     <i class="fas fa-file-csv"></i>
                                     CSV
                                 </a>
-                                <a href="stats.php?export=performers&format=webp" class="export-option" download>
+                                <a href="/pages/stats.php?export=performers&format=webp" class="export-option" download>
                                     <i class="fas fa-image"></i>
                                     WebP
                                 </a>
-                                <a href="stats.php?export=performers&format=svg" class="export-option" download>
+                                <a href="/pages/stats.php?export=performers&format=svg" class="export-option" download>
                                     <i class="fas fa-bezier-curve"></i>
                                     SVG
                                 </a>

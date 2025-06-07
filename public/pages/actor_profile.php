@@ -62,7 +62,7 @@ if ($actor_db) {
         // verificam daca actorul exista deja in baza de date dupa ID-ul TMDB
         $actor_db = findActorInDatabase($db, $tmdb_id);
         if ($actor_db) {
-            header("Location: actor_profile.php?tmdb_id=" . $tmdb_id);
+            header("Location: /actor_profile?tmdb_id=" . $tmdb_id);
             exit;
         }
         
@@ -104,9 +104,9 @@ $news = getActorNews($actor_name);
     <meta charset="UTF-8">
     <title><?php echo htmlspecialchars($actor_name); ?> - Actor Profile</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/actor_profile.css">
-    <link rel="stylesheet" href="../assets/css/navbar.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="/assets/css/actor_profile.css">
+    <link rel="stylesheet" href="/assets/css/navbar.css">
+    <link rel="stylesheet" href="/assets/css/footer.css">
 </head>
 <body>
     <?php include '../../src/includes/navbar.php'; ?>
@@ -210,6 +210,7 @@ $news = getActorNews($actor_name);
             </div>
         </div>
     </div>
+
     <?php include '../../src/includes/footer.php'; ?>
 </body>
 </html>
