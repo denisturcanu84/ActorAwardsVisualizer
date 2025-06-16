@@ -8,7 +8,7 @@
 
 .profile-card, 
 .right-col.news-section {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--card-background);
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
   overflow: hidden;
@@ -30,8 +30,8 @@
   width: 200px;
   height: 280px;
   border-radius: calc(var(--border-radius) - 4px);
-  background: #e8edf2 center/cover no-repeat;
-  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  background: var(--card-background) center/cover no-repeat;
+  box-shadow: var(--card-shadow);
   flex-shrink: 0;
   transition: var(--transition);
 }
@@ -68,12 +68,12 @@
 
 .profile-info .popularity {
   display: inline-block;
-  background: #E0F7FF;
-  color: #357ABD;
+  background: var(--card-background);
+  color: var(--primary-color);
   font-weight: 600;
   padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 0.95rem;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
 }
 
 .profile-info .tmdb-link {
@@ -82,7 +82,7 @@
   color: white;
   background: var(--primary-color);
   padding: 0.75rem 1.5rem;
-  border-radius: 50px;
+  border-radius: var(--border-radius);
   text-decoration: none;
   font-weight: 500;
   transition: var(--transition);
@@ -91,7 +91,7 @@
 .profile-info .tmdb-link:hover {
   background: var(--primary-hover);
   transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: var(--card-shadow);
 }
 
 .awards-section, 
@@ -132,9 +132,9 @@
 }
 
 .awards-list li {
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--card-background);
   padding: 1.2rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   transition: var(--transition);
 }
 
@@ -152,7 +152,7 @@
 
 .award-cat {
   display: block;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   margin-bottom: 0.5rem;
   color: var(--text-secondary);
 }
@@ -192,9 +192,9 @@
 
 .movie-poster {
   height: 270px;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  box-shadow: var(--card-shadow);
 }
 
 .movie-poster img {
@@ -265,7 +265,7 @@
 
 .news-date {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 

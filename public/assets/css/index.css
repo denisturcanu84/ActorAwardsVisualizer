@@ -13,8 +13,8 @@
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     line-height: 1.6;
-    color: #243B55;
-    background: linear-gradient(120deg, #E0F7FF 60%, #ffffff 100%);
+    color: var(--text-color);
+    background: var(--background);
     font-size: var(--p-size);
     overflow-x: hidden;
 }
@@ -27,7 +27,7 @@ body {
 }
 
 .hero {
-    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
     color: white;
     padding: 0; 
     margin-top: 0; 
@@ -73,12 +73,12 @@ body {
 }
 
 .card {
-    background-color: white;
+    background-color: var(--card-background);
     padding: clamp(1.25rem, 3vw, 1.5rem);
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     text-align: center;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-    transition: transform 0.3s ease;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
 }
 
 .card:hover {
@@ -109,7 +109,7 @@ body {
     color: white;
     padding: 0.6rem 1.2rem;
     text-decoration: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     font-size: var(--p-size);
     transition: var(--transition);
 }

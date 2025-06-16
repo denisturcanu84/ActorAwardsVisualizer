@@ -1,9 +1,9 @@
 body {
-    background: linear-gradient(120deg, #E0F7FF 60%, #ffffff 100%);
+    background: var(--background);
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    color: #243B55;
+    color: var(--text-color);
 }
 
 /* Search-specific styles */
@@ -11,7 +11,7 @@ body {
     max-width: 600px;
     margin: 40px auto;
     padding: 30px;
-    background: white;
+    background: var(--card-background);
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
     text-align: center;
@@ -28,30 +28,30 @@ body {
     width: 100%;
     max-width: 400px;
     padding: 14px 20px;
-    border: 2px solid #ccc;
-    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
     font-size: 1rem;
     transition: border-color 0.3s ease;
 }
 
 .search-form input[type="text"]:focus {
-    border-color: #4A90E2;
+    border-color: var(--primary-color);
     outline: none;
 }
 
 .search-form button {
     padding: 12px 24px;
-    background-color: #4A90E2;
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .search-form button:hover {
-    background-color: #357ABD;
+    background-color: var(--primary-hover);
     transform: scale(1.02);
 }
 
