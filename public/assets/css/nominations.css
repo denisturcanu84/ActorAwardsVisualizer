@@ -106,16 +106,14 @@
 
 .main-grid {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   margin-top: 1.5rem;
   width: 100%;
 }
 
-.side-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.filters-section {
+  margin-bottom: 1.5rem;
 }
 
 .content-panel {
@@ -123,6 +121,12 @@
   flex-direction: column;
   width: 100%;
   min-width: 0;
+}
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .nominations-list {
