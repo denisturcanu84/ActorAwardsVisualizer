@@ -22,7 +22,7 @@ if ($search !== '') {
 
     <!-- page header -->
     <div class="page-header">
-        <div class="container">
+        <div class="container_header">
             <h1>Search Actor</h1>
             <p class="page-description">
                 Find detailed information about actors and their award history. 
