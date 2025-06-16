@@ -1,5 +1,6 @@
 @import "./actor_profile.css";
 
+/* Nominations Page Specific Styles */
 .page-header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
   color: white;
@@ -249,7 +250,6 @@
   margin: 0 0 0.6rem;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--text-color);
 }
 
 .nomination-details h3 a {
@@ -263,106 +263,105 @@
 }
 
 .nomination-info p {
-  margin: 0.3rem 0;
-  font-size: 0.9rem;
-  color: #555;
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
 }
 
 .nomination-info p strong {
-  color: #333;
-  font-weight: 500;
+  color: var(--text-color);
+  font-weight: 600;
 }
 
 .result-badge {
   display: inline-block;
-  padding: 0.25rem 0.75rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 50px;
   font-size: 0.85rem;
-  font-weight: 600;
-  color: #fff;
+  font-weight: 500;
+  margin-top: 0.5rem;
 }
 
 .result-badge.won {
-  background: #28a745;
+  background: #e3f2fd;
+  color: #1976d2;
 }
 
 .result-badge.nominated {
-  background: #ffc107;
+  background: #f5f5f5;
+  color: #616161;
 }
 
 .pagination-wrapper {
-  width: 100%;
   display: flex;
   justify-content: center;
-  margin: 2rem 0;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .pagination {
   display: flex;
-  justify-content: center;
-  align-items: center;
   gap: 0.5rem;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  max-width: none;
+  align-items: center;
+  background: var(--card-background);
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .pagination a {
-  padding: 0.75rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: var(--border-radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  border-radius: 8px;
   text-decoration: none;
   color: var(--text-color);
-  transition: var(--transition);
   font-weight: 500;
-  min-width: 40px;
-  text-align: center;
-  background: var(--card-background);
+  transition: var(--transition);
 }
 
 .pagination a:hover,
-.pagination a.active {
-  background: var(--primary-color);
-  color: #fff;
-  border-color: var(--primary-color);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+.pagination a:focus {
+  background: rgba(74, 144, 226, 0.1);
+  color: var(--primary-color);
 }
 
 .pagination a.active {
-  font-weight: 600;
+  background: var(--primary-color);
+  color: white;
 }
 
 .pagination-dots {
-  padding: 0.75rem 0.5rem;
   color: var(--text-secondary);
-  font-weight: 500;
+  padding: 0 0.5rem;
 }
 
 @media (max-width: 1024px) {
   .main-grid {
-    display: block;
-    width: 100%;
+    grid-template-columns: 250px 1fr;
+    gap: 1rem;
   }
+  
   .side-panel {
-    margin-bottom: 1.5rem;
+    gap: 1rem;
   }
   
   .content-panel {
-    width: 100%;
+    min-width: 0;
   }
   
   .pagination-wrapper {
-    width: 100%;
-    margin: 2rem 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
   .page-header {
-    padding: 100px 0 40px;
-    margin-top: 0;
+    padding: 40px 0 30px;
   }
   
   .page-header h1 {
@@ -375,43 +374,37 @@
   }
   
   .pagination-wrapper {
-    width: 100%;
-    margin: 2rem 0;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
   
   .pagination {
-    gap: 0.25rem;
     flex-wrap: wrap;
     justify-content: center;
   }
   
   .pagination a {
-    padding: 0.5rem 0.75rem;
-    min-width: 35px;
-    font-size: 0.9rem;
+    min-width: 2.2rem;
+    height: 2.2rem;
   }
   
   .nomination-card {
     flex-direction: column;
-    align-items: center; 
-    text-align: center;
+    align-items: flex-start;
     gap: 1rem;
   }
   
   .nomination-images { 
+    width: 100%;
     justify-content: center;
-    align-self: center;
-    margin-bottom: 0.25rem; 
   }
-
+  
   .nomination-details {
-    padding-left: 0;
-    padding-right: 0;
-    margin-bottom: 0.5rem;
+    width: 100%;
+    padding: 0;
   }
-
+  
   .nomination-card > .image-wrapper { 
-    margin-top: 0.5rem; 
-    align-self: center;
+    margin: 0 auto;
   }
 }

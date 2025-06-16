@@ -99,6 +99,7 @@ foreach ($productions as $production) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productions - Actor Awards Visualizer</title>
+    <link rel="stylesheet" href="../assets/css/common.css">
     <link rel="stylesheet" href="../assets/css/index.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
@@ -106,6 +107,18 @@ foreach ($productions as $production) {
 </head>
 <body>
     <?php include '../../src/includes/navbar.php'; ?>
+
+    <!-- page header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Productions</h1>
+            <p class="page-description">
+                Explore award-winning productions and their achievements. 
+                Filter by year, category, or search for specific titles to discover 
+                outstanding films and television shows that have received recognition.
+            </p>
+        </div>
+    </div>
 
     <div class="container">
         <h1 class="text-center">Productions</h1>

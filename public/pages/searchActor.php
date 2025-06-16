@@ -12,6 +12,7 @@ if ($search !== '') {
     <meta charset="UTF-8">
     <title>Actor Awards Visualizer - Search</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/searchActor.css">
     <link rel="stylesheet" href="/assets/css/navbar.css">
     <link rel="stylesheet" href="/assets/css/footer.css">
@@ -19,8 +20,19 @@ if ($search !== '') {
 <body>
     <?php include '../../src/includes/navbar.php'; ?>
 
+    <!-- page header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Search Actor</h1>
+            <p class="page-description">
+                Find detailed information about actors and their award history. 
+                Enter an actor's name to view their profile, nominations, wins, 
+                and career achievements.
+            </p>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>Search Actor Profile</h1>
         <form method="get" action="/searchActor" class="search-form">
             <input type="text" name="name" placeholder="Enter actor's full name" required>
             <button type="submit">Search</button>

@@ -37,6 +37,7 @@ $topProductions = $statsService->getTopProductions();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics - Actor Awards Visualizer</title>
+    <link rel="stylesheet" href="../assets/css/common.css">
     <link rel="stylesheet" href="../assets/css/index.css">
     <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/footer.css">
@@ -47,10 +48,15 @@ $topProductions = $statsService->getTopProductions();
 <body>
     <?php include '../../src/includes/navbar.php'; ?>
 
+    <!-- page header -->
     <div class="page-header">
         <div class="container">
             <h1>Statistics</h1>
-            <p class="page-description">Explore performance statistics and trends across awards seasons</p>
+            <p class="page-description">
+                Dive into comprehensive statistics and insights about SAG awards. 
+                Explore trends, analyze performance data, and discover patterns across 
+                different categories and years.
+            </p>
         </div>
     </div>
 

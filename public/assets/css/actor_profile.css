@@ -1,31 +1,4 @@
-:root {
-  --primary-color: #4A90E2;
-  --primary-hover: #357ABD;
-  --text-color: #243B55;
-  --text-secondary: #576a7e;
-  --background: linear-gradient(120deg, #E0F7FF 60%, #ffffff 100%);
-  --card-background: #ffffff;
-  --card-shadow: 0 4px 24px rgba(0,0,0,0.12);
-  --spacing: 2.5rem;
-  --border-radius: 16px;
-  --transition: all 0.3s ease;
-}
-
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: var(--background);
-  margin: 0;
-  color: var(--text-color);
-  line-height: 1.7;
-  font-size: 16px;
-}
-
-.container {
-  max-width: 1300px;
-  margin: 80px auto 40px;
-  padding: 0 1.5rem;
-}
-
+/* Actor Profile Specific Styles */
 .main-content {
   display: grid;
   grid-template-columns: 2.5fr 1fr;

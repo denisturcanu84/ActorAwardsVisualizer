@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actor Awards Visualizer</title>
+    <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="assets/css/navbar.css">
     <link rel="stylesheet" href="assets/css/footer.css">
@@ -23,7 +24,7 @@
         </section>
         <section class="navigation-cards">
             <div class="container">
-                <h2>Explore the Data</h2>
+                <h2>Explore the Data plm</h2>
                 <div class="cards-grid">
                     <div class="card">
                         <div class="card-icon">🎭</div>
