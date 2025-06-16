@@ -116,7 +116,7 @@ function return_bytes($val) {
     <link rel="stylesheet" href="/assets/css/navbar.css">
 </head>
 <body>
-    <?php include __DIR__ . '/../src/includes/navbar.php'; ?>
+    <?php include __DIR__ . "/../src/includes/navbar.php"; ?>
 
     <div class="container">
         <div class="admin-header">
