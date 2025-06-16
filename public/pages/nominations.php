@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['result'])) $redirect_params['result'] = $_POST['result'];
     if (!empty($_POST['search'])) $redirect_params['search'] = $_POST['search'];
     
-    $redirect_url = 'nominations.php';
+    $redirect_url = '/pages/nominations.php';
     if (!empty($redirect_params)) {
         $redirect_url .= '?' . http_build_query($redirect_params);
     }

@@ -16,4 +16,3 @@
         <a href="/stats">Statistics</a>
     </div>
 </nav>
-?>

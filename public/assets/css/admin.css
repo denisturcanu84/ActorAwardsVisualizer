@@ -1,0 +1,191 @@
+/* Admin Dashboard Styles */
+.admin-header {
+    margin-bottom: var(--spacing);
+    text-align: center;
+}
+
+.admin-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.admin-message {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+}
+
+.admin-section {
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+}
+
+.admin-section h2 {
+    padding: 1rem;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+    color: var(--text-color);
+}
+
+.admin-card {
+    padding: 1rem;
+}
+
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.admin-form {
+    margin: 0;
+}
+
+.admin-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: var(--p-size);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.admin-button:hover {
+    background-color: var(--primary-hover);
+}
+
+.admin-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Log Styles */
+.log-container {
+    margin-bottom: 1rem;
+}
+
+.log-container h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+}
+
+.log-content {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-line {
+    font-family: monospace;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Stats Styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: var(--border-radius);
+}
+
+.stat-item h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    font-size: var(--p-size);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+/* Health Styles */
+.health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.health-item {
+    text-align: center;
+}
+
+.health-item h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.health-value {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+/* Refresh Form Styles */
+.refresh-form {
+    margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid,
+    .health-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-actions {
+        flex-direction: column;
+    }
+    
+    .admin-button {
+        width: 100%;
+    }
+} 
