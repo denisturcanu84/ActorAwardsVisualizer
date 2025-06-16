@@ -24,7 +24,7 @@
         </section>
         <section class="navigation-cards">
             <div class="container">
-                <h2>Explore the Data plm</h2>
+                <h2>Explore the Data</h2>
                 <div class="cards-grid">
                     <div class="card">
                         <div class="card-icon">🎭</div>
