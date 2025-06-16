@@ -214,7 +214,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
            </div>
            <div class="filter-buttons">
              <button type="submit" class="filter-button">Apply Filters</button>
-             <a href="nominations.php" class="reset-button">Reset</a>
+             <a href="/pages/nominations.php" class="reset-button">Reset</a>
            </div>
          </form>
         </div>

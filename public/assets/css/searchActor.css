@@ -4,6 +4,7 @@ body {
     margin: 0;
     padding: 0;
     color: var(--text-color);
+    padding-top: 60px; /* Add padding equal to navbar height */
 }
 
 /* Search-specific styles */
@@ -113,4 +114,12 @@ body {
     .page-description {
         font-size: 0.9rem;
     }
+}
+
+/* Search-specific styles */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: white;
+    padding: 40px 0;
+    margin-bottom: 2rem;
 }
