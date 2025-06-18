@@ -1,34 +1,34 @@
 <?php
 require_once __DIR__ . '/../config.php';
 
-log_message("=== ÎNCEPE PROCESUL DE POPULARE A BAZEI DE DATE ===");
+echo "=== STARTING COMPLETE DATABASE SETUP PROCESS ===\n";
 
-// Inițializează schema bazei de date
-log_message("\n1. Inițializare schema bazei de date...");
-include_once __DIR__ . '/init_full_db.php';
+// Initialize database schema with init_db script
+echo "\n1. Initializing database schema...\n";
+include_once __DIR__ . '/consolidated_db_init.php';
 
-// Importă premiile din CSV
-log_message("\n2. Importă premiile din CSV...");
+// Import awards from CSV
+echo "\n2. Importing awards from CSV...\n";
 include_once __DIR__ . '/import_awards.php';
 
-// Populează categoriile de premii
-log_message("\n3. Populează categoriile de premii...");
+// Populate award categories
+echo "\n3. Populating award categories...\n";
 include_once __DIR__ . '/populate_award_categories.php';
 
-// Populează actorii
-log_message("\n4. Populează actorii...");
+// Populate actors
+echo "\n4. Populating actors...\n";
 include_once __DIR__ . '/populate_actors.php';
 
-// Populează producțiile
-log_message("\n5. Populează producțiile...");
+// Populate productions
+echo "\n5. Populating productions...\n";
 include_once __DIR__ . '/populate_productions.php';
 
-// Populează creditele actorilor
-log_message("\n6. Populează creditele actorilor...");
+// Populate actor credits
+echo "\n6. Populating actor credits...\n";
 include_once __DIR__ . '/populate_actor_credits.php';
 
-// Calculează statisticile
-log_message("\n7. Calculează statisticile...");
+// Calculate statistics
+echo "\n7. Calculating statistics...\n";
 include_once __DIR__ . '/calculate_statistics.php';
 
-log_message("\n=== PROCESUL DE POPULARE A BAZEI DE DATE S-A ÎNCHEIAT CU SUCCES! ===");
+echo "\n=== DATABASE SETUP PROCESS COMPLETED SUCCESSFULLY! ===\n";

@@ -1,14 +1,20 @@
 <?php
+require_once __DIR__ . '/../../src/bootstrap.php';
+
+use ActorAwards\Middleware\AuthenticationMiddleware;
+
+// Require user to be logged in
+AuthenticationMiddleware::requireLogin();
+
 // enabled error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../../src/config/config.php';
+// Legacy includes for existing functionality
 require_once __DIR__ . '/../../src/includes/db.php';
 require_once __DIR__ . '/../../src/includes/tmdb.php';
 require_once __DIR__ . '/../../src/includes/functions.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
 $dotenv->load();
@@ -52,17 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // build the query with filters
-$query = "SELECT a.*, 
-                 a.full_name, 
-                 ac.profile_path, 
-                 ac.tmdb_id AS actor_tmdb_id, 
-                 p.title as production_title, 
-                 p.poster_path AS local_db_poster_path, 
+$query = "SELECT a.*,
+                 a.full_name,
+                 ac.profile_path,
+                 ac.tmdb_id AS actor_tmdb_id,
+                 p.title as production_title,
+                 p.poster_path AS local_db_poster_path,
                  p.tmdb_id AS production_tmdb_id,
-                 p.type AS production_type 
-          FROM awards a 
-          LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id 
-          LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id 
+                 p.type AS production_type
+          FROM awards a
+          LEFT JOIN actors ac ON a.tmdb_actor_id = ac.tmdb_id
+          LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id
           WHERE a.full_name IS NOT NULL AND a.full_name <> ''";
 
 $params = [];
@@ -156,7 +162,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
   
   <!-- page header -->
   <div class="page-header">
-    <div class="container">
+    <div class="container_header">
       <h1>Award Nominations</h1>
       <p class="page-description">
         Explore the SAG awards nominations and wins. 

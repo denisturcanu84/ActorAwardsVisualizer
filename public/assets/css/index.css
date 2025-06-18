@@ -10,21 +10,7 @@
     --p-size: clamp(0.875rem, 2vw, 1rem);
 }
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background: var(--background);
-    font-size: var(--p-size);
-    overflow-x: hidden;
-}
-
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
+/* Index-specific styles - body and container styles handled by common.css */
 
 .hero {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
@@ -67,9 +53,28 @@ body {
 
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: 
+        "nominations actors productions"
+        "statistics statistics statistics";
     gap: 1rem;
     padding: 0;
+}
+
+.card:nth-child(1) {
+    grid-area: nominations;
+}
+
+.card:nth-child(2) {
+    grid-area: actors;
+}
+
+.card:nth-child(3) {
+    grid-area: productions;
+}
+
+.card:nth-child(4) {
+    grid-area: statistics;
 }
 
 .card {
@@ -180,11 +185,26 @@ body {
 
     .cards-grid {
         grid-template-columns: 1fr;
+        grid-template-areas: 
+            "nominations"
+            "actors"
+            "productions" 
+            "statistics";
         gap: 1rem;
     }
 
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: 
+            "nominations actors"
+            "productions statistics";
         gap: 1rem;
     }
 }

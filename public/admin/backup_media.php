@@ -1,13 +1,10 @@
 <?php
-require_once __DIR__ . '/../../src/config/config.php';
-require_once __DIR__ . '/../../src/includes/db.php';
-require_once __DIR__ . '/../../src/includes/functions.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
+
+use ActorAwards\Middleware\AuthenticationMiddleware;
 
 // Check if user is admin
-if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
-    header('HTTP/1.1 403 Forbidden');
-    exit('Access denied');
-}
+AuthenticationMiddleware::requireAdmin();
 
 // Set headers for file download
 header('Content-Type: application/zip');
@@ -29,21 +26,28 @@ $directories = [
 ];
 
 // Add files to ZIP
+$filesAdded = 0;
 foreach ($directories as $dir) {
     if (file_exists($dir)) {
-        $files = new RecursiveIteratorIterator(
+        $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($dir),
             RecursiveIteratorIterator::LEAVES_ONLY
         );
 
-        foreach ($files as $file) {
+        foreach ($iterator as $file) {
             if (!$file->isDir()) {
                 $filePath = $file->getRealPath();
                 $relativePath = substr($filePath, strlen(__DIR__ . '/../../'));
                 $zip->addFile($filePath, $relativePath);
+                $filesAdded++;
             }
         }
     }
+}
+
+// If no files were found, add a readme file
+if ($filesAdded === 0) {
+    $zip->addFromString('README.txt', 'No media files found to backup at ' . date('Y-m-d H:i:s'));
 }
 
 $zip->close();

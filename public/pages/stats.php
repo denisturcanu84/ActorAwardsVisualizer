@@ -1,15 +1,23 @@
 <?php
+require_once __DIR__ . '/../../src/bootstrap.php';
+
+use ActorAwards\Middleware\AuthenticationMiddleware;
+
+// Require user to be logged in
+AuthenticationMiddleware::requireLogin();
+
 // enabled error reporting for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once __DIR__ . '/../../vendor/autoload.php';
-require_once __DIR__ . '/../../src/config/config.php';
+use ActorAwards\Services\DatabaseService;
+use ActorAwards\Services\StatsService;
+
+// Legacy includes for existing functionality
 require_once __DIR__ . '/../../src/includes/db.php';
 require_once __DIR__ . '/../../src/includes/functions.php';
 require_once __DIR__ . '/../../src/includes/export_handler.php';
-require_once __DIR__ . '/../../src/includes/stats_service.php';
 require_once __DIR__ . '/../../src/includes/stats_components.php';
 
 // initialize database connection
@@ -45,12 +53,12 @@ $topProductions = $statsService->getTopProductions();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="stats-page">
     <?php include '../../src/includes/navbar.php'; ?>
 
     <!-- page header -->
     <div class="page-header">
-        <div class="container">
+        <div class="container_header">
             <h1>Statistics</h1>
             <p class="page-description">
                 Dive into comprehensive statistics and insights about SAG awards. 

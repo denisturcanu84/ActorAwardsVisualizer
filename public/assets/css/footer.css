@@ -34,9 +34,41 @@ body {
     font-size: clamp(0.8rem, 1.5vw, 0.9rem); 
 }
 
+.footer-attribution {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .footer p {
-    margin: calc(var(--spacing) * 0.25) 0; 
+    margin: 0; 
     opacity: 0.9;
+}
+
+.tmdb-attribution {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    justify-content: center;
+}
+
+.tmdb-link {
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.tmdb-link:hover {
+    transform: translateY(-2px);
+}
+
+.tmdb-logo {
+    height: 14px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    vertical-align: middle;
 }
 
 .footer a {
@@ -52,5 +84,19 @@ body {
 @media (max-width: 480px) {
     .footer {
         padding: var(--spacing) 0;
+    }
+    
+    .footer-attribution {
+        gap: 0.25rem;
+    }
+    
+    .tmdb-attribution {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.25rem;
+    }
+    
+    .tmdb-logo {
+        height: 12px;
     }
 }

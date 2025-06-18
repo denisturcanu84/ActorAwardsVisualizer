@@ -1,3 +1,6 @@
+/* Import Font Awesome for icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
 /* Common CSS Variables */
 :root {
     --primary-color: #4A90E2;
@@ -33,10 +36,19 @@ body {
     background: var(--background);
     font-size: var(--p-size);
     overflow-x: hidden;
+    padding-top: 60px; /* Add padding for fixed navbar */
 }
 
 /* Common Container */
 .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Container for page headers */
+.container_header {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
@@ -48,7 +60,7 @@ body {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
     color: white;
     padding: 80px 0 40px;
-    margin-top: 0;
+    margin-top: 0; /* Remove margin since body has padding */
     text-align: center;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
@@ -185,4 +197,4 @@ body {
     .card {
         padding: 1rem;
     }
-} 
+}

@@ -1,4 +1,11 @@
 <?php
+require_once __DIR__ . '/../../src/bootstrap.php';
+
+use ActorAwards\Middleware\AuthenticationMiddleware;
+
+// Require user to be logged in
+AuthenticationMiddleware::requireLogin();
+
 $search = isset($_GET['name']) ? trim($_GET['name']) : '';
 if ($search !== '') {
     $search_url = "/actor_profile?name=" . urlencode($search);

@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../src/bootstrap.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,17 +14,20 @@
 </head>
 <body>
     <?php include '../src/includes/navbar.php'; ?>
+    
+    <!-- page header -->
+    <div class="page-header">
+        <div class="container_header">
+            <h1>Welcome to Actor Awards Visualizer</h1>
+            <p class="page-description">
+                Explore and analyze SAG Awards nominations and wins across different years, 
+                categories, and productions. Discover trends, statistics, and detailed 
+                information about your favorite actors & movies.
+            </p>
+        </div>
+    </div>
+
     <main class="main-content">
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Welcome to Actor Awards Visualizer</h1>
-                <p class="hero-description">
-                    Explore and analyze SAG Awards nominations and wins across different years, 
-                    categories, and productions. Discover trends, statistics, and detailed 
-                    information about your favorite actors &amp; movies.
-                </p>
-            </div>
-        </section>
         <section class="navigation-cards">
             <div class="container">
                 <h2>Explore the Data</h2>

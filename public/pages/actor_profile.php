@@ -1,12 +1,16 @@
 <?php
-require_once __DIR__ . '/../../src/config/config.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
+
+use ActorAwards\Middleware\AuthenticationMiddleware;
+
+// Require user to be logged in
+AuthenticationMiddleware::requireLogin();
+
+// Legacy includes for existing functionality
 require_once __DIR__ . '/../../src/includes/db.php';
 require_once __DIR__ . '/../../src/includes/tmdb.php';
 require_once __DIR__ . '/../../src/includes/functions.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
-$dotenv->load();
 $api_key = TMDB_API_KEY;
 
 // verificam ce actor a fost cautat

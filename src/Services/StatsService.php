@@ -1,37 +1,38 @@
 <?php
 
 namespace ActorAwards\Services;
-
 use PDO;
-
-class StatsService 
+class StatsService
 {
     private PDO $db;
     
-    public function __construct(PDO $database) 
+    public function __construct(PDO $database)
     {
         $this->db = $database;
     }
     
     public function getYearlyStats() {
         return $this->db->query("
-            SELECT 
+            SELECT
                 year,
-                COUNT(*) as total_nominations,
                 SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) as total_wins,
+                COUNT(*) as total_nominations,
                 ROUND(SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as win_rate
-            FROM awards 
-            GROUP BY year 
-            ORDER BY year DESC
+            FROM awards
+            WHERE SUBSTR(year, 1, 4) LIKE '____'
+                AND CAST(SUBSTR(year, 1, 4) AS INTEGER) >= 1990
+                AND CAST(SUBSTR(year, 1, 4) AS INTEGER) <= 2020
+            GROUP BY year
+            ORDER BY year ASC
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function getCategoryStats() {
         return $this->db->query("
-            SELECT 
+            SELECT
                 category,
-                COUNT(*) as total_nominations,
                 SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) as total_wins,
+                COUNT(*) as total_nominations,
                 ROUND(SUM(CASE WHEN won = 'True' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1) as win_rate
             FROM awards 
             GROUP BY category 

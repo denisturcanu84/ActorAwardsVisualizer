@@ -2,7 +2,7 @@
 .stats-grid {
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
     margin: 1.5rem 0;
 }
 
@@ -260,8 +260,8 @@
 
 .chart-wrapper {
     padding: 1.5rem;
-    min-height: 300px;
-    max-height: 400px;
+    min-height: 500px;
+    max-height: 600px;
     border-bottom: 1px solid #eee;
     position: relative;
     width: 100%;
@@ -611,8 +611,9 @@
     }
 
     .chart-wrapper {
-        min-height: 200px;
-        max-height: 300px;
+        min-height: 350px;
+        max-height: 450px;
+        padding: 1rem;
     }
 }
 
@@ -632,4 +633,10 @@
       box-shadow: var(--shadow-light);
     }
 }
-  
+
+/* Stats-specific container - make it wider */
+.stats-page .container {
+    max-width: 1400px;
+    width: 95%;
+}
+

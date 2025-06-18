@@ -1,12 +1,16 @@
 <?php
-require_once __DIR__ . '/../../src/config/config.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
+
+use ActorAwards\Middleware\AuthenticationMiddleware;
+
+// Require user to be logged in
+AuthenticationMiddleware::requireLogin();
+
+// Legacy includes for existing functionality
 require_once __DIR__ . '/../../src/includes/db.php';
 require_once __DIR__ . '/../../src/includes/tmdb.php';
 require_once __DIR__ . '/../../src/includes/functions.php';
-require_once __DIR__ . '/../../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
-$dotenv->load();
 $api_key = TMDB_API_KEY;
 
 // Initialize database connection
@@ -110,7 +114,7 @@ foreach ($productions as $production) {
 
     <!-- page header -->
     <div class="page-header">
-        <div class="container">
+        <div class="container_header">
             <h1>Productions</h1>
             <p class="page-description">
                 Explore award-winning productions and their achievements. 

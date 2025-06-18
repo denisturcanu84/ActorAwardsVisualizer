@@ -1,35 +1,89 @@
 <?php
-require_once __DIR__ . '/../src/includes/logging.php';
-session_start();
+require_once __DIR__ . '/../src/bootstrap.php';
 
-// Check if already logged in
-if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']) {
-    logAccess('Admin already logged in, redirecting to dashboard');
-    header('Location: /admin.php');
-    exit;
-}
+use ActorAwards\Services\DatabaseService;
+use ActorAwards\Services\UserService;
+use ActorAwards\Utils\Helpers;
+use ActorAwards\Middleware\AuthenticationMiddleware;
+
+// Redirect if already logged in
+AuthenticationMiddleware::redirectIfLoggedIn();
 
 $error = '';
+$success = '';
+$current_tab = $_GET['tab'] ?? 'login'; // Default to login tab
 
-// Handle login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    // Log the login attempt
-    logAccess("Login attempt for username: $username");
-
-    // Hardcoded credentials check
-    if ($username === 'admin' && $password === 'admin123') {
-        $_SESSION['is_admin'] = true;
-        logAccess('Successful login');
-        header('Location: /admin.php');
-        exit;
-    } else {
-        $error = 'Invalid username or password';
-        logError("Failed login attempt for username: $username");
+    $action = $_POST['action'] ?? '';
+    
+    if ($action === 'login') {
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $csrf_token = $_POST['csrf_token'] ?? '';
+        
+        if (!Helpers::verifyCsrfToken($csrf_token)) {
+            $error = 'Invalid security token. Please try again.';
+        } elseif (empty($username) || empty($password)) {
+            $error = 'Please fill in all fields.';
+        } else {
+            try {
+                $db = DatabaseService::getConnection();
+                $userService = new UserService($db);
+                $user = $userService->authenticateUser($username, $password);
+                
+                if ($user) {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['is_admin'] = (bool)$user['is_admin'];
+                    
+                    header('Location: /');
+                    exit;
+                } else {
+                    $error = 'Invalid username or password.';
+                }
+            } catch (Exception $e) {
+                $error = 'Login failed. Please try again.';
+            }
+        }
+    } elseif ($action === 'register') {
+        $username = trim($_POST['username'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $confirm_password = $_POST['confirm_password'] ?? '';
+        $csrf_token = $_POST['csrf_token'] ?? '';
+        
+        if (!Helpers::verifyCsrfToken($csrf_token)) {
+            $error = 'Invalid security token. Please try again.';
+        } elseif (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
+            $error = 'Please fill in all fields.';
+        } elseif (!Helpers::isValidEmail($email)) {
+            $error = 'Please enter a valid email address.';
+        } elseif ($password !== $confirm_password) {
+            $error = 'Passwords do not match.';
+        } elseif (strlen($password) < 6) {
+            $error = 'Password must be at least 6 characters long.';
+        } else {
+            try {
+                $db = DatabaseService::getConnection();
+                $userService = new UserService($db);
+                
+                if ($userService->userExists($username, $email)) {
+                    $error = 'Username or email already exists.';
+                } else {
+                    if ($userService->createUser($username, $email, $password)) {
+                        $success = 'Account created successfully! You can now log in.';
+                    } else {
+                        $error = 'Registration failed. Please try again.';
+                    }
+                }
+            } catch (Exception $e) {
+                $error = 'Registration failed. Please try again.';
+            }
+        }
     }
 }
+
+$csrf_token = Helpers::generateCsrfToken();
 ?>
 
 <!DOCTYPE html>
@@ -37,107 +91,240 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Actor Awards Visualizer</title>
+    <title>Login - Actor Awards Visualizer</title>
     <link rel="stylesheet" href="/assets/css/common.css">
     <link rel="stylesheet" href="/assets/css/navbar.css">
+    <link rel="stylesheet" href="/assets/css/footer.css">
     <style>
-        .login-container {
+        .auth-container {
             max-width: 400px;
-            margin: 100px auto;
-            padding: 2rem;
-            background: var(--card-background);
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
+            margin: 100px auto 50px;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
-        .login-header {
+        
+        .auth-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 30px;
         }
-
-        .login-header h1 {
-            font-size: 2rem;
-            color: var(--text-color);
-            margin-bottom: 0.5rem;
+        
+        .auth-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
         }
-
-        .login-form {
+        
+        .auth-tabs {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
         }
-
+        
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .auth-tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            margin-bottom: 20px;
         }
-
+        
         .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-primary);
             font-weight: 500;
-            color: var(--text-color);
         }
-
+        
         .form-group input {
-            padding: 0.75rem;
+            width: 100%;
+            padding: 12px;
             border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
+            border-radius: 5px;
+            font-size: 16px;
+            background: var(--bg-color);
+            color: var(--text-primary);
         }
-
-        .login-button {
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .auth-button {
+            width: 100%;
+            padding: 12px;
             background: var(--primary-color);
             color: white;
-            padding: 0.75rem;
             border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
+            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            transition: var(--transition);
+            transition: background-color 0.3s ease;
         }
-
-        .login-button:hover {
-            background: var(--primary-hover);
+        
+        .auth-button:hover {
+            background: var(--secondary-color);
         }
-
+        
         .error-message {
-            color: #dc3545;
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
             text-align: center;
-            margin-bottom: 1rem;
+        }
+        
+        .success-message {
+            background: #efe;
+            color: #3a3;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <?php include __DIR__ . '/../src/includes/navbar.php'; ?>
 
-    <div class="container">
-        <div class="login-container">
-            <div class="login-header">
-                <h1>Admin Login</h1>
-                <p>Enter your credentials to access the admin dashboard</p>
+    
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Actor Awards Visualizer</h1>
+            <p>Please log in or create an account to continue</p>
+        </div>
+        
+        <?php if ($error): ?>
+            <div class="error-message"><?php echo Helpers::escape($error); ?></div>
+        <?php endif; ?>
+        
+        <?php if ($success): ?>
+            <div class="success-message"><?php echo Helpers::escape($success); ?></div>
+        <?php endif; ?>
+        
+        <div class="auth-tabs">
+            <button class="auth-tab <?php echo $current_tab === 'login' ? 'active' : ''; ?>" onclick="showTab('login')">Login</button>
+            <button class="auth-tab <?php echo $current_tab === 'register' ? 'active' : ''; ?>" onclick="showTab('register')">Register</button>
+        </div>
+        
+        <!-- Login Form -->
+        <form class="auth-form <?php echo $current_tab === 'login' ? 'active' : ''; ?>" id="login-form" method="post">
+            <input type="hidden" name="action" value="login">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+            
+            <div class="form-group">
+                <label for="login-username">Username or Email</label>
+                <input type="text" id="login-username" name="username" required>
             </div>
-
-            <?php if ($error): ?>
-                <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-
-            <form method="post" class="login-form">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-
-                <button type="submit" class="login-button">Login</button>
-            </form>
+            
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" required>
+            </div>
+            
+            <button type="submit" class="auth-button">Login</button>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="/reset-password" style="color: var(--primary-color); text-decoration: none; font-size: 14px;">
+                    Forgot your password?
+                </a>
+            </div>
+        </form>
+        
+        <!-- Register Form -->
+        <form class="auth-form <?php echo $current_tab === 'register' ? 'active' : ''; ?>" id="register-form" method="post">
+            <input type="hidden" name="action" value="register">
+            <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+            
+            <div class="form-group">
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" name="password" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+                <label for="register-confirm-password">Confirm Password</label>
+                <input type="password" id="register-confirm-password" name="confirm_password" required minlength="6">
+            </div>
+            
+            <button type="submit" class="auth-button">Create Account</button>
+        </form>
+        
+        <div class="back-link">
+            <a href="/">← Back to Home</a>
         </div>
     </div>
 
     <?php include __DIR__ . '/../src/includes/footer.php'; ?>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all forms
+            const forms = document.querySelectorAll('.auth-form');
+            forms.forEach(form => form.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.auth-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected form
+            const selectedForm = document.getElementById(tabName + '-form');
+            if (selectedForm) {
+                selectedForm.classList.add('active');
+            }
+            
+            // Add active class to selected tab
+            const selectedTab = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
