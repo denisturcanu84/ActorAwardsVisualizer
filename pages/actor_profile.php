@@ -21,7 +21,7 @@ $actor_db = findActorInDatabase($db, $tmdb_id_param, $actor_name);
 
 if ($actor_db) {
     // folosim datele din baza de date
-    $tmdb_id = $actor_db['tmdb_id'];
+    $tmdb_id = $actor_db['tmdb_id']; 
     $actor_name = $actor_db['full_name'];
     $profile_path = $actor_db['profile_path'];
     $bio = $actor_db['bio'];
