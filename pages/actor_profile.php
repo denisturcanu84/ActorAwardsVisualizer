@@ -8,7 +8,6 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 $api_key = $_ENV['TMDB_API_KEY'] ?? '';
 
-// verificam ce actor a fost cautat
 if (!isset($_GET['name']) && !isset($_GET['tmdb_id'])) {
     die('Actor not specified.');
 }
@@ -20,14 +19,12 @@ $db = getDbConnection();
 $actor_db = findActorInDatabase($db, $tmdb_id_param, $actor_name);
 
 if ($actor_db) {
-    // folosim datele din baza de date
     $tmdb_id = $actor_db['tmdb_id']; 
     $actor_name = $actor_db['full_name'];
     $profile_path = $actor_db['profile_path'];
     $bio = $actor_db['bio'];
     $popularity = $actor_db['popularity'];
     
-    // actualizam datele in baza de date daca sunt vechi
     if (isOutdated($actor_db['last_updated'], '7 days')) {
         $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
         if ($tmdb_data) {
@@ -92,7 +89,6 @@ if ($actor_db) {
 $tmdb_link = "https://www.themoviedb.org/person/$tmdb_id";
 $profile_path = getProfileImageUrl($profile_path);
 
-// informatii aditionale
 $awards = getActorAwards($db, $actor_name);
 $movies = getActorMovies($tmdb_id, $api_key, 4);
 $news = getActorNews($actor_name);
