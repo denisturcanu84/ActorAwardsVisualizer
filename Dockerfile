@@ -41,7 +41,11 @@ RUN composer install --no-dev --optimize-autoloader \
         echo "SMTP_USERNAME=${SMTP_USERNAME}"; \
         echo "SMTP_PASSWORD=${SMTP_PASSWORD}"; \
         echo "SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL}"; \
-        echo "SMTP_FROM_NAME=${SMTP_FROM_NAME}"; \
+        if echo "${SMTP_FROM_NAME}" | grep -q " " && ! echo "${SMTP_FROM_NAME}" | grep -q "^\".*\"$"; then \
+            echo "SMTP_FROM_NAME=\"${SMTP_FROM_NAME}\""; \
+        else \
+            echo "SMTP_FROM_NAME=${SMTP_FROM_NAME}"; \
+        fi; \
         echo "APP_NAME=${APP_NAME}"; \
         echo "APP_URL=${APP_URL}"; \
     } > /var/www/html/.env \
