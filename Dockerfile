@@ -31,19 +31,21 @@ RUN composer install --no-dev --optimize-autoloader \
     && chown -R www-data:www-data /var/www/html \
     && mkdir -p /var/www/html/database \
     && chmod -R 777 /var/www/html/database \
-    && (echo "TMDB_API_KEY=${TMDB_API_KEY}"; \
+    && { \
+        echo "TMDB_API_KEY=${TMDB_API_KEY}"; \
         echo "TMDB_API_BASE_URL=${TMDB_API_BASE_URL}"; \
         echo "DATABASE_PATH=${DATABASE_PATH}"; \
         echo "CSV_PATH=${CSV_PATH}"; \
         echo "SMTP_HOST=${SMTP_HOST}"; \
         echo "SMTP_PORT=${SMTP_PORT}"; \
         echo "SMTP_USERNAME=${SMTP_USERNAME}"; \
-        echo "SMTP_PASSWORD=\"${SMTP_PASSWORD}\""; \
+        echo "SMTP_PASSWORD=${SMTP_PASSWORD}"; \
         echo "SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL}"; \
-        echo "SMTP_FROM_NAME=\"${SMTP_FROM_NAME}\""; \
-        echo "APP_NAME=\"${APP_NAME}\""; \
+        echo "SMTP_FROM_NAME=${SMTP_FROM_NAME}"; \
+        echo "APP_NAME=${APP_NAME}"; \
         echo "APP_URL=${APP_URL}"; \
-    ) > /var/www/html/.env
+    } > /var/www/html/.env \
+    && cat /var/www/html/.env
 
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 
