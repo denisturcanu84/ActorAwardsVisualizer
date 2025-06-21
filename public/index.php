@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php'; // loads all required dependencies and configurations
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +13,7 @@ require_once __DIR__ . '/../src/bootstrap.php';
     <link rel="stylesheet" href="assets/css/footer.css">
 </head>
 <body>
-    <?php include '../src/includes/navbar.php'; ?>
+    <?php include '../src/Views/Components/Navbar.php';?>
     
     <!-- page header -->
     <div class="page-header">
@@ -88,7 +88,7 @@ require_once __DIR__ . '/../src/bootstrap.php';
         </section>
     </main>
 
-    <?php include '../src/includes/footer.php'; ?>
- 
+    <?php include '../src/Views/Components/Footer.php'; ?>
+    
 </body>
 </html>

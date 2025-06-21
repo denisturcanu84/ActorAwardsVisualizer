@@ -5,7 +5,10 @@ namespace ActorAwards\Utils;
 class Helpers
 {
     /**
-     * Check if information from database is outdated
+     * Checks if our cached data is too old and needs refreshing
+     * @param string|null $lastUpdated When the data was last updated (null means never)
+     * @param string $interval How old is "too old" (default 1 day)
+     * @return bool True if data is stale and should be refreshed
      */
     public static function isOutdated(?string $lastUpdated, string $interval = '1 day'): bool
     {
@@ -17,32 +20,10 @@ class Helpers
     }
     
     /**
-     * Get actor news using Google News RSS
-     */
-    public static function getActorNews(string $actorName): array
-    {
-        $rss = @simplexml_load_file('https://news.google.com/rss/search?q=' . urlencode($actorName));
-        $news = [];
-        
-        if ($rss && isset($rss->channel->item)) {
-            foreach ($rss->channel->item as $item) {
-                $news[] = [
-                    'title' => (string)$item->title,
-                    'link' => (string)$item->link,
-                    'pubDate' => (string)$item->pubDate
-                ];
-                
-                if (count($news) >= 5) {
-                    break;
-                }
-            }
-        }
-        
-        return $news;
-    }
-    
-    /**
-     * Sanitize output for HTML
+     * Makes text safe to display in HTML by escaping special characters
+     * @param string $string Text that might contain HTML/JS code
+     * @return string Safe text that won't execute as code
+     * @important Always use this before outputting user-provided content!
      */
     public static function escape(string $string): string
     {
@@ -50,7 +31,10 @@ class Helpers
     }
     
     /**
-     * Validate email format
+     * Checks if an email address is properly formatted
+     * @param string $email The email to validate
+     * @return bool True if email looks valid (but doesn't check if it actually exists)
+     * @example Helps prevent obviously fake emails during registration
      */
     public static function isValidEmail(string $email): bool
     {
@@ -58,7 +42,10 @@ class Helpers
     }
     
     /**
-     * Generate CSRF token
+     * Creates a unique security token to prevent form submission attacks
+     * @return string The generated token
+     * @note Stores token in session so we can verify it later
+     * @important Use with verifyCsrfToken() for complete protection
      */
     public static function generateCsrfToken(): string
     {
@@ -70,7 +57,10 @@ class Helpers
     }
     
     /**
-     * Verify CSRF token
+     * Checks if a submitted form token matches what we expect
+     * @param string $token The token from the submitted form
+     * @return bool True if token is valid and matches our session
+     * @important This prevents attackers from tricking users into submitting malicious forms
      */
     public static function verifyCsrfToken(string $token): bool
     {

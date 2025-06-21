@@ -1,4 +1,13 @@
 <?php
+/**
+ * Login and Registration page
+ *
+ * It has these security features:
+ * - CSRF protection
+ * - secure session management
+ * - password hashing
+ * - input validation
+ */
 require_once __DIR__ . '/../src/bootstrap.php';
 
 use ActorAwards\Services\DatabaseService;
@@ -6,16 +15,17 @@ use ActorAwards\Services\UserService;
 use ActorAwards\Utils\Helpers;
 use ActorAwards\Middleware\AuthenticationMiddleware;
 
-// Redirect if already logged in
 AuthenticationMiddleware::redirectIfLoggedIn();
 
 $error = '';
 $success = '';
-$current_tab = $_GET['tab'] ?? 'login'; // Default to login tab
+$current_tab = $_GET['tab'] ?? 'login'; // default to login tab
 
+// process form submissions (POST requests only - GET requests just display the form)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
+    // handle login form submission
     if ($action === 'login') {
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
@@ -26,16 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (empty($username) || empty($password)) {
             $error = 'Please fill in all fields.';
         } else {
+            // database authentication attempt with error handling
             try {
                 $db = DatabaseService::getConnection();
                 $userService = new UserService($db);
                 $user = $userService->authenticateUser($username, $password);
                 
+                // if authentication succeeds, set session variables
+                // sessions use secured cookies (configured in bootstrap.php)
                 if ($user) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['is_admin'] = (bool)$user['is_admin'];
                     
+                    // successful login redirects to home page
                     header('Location: /');
                     exit;
                 } else {
@@ -45,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Login failed. Please try again.';
             }
         }
+    //handles registration form submission
     } elseif ($action === 'register') {
         $username = trim($_POST['username'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -52,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirm_password = $_POST['confirm_password'] ?? '';
         $csrf_token = $_POST['csrf_token'] ?? '';
         
+        // CSRF protection for registration form
         if (!Helpers::verifyCsrfToken($csrf_token)) {
             $error = 'Invalid security token. Please try again.';
         } elseif (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
@@ -63,10 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (strlen($password) < 6) {
             $error = 'Password must be at least 6 characters long.';
         } else {
+            // registration attempt with validation and error handling
             try {
                 $db = DatabaseService::getConnection();
                 $userService = new UserService($db);
                 
+                // checks for existing user before creating new account
                 if ($userService->userExists($username, $email)) {
                     $error = 'Username or email already exists.';
                 } else {
@@ -83,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// generate new CSRF token for form protection
 $csrf_token = Helpers::generateCsrfToken();
 ?>
 
@@ -222,7 +241,7 @@ $csrf_token = Helpers::generateCsrfToken();
     </style>
 </head>
 <body>
-    <?php include __DIR__ . '/../src/includes/navbar.php'; ?>
+    <?php include __DIR__ . '/../src/Views/Components/Navbar.php'; ?>
 
     
     <div class="auth-container">
@@ -301,25 +320,26 @@ $csrf_token = Helpers::generateCsrfToken();
         </div>
     </div>
 
-    <?php include __DIR__ . '/../src/includes/footer.php'; ?>
+    <?php include __DIR__ . '/../src/Views/Components/Footer.php'; ?>
 
+    <!-- this script handles switching between login and registration forms without reloading the page -->
     <script>
         function showTab(tabName) {
-            // Hide all forms
+            // hide all forms
             const forms = document.querySelectorAll('.auth-form');
             forms.forEach(form => form.classList.remove('active'));
             
-            // Remove active class from all tabs
+            // remove active class from all tabs
             const tabs = document.querySelectorAll('.auth-tab');
             tabs.forEach(tab => tab.classList.remove('active'));
             
-            // Show selected form
+            // show selected form
             const selectedForm = document.getElementById(tabName + '-form');
             if (selectedForm) {
                 selectedForm.classList.add('active');
             }
             
-            // Add active class to selected tab
+            // add active class to selected tab
             const selectedTab = document.querySelector(`[onclick="showTab('${tabName}')"]`);
             if (selectedTab) {
                 selectedTab.classList.add('active');

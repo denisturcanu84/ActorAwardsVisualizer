@@ -3,10 +3,13 @@ require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
 
-// Require user to be logged in
+// Make sure the user is logged in.
 AuthenticationMiddleware::requireLogin();
 
+// Grab the search term from the URL.
 $search = isset($_GET['name']) ? trim($_GET['name']) : '';
+
+// The profile page handles the actual search logic so it will redirect there.
 if ($search !== '') {
     $search_url = "/actor_profile?name=" . urlencode($search);
     header("Location: $search_url");
@@ -25,7 +28,7 @@ if ($search !== '') {
     <link rel="stylesheet" href="/assets/css/footer.css">
 </head>
 <body>
-    <?php include '../../src/includes/navbar.php'; ?>
+    <?php include '../../src/Views/Components/Navbar.php'; ?>
 
     <!-- page header -->
     <div class="page-header">
@@ -46,6 +49,6 @@ if ($search !== '') {
         </form>
     </div>
 
-    <?php include '../../src/includes/footer.php'; ?>
+    <?php include '../../src/Views/Components/Footer.php'; ?>
 </body>
 </html>

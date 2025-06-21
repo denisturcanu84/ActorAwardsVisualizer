@@ -5,20 +5,25 @@ use ActorAwards\Middleware\AuthenticationMiddleware;
 use ActorAwards\Services\DatabaseService;
 use ActorAwards\Services\UserService;
 use ActorAwards\Services\StatsService;
+use ActorAwards\Services\LoggingService;
+use ActorAwards\Services\TmdbService;
+use ActorAwards\Repositories\ActorRepository;
+use ActorAwards\Repositories\ProductionRepository;
 
 // Require admin access
 AuthenticationMiddleware::requireAdmin();
 
-// Legacy includes for existing functionality
-require_once __DIR__ . '/../src/includes/logging.php';
-
 // Initialize services
 $db = DatabaseService::getConnection();
 $userService = new UserService($db);
-$statsService = new StatsService($db);
+$tmdbService = new TmdbService(TMDB_API_KEY);
+$actorRepository = new ActorRepository($db);
+$productionRepository = new ProductionRepository($db, $tmdbService);
+$statsService = new StatsService($db, $tmdbService, $actorRepository, $productionRepository);
+$loggingService = new LoggingService();
 
 // Log admin access
-logAccess('Admin dashboard accessed');
+$loggingService->logAccess('Admin dashboard accessed');
 
 $message = '';
 $messageType = '';
@@ -29,12 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     switch ($action) {
         case 'download_db':
-            logAccess('Database download requested');
+            $loggingService->logAccess('Database download requested');
             require_once __DIR__ . '/admin/export_db.php';
             exit;
             
         case 'backup_media':
-            logAccess('Media backup requested');
+            $loggingService->logAccess('Media backup requested');
             require_once __DIR__ . '/admin/backup_media.php';
             exit;
             
@@ -61,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($stmt->execute([$username, $email, $hashedPassword, $role])) {
                     $message = "User '$username' created successfully.";
                     $messageType = 'success';
-                    logAccess("Admin created user: $username");
+                    $loggingService->logAccess("Admin created user: $username");
                 } else {
                     $message = 'Failed to create user.';
                     $messageType = 'error';
@@ -69,72 +74,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             break;
             
-        case 'edit_user':
-            $userId = (int)($_POST['user_id'] ?? 0);
-            $username = trim($_POST['username'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $role = $_POST['role'] ?? 'user';
-            
-            if ($userId > 0 && !empty($username) && !empty($email)) {
-                $currentUser = $userService->getUserById($userId);
-                if ($currentUser) {
-                    // Check if username or email already exists for other users
-                    $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE (username = ? OR email = ?) AND id != ?");
-                    $stmt->execute([$username, $email, $userId]);
-                    
-                    if ($stmt->fetchColumn() > 0) {
-                        $message = 'Username or email already exists for another user.';
-                        $messageType = 'error';
-                    } else {
-                        // Update user
-                        $stmt = $db->prepare("UPDATE users SET username = ?, email = ?, role = ? WHERE id = ?");
-                        if ($stmt->execute([$username, $email, $role, $userId])) {
-                            $message = "User updated successfully.";
-                            $messageType = 'success';
-                            logAccess("Admin updated user: {$currentUser['username']} -> $username");
-                        } else {
-                            $message = 'Failed to update user.';
-                            $messageType = 'error';
-                        }
-                    }
-                }
-            } else {
-                $message = 'All fields are required for user update.';
-                $messageType = 'error';
-            }
-            break;
-            
         case 'delete_user':
             $userId = (int)($_POST['user_id'] ?? 0);
             if ($userId > 0) {
                 $user = $userService->getUserById($userId);
-                if ($user) {
-                    $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
-                    if ($stmt->execute([$userId])) {
-                        $message = "User '{$user['username']}' deleted successfully.";
+                if ($user && $user['role'] !== 'admin') {
+                    if ($userService->deleteUser($userId)) {
+                        $message = "User deleted successfully.";
                         $messageType = 'success';
-                        logAccess("Admin deleted user: {$user['username']}");
+                        $loggingService->logAccess("Admin deleted user: {$user['username']}");
                     } else {
                         $message = 'Failed to delete user.';
                         $messageType = 'error';
                     }
+                } elseif ($user['role'] === 'admin') {
+                    $message = 'Admins cannot be deleted.';
+                    $messageType = 'error';
                 }
             }
             break;
-            
-        case 'refresh_logs':
-        case 'refresh_stats':
-        case 'refresh_health':
-        case 'refresh_users':
-            logAccess(ucfirst(str_replace('refresh_', '', $action)) . ' refreshed');
-            header('Location: ' . $_SERVER['PHP_SELF']);
-            exit;
-            
-        default:
-            // Invalid action, do nothing
-            break;
     }
 }
+
+// Fetch data for display
+$users = $userService->getUsers();
+$totalUsers = count($users);
+$adminCount = count(array_filter($users, fn($u) => $u['role'] === 'admin'));
 
 // Get system stats
 $disk_free = disk_free_space('/');
@@ -178,13 +143,6 @@ $total_awards = $db->query("SELECT COUNT(*) FROM awards")->fetchColumn();
 $total_productions = $db->query("SELECT COUNT(*) FROM productions")->fetchColumn();
 $total_users = $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
 
-// Get users for management
-$users = $db->query("
-    SELECT id, username, email, role, created_at 
-    FROM users 
-    ORDER BY created_at DESC
-")->fetchAll(PDO::FETCH_ASSOC);
-
 // Helper function to convert memory limit string to bytes
 function return_bytes($val) {
     $val = trim($val);
@@ -211,7 +169,7 @@ function return_bytes($val) {
     <link rel="stylesheet" href="/assets/css/footer.css">
 </head>
 <body>
-    <?php include __DIR__ . "/../src/includes/navbar.php"; ?>
+    <?php include __DIR__ . "/../src/Views/Components/Navbar.php"; ?>
 
     <!-- Admin Header - Full Width -->
     <div class="admin-header">
@@ -308,28 +266,19 @@ function return_bytes($val) {
                                 </td>
                                 <td><?php echo date('M j, Y', strtotime($user['created_at'])); ?></td>
                                 <td class="user-actions">
-                                    <div class="action-buttons-group">
-                                        <button type="button" class="admin-button small edit-btn" onclick="editUser(<?php echo $user['id']; ?>)">Edit</button>
-                                        <button type="button" class="admin-button small save-btn" onclick="saveUser(<?php echo $user['id']; ?>)" style="display: none;">Save</button>
-                                        <button type="button" class="admin-button small cancel-btn" onclick="cancelEdit(<?php echo $user['id']; ?>)" style="display: none;">Cancel</button>
-                                        <form method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                    <a href="/admin/user/edit/<?php echo $user['id']; ?>/" class="btn btn-edit">Edit</a>
+                                    <?php if ($user['role'] !== 'admin'): ?>
+                                        <form method="POST" action="/admin.php" style="display: inline-block;">
                                             <input type="hidden" name="action" value="delete_user">
                                             <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                            <button type="submit" class="admin-button danger small">Delete</button>
+                                            <button type="submit" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
                                         </form>
-                                    </div>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                </div>
-                
-                <div class="refresh-button-container">
-                    <form method="post" style="display: inline;">
-                        <input type="hidden" name="action" value="refresh_users">
-                        <button type="submit" class="admin-button">Refresh Users</button>
-                    </form>
                 </div>
             </div>
         </section>
@@ -414,81 +363,7 @@ function return_bytes($val) {
         </section>
     </div>
 
-    <!-- Hidden form for editing users -->
-    <form id="editUserForm" method="post" style="display: none;">
-        <input type="hidden" name="action" value="edit_user">
-        <input type="hidden" name="user_id" id="editUserId">
-        <input type="hidden" name="username" id="editUsername">
-        <input type="hidden" name="email" id="editEmail">
-        <input type="hidden" name="role" id="editRole">
-    </form>
+    <?php include __DIR__ . '/../src/Views/Components/Footer.php'; ?>
 
-    <script>
-        function editUser(userId) {
-            // Hide display elements and show edit inputs
-            document.getElementById('username-display-' + userId).style.display = 'none';
-            document.getElementById('email-display-' + userId).style.display = 'none';
-            document.getElementById('role-display-' + userId).style.display = 'none';
-            
-            document.getElementById('username-input-' + userId).style.display = 'inline-block';
-            document.getElementById('email-input-' + userId).style.display = 'inline-block';
-            document.getElementById('role-input-' + userId).style.display = 'inline-block';
-            
-            // Hide edit button, show save/cancel buttons
-            const row = document.getElementById('user-row-' + userId);
-            const editBtn = row.querySelector('.edit-btn');
-            const saveBtn = row.querySelector('.save-btn');
-            const cancelBtn = row.querySelector('.cancel-btn');
-            
-            editBtn.style.display = 'none';
-            saveBtn.style.display = 'inline-block';
-            cancelBtn.style.display = 'inline-block';
-        }
-        
-        function cancelEdit(userId) {
-            // Show display elements and hide edit inputs
-            document.getElementById('username-display-' + userId).style.display = 'inline';
-            document.getElementById('email-display-' + userId).style.display = 'inline';
-            document.getElementById('role-display-' + userId).style.display = 'inline';
-            
-            document.getElementById('username-input-' + userId).style.display = 'none';
-            document.getElementById('email-input-' + userId).style.display = 'none';
-            document.getElementById('role-input-' + userId).style.display = 'none';
-            
-            // Show edit button, hide save/cancel buttons
-            const row = document.getElementById('user-row-' + userId);
-            const editBtn = row.querySelector('.edit-btn');
-            const saveBtn = row.querySelector('.save-btn');
-            const cancelBtn = row.querySelector('.cancel-btn');
-            
-            editBtn.style.display = 'inline-block';
-            saveBtn.style.display = 'none';
-            cancelBtn.style.display = 'none';
-            
-            // Reset input values to original
-            location.reload();
-        }
-        
-        function saveUser(userId) {
-            const username = document.getElementById('username-input-' + userId).value.trim();
-            const email = document.getElementById('email-input-' + userId).value.trim();
-            const role = document.getElementById('role-input-' + userId).value;
-            
-            if (!username || !email) {
-                alert('Username and email are required!');
-                return;
-            }
-            
-            // Set form values and submit
-            document.getElementById('editUserId').value = userId;
-            document.getElementById('editUsername').value = username;
-            document.getElementById('editEmail').value = email;
-            document.getElementById('editRole').value = role;
-            
-            document.getElementById('editUserForm').submit();
-        }
-    </script>
-
-    <?php include __DIR__ . '/../src/includes/footer.php'; ?>
 </body>
-</html> 
+</html>

@@ -2,37 +2,39 @@
 require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
-
-// Require user to be logged in
 AuthenticationMiddleware::requireLogin();
 
-// enabled error reporting for debugging
+// debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 use ActorAwards\Services\DatabaseService;
 use ActorAwards\Services\StatsService;
+use ActorAwards\Services\TmdbService;
+use ActorAwards\Repositories\ActorRepository;
+use ActorAwards\Repositories\ProductionRepository;
+use ActorAwards\Exports\ExportHandler;
 
-// Legacy includes for existing functionality
-require_once __DIR__ . '/../../src/includes/db.php';
-require_once __DIR__ . '/../../src/includes/functions.php';
-require_once __DIR__ . '/../../src/includes/export_handler.php';
-require_once __DIR__ . '/../../src/includes/stats_components.php';
+// This is for the stat card rendering functions.
+require_once __DIR__ . '/../../src/Views/Components/StatsComponents.php';
 
-// initialize database connection
-$db = getDbConnection();
+$db = DatabaseService::getConnection();
 
-// Handle export requests
+// Handle requests to export data as CSV/JSON.
 if (isset($_GET['export']) && isset($_GET['format'])) {
     $exportHandler = new ExportHandler($db);
     $exportHandler->handleExport($_GET['export'], $_GET['format']);
 }
 
-// Initialize services
-$statsService = new StatsService($db);
+// Set up all the services needed for the stats page.
+// StatsService needs the other services to do its job (like fetching images).
+$tmdbService = new TmdbService(TMDB_API_KEY);
+$actorRepository = new ActorRepository($db);
+$productionRepository = new ProductionRepository($db);
+$statsService = new StatsService($db, $tmdbService, $actorRepository, $productionRepository);
 
-// Get all statistics data
+// Get all the stats data for the page.
 $yearlyStats = $statsService->getYearlyStats();
 $categoryStats = $statsService->getCategoryStats();
 $topActors = $statsService->getTopActors();
@@ -54,7 +56,7 @@ $topProductions = $statsService->getTopProductions();
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="stats-page">
-    <?php include '../../src/includes/navbar.php'; ?>
+    <?php include '../../src/Views/Components/Navbar.php'; ?>
 
     <!-- page header -->
     <div class="page-header">
@@ -72,6 +74,10 @@ $topProductions = $statsService->getTopProductions();
         <div class="stats-grid">
             <div class="charts-section">
                 <?php 
+                // Prepare and render chart for yearly stats:
+                // - Uses Chart.js for visualization
+                // - Data formatted for bar/line charts
+                // - Includes table view toggle
                 renderStatsSection(
                     'Awards by Year',
                     'Distribution of awards across years',
@@ -81,6 +87,10 @@ $topProductions = $statsService->getTopProductions();
                     ['Year', 'Total Awards', 'Nominations', 'Win Rate']
                 );
                 
+                // Prepare and render category breakdown:
+                // - Groups awards by category type
+                // - Shows win rates per category
+                // - Uses pie/bar chart visualization
                 renderStatsSection(
                     'Category Distribution',
                     'Awards by category type',
@@ -113,7 +123,10 @@ $topProductions = $statsService->getTopProductions();
     </div>
 
     <script>
-    // Export dropdown functionality
+    // JavaScript integration points:
+    // 1. Export dropdown UI functionality
+    // 2. Chart initialization in stats.js
+    // 3. Table expand/collapse toggles
     document.querySelectorAll('.export-button').forEach(button => {
         button.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -140,12 +153,12 @@ $topProductions = $statsService->getTopProductions();
                 if (isCollapsed) {
                     wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
                     wrapper.classList.remove('collapsed');
-                    this.innerHTML = 'Show Less <i class="fas fa-chevron-up"></i>';
+                    this.textContent = 'Show Less';
                     this.classList.add('expanded');
                 } else {
                     wrapper.style.maxHeight = '400px';
                     wrapper.classList.add('collapsed');
-                    this.innerHTML = 'Show More <i class="fas fa-chevron-down"></i>';
+                    this.textContent = 'Show More';
                     this.classList.remove('expanded');
                 }
             });
@@ -153,8 +166,13 @@ $topProductions = $statsService->getTopProductions();
     });
     </script>
 
-    <script src="../assets/js/stats.js"></script>
+    <!-- Main chart initialization script -->
+    <!-- Handles: -->
+    <!-- - Chart.js configuration -->
+    <!-- - Data binding from PHP variables -->
+    <!-- - Interactive chart behaviors -->
+    <script src="../assets/js/stats-chart.js"></script>
 
-    <?php include '../../src/includes/footer.php'; ?>
+    <?php include '../../src/Views/Components/Footer.php'; ?>
 </body>
 </html>

@@ -1,18 +1,29 @@
 <?php
+
+namespace ActorAwards\Exports;
+
+use PDO;
+use Exception;
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+// handles exporting data in different formats (CSV, WebP, SVG)
 class ExportHandler {
     private $db;
     
+    // Sets up the handler with a database connection
     public function __construct($database) {
         $this->db = $database;
     }
     
     public function handleExport($exportType, $format) {
         try {
+            // Get the data we want to export based on type
             $data = $this->getExportData($exportType);
+            // Figure out what to name the file
             $filename = $this->getFilename($exportType);
             
+            // Can't export if there's no data
             if (empty($data)) {
                 throw new Exception('No data available for export');
             }
@@ -69,8 +80,10 @@ Available Image Formats:
         }
     }
     
+    // Gets different types of stats from the database
     private function getExportData($exportType) {
         switch ($exportType) {
+            // Stats grouped by year
             case 'yearly':
                 return $this->db->query("
                     SELECT 
@@ -83,6 +96,7 @@ Available Image Formats:
                     ORDER BY year DESC
                 ")->fetchAll(PDO::FETCH_ASSOC);
                 
+            // Stats grouped by award category
             case 'category':
                 return $this->db->query("
                     SELECT 
@@ -95,6 +109,7 @@ Available Image Formats:
                     ORDER BY total_nominations DESC
                 ")->fetchAll(PDO::FETCH_ASSOC);
                 
+            // Stats about top performing actors
             case 'performers':
                 return $this->db->query("
                     SELECT 
@@ -114,6 +129,7 @@ Available Image Formats:
         }
     }
     
+    // Creates different filenames based on export type
     private function getFilename($exportType) {
         switch ($exportType) {
             case 'yearly':
@@ -127,7 +143,9 @@ Available Image Formats:
         }
     }
     
+    // Creates a CSV file from the data
     private function exportCSV($data, $filename) {
+        // Make sure nothing else is trying to output
         // Clear any output buffer
         while (ob_get_level()) {
             ob_end_clean();
@@ -161,7 +179,9 @@ Available Image Formats:
         exit;
     }
     
+    // Creates a WebP image chart from the data
     private function exportWebP($data, $filename, $exportType) {
+        // First check if we have the needed tools
         // Diagnostic information
         if (!extension_loaded('gd')) {
             throw new Exception('GD extension is not loaded');
@@ -258,8 +278,9 @@ Available Image Formats:
         exit;
     }
     
+    // Creates a PNG image if WebP isn't available
     private function exportPNG($data, $filename, $exportType) {
-        // Fallback to PNG if WebP is not supported
+        // Fallback option when WebP doesn't work
         // Clear any output buffer
         while (ob_get_level()) {
             ob_end_clean();
@@ -325,6 +346,7 @@ Available Image Formats:
         exit;
     }
     
+    // Draws a basic bar chart on the image
     private function drawSimpleChart($image, $data, $width, $height, $padding, $blue, $darkblue, $gray, $lightgray, $black) {
         if (empty($data)) {
             imagestring($image, 3, $padding, $height/2, 'No data available', $black);
@@ -434,7 +456,9 @@ Available Image Formats:
         imagestring($image, 2, 10, $chartY + $chartHeight/2, 'Count', $black);
     }
     
+    // Creates an SVG chart from the data
     private function exportSVG($data, $filename, $exportType) {
+        // Make sure nothing else is trying to output
         // Clear any output buffer
         while (ob_get_level()) {
             ob_end_clean();
@@ -460,6 +484,7 @@ Available Image Formats:
         exit;
     }
     
+    // Builds the actual SVG markup for the chart
     private function createSVG($data, $width, $height, $padding, $exportType) {
         if (empty($data)) {
             return '<svg width="' . $width . '" height="' . $height . '" xmlns="http://www.w3.org/2000/svg"><text x="50" y="50">No data available</text></svg>';
@@ -554,6 +579,7 @@ Available Image Formats:
         return $svg;
     }
     
+    // Figures out what label to use for each data point
     private function getLabel($row) {
         if (isset($row['year'])) {
             return (string)$row['year'];

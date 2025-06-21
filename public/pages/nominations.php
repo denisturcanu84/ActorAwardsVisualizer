@@ -3,33 +3,29 @@ require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
 
-// Require user to be logged in
+// Require login
 AuthenticationMiddleware::requireLogin();
 
-// enabled error reporting for debugging
+use ActorAwards\Services\DatabaseService;
+use ActorAwards\Services\TmdbService;
+use ActorAwards\Utils\Helpers;
+
+// debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Legacy includes for existing functionality
-require_once __DIR__ . '/../../src/includes/db.php';
-require_once __DIR__ . '/../../src/includes/tmdb.php';
-require_once __DIR__ . '/../../src/includes/functions.php';
+// Initialize services.
+$db = DatabaseService::getConnection();
+$tmdbService = new TmdbService(TMDB_API_KEY);
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../..');
-$dotenv->load();
-$api_key = TMDB_API_KEY;
-
-// initialize database connection
-$db = getDbConnection();
-
-// get filter values - prioritize GET parameters if they exist, then POST
+// Get filter values from request.
 $selectedYear = $_GET['year'] ?? $_POST['year'] ?? '';
 $selectedCategory = $_GET['category'] ?? $_POST['category'] ?? '';
 $selectedResult = $_GET['result'] ?? $_POST['result'] ?? '';
 $searchQuery = $_GET['search'] ?? $_POST['search'] ?? '';
 
-// convert Won/Nominated to True/False for database query
+// Convert 'Won'/'Nominated' to DB boolean 'True'/'False'.
 $resultBoolean = null;
 if ($selectedResult === 'Won') {
     $resultBoolean = 'True';
@@ -37,10 +33,10 @@ if ($selectedResult === 'Won') {
     $resultBoolean = 'False';
 }
 
-// get current page
+// Pagination.
 $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 
-// if POST request (new filters applied), redirect to GET with parameters to maintain state
+// Redirect POST to GET for bookmarkable URLs.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirect_params = [];
     if (!empty($_POST['year'])) $redirect_params['year'] = $_POST['year'];
@@ -57,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// build the query with filters
+// Build the main query for nominations.
 $query = "SELECT a.*,
                  a.full_name,
                  ac.profile_path,
@@ -71,8 +67,9 @@ $query = "SELECT a.*,
           LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id
           WHERE a.full_name IS NOT NULL AND a.full_name <> ''";
 
-$params = [];
+$params = []; // Bind parameters for the prepared statement.
 
+// Apply filters to the query.
 if ($selectedYear) {
     $query .= " AND a.year = ?";
     $params[] = $selectedYear;
@@ -90,18 +87,20 @@ if ($resultBoolean !== null) {
 
 if ($searchQuery) {
     $query .= " AND (a.full_name LIKE ? OR p.title LIKE ?)";
-    $params[] = "%$searchQuery%";
-    $params[] = "%$searchQuery%";
+    $params[] = "%{$searchQuery}%";
+    $params[] = "%{$searchQuery}%";
 }
 
-// --- pagination setup ----
+// --- Pagination ---
 $itemsPerPage = 10;
 
-// build COUNT query with the same filters
-$countSql = "SELECT COUNT(*) 
-             FROM awards a 
-             LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id 
+// Count total results for pagination.
+$countSql = "SELECT COUNT(*)
+             FROM awards a
+             LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id
              WHERE a.full_name IS NOT NULL AND a.full_name <> ''";
+
+// Add the same filters to the count query.
 $countParams = [];
 if ($selectedYear) {
     $countSql .= " AND a.year = ?";
@@ -117,32 +116,48 @@ if ($resultBoolean !== null) {
 }
 if ($searchQuery) {
     $countSql .= " AND (a.full_name LIKE ? OR p.title LIKE ?)";
-    $countParams[] = "%$searchQuery%";
-    $countParams[] = "%$searchQuery%";
+    $countParams[] = "%{$searchQuery}%";
+    $countParams[] = "%{$searchQuery}%";
 }
 
+// Execute the count query.
 $countStmt = $db->prepare($countSql);
 $countStmt->execute($countParams);
-$totalItems = (int)$countStmt->fetchColumn();
-$totalPages = (int)ceil($totalItems / $itemsPerPage);
+$totalItems = $countStmt->fetchColumn();
+$totalPages = ceil($totalItems / $itemsPerPage);
 
-// complete main query with LIMIT/OFFSET
-$query .= " ORDER BY a.year DESC, a.category
-            LIMIT ? OFFSET ?";
+// Add pagination to the main query.
+$offset = ($currentPage - 1) * $itemsPerPage;
+$query .= " ORDER BY a.year DESC, a.full_name ASC LIMIT ?, ?";
+$params[] = $offset;
 $params[] = $itemsPerPage;
-$params[] = ($currentPage - 1) * $itemsPerPage;
 
-// prepare and execute the query
+// Execute the main query.
 $stmt = $db->prepare($query);
 $stmt->execute($params);
 $nominations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// get unique years and categories for filters
-$query = "SELECT DISTINCT year FROM awards ORDER BY year DESC";
-$years = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
+// Get distinct values for the filter dropdowns.
+$years = $db->query("SELECT DISTINCT year FROM awards ORDER BY year DESC")->fetchAll(PDO::FETCH_COLUMN);
+$categories = $db->query("SELECT DISTINCT category FROM awards ORDER BY category ASC")->fetchAll(PDO::FETCH_COLUMN);
 
-$query = "SELECT DISTINCT category FROM awards ORDER BY category";
-$categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
+// Process results to fetch poster images from TMDB if they are missing locally.
+foreach ($nominations as &$nomination) {
+    if (empty($nomination['local_db_poster_path']) && !empty($nomination['production_tmdb_id'])) {
+        $productionDetails = $tmdbService->getProductionDetails($nomination['production_tmdb_id'], $nomination['production_type']);
+        if ($productionDetails && !empty($productionDetails['poster_path'])) {
+            $nomination['local_db_poster_path'] = $productionDetails['poster_path'];
+            // Save the poster path to the local database for next time.
+            $updateStmt = $db->prepare("UPDATE productions SET poster_path = ? WHERE tmdb_id = ?");
+            $updateStmt->execute([$productionDetails['poster_path'], $nomination['production_tmdb_id']]);
+        }
+    }
+}
+// Make sure the reference is removed.
+unset($nomination); 
+
+// Get the base URL for images.
+$posterBaseUrl = $tmdbService->getPosterBaseUrl();
 ?>
 
 <!DOCTYPE html>
@@ -158,7 +173,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
   <link rel="stylesheet" href="../assets/css/nominations.css">
 </head>
 <body>
-  <?php include '../../src/includes/navbar.php'; ?>
+  <?php include '../../src/Views/Components/Navbar.php'; ?>
   
   <!-- page header -->
   <div class="page-header">
@@ -248,22 +263,22 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                    
                    // first try database
                    if (!empty($nomination['profile_path'])) {
-                       $actor_image = getProfileImageUrl($nomination['profile_path']);
+                       $actor_image = $tmdbService->getProfileImageUrl($nomination['profile_path']);
                    }
                    
                    // if no image and we have TMDB actor ID, try API
                    if (!$actor_image && !empty($nomination['actor_tmdb_id'])) {
-                       $actor_details = getActorDetailsTmdb($nomination['actor_tmdb_id'], $api_key);
+                       $actor_details = $tmdbService->getActorDetails($nomination['actor_tmdb_id']);
                        if (is_array($actor_details) && !empty($actor_details['profile_path'])) {
-                           $actor_image = getProfileImageUrl($actor_details['profile_path']);
+                           $actor_image = $tmdbService->getProfileImageUrl($actor_details['profile_path']);
                        }
                    }
                    
                    // if still no image, try searching by name
                    if (!$actor_image && !empty($nomination['full_name'])) {
-                       $actor_search = searchActorTmdb($nomination['full_name'], $api_key);
+                       $actor_search = $tmdbService->searchActor($nomination['full_name']);
                        if ($actor_search && !empty($actor_search['profile_path'])) {
-                           $actor_image = getProfileImageUrl($actor_search['profile_path']);
+                           $actor_image = $tmdbService->getProfileImageUrl($actor_search['profile_path']);
                        }
                    }
                    ?>
@@ -318,7 +333,7 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                  
                  // first try database
                  if (!empty($nomination['local_db_poster_path'])) {
-                     $poster_image = getPosterImageUrl($nomination['local_db_poster_path']);
+                     $poster_image = $tmdbService->getPosterImageUrl($nomination['local_db_poster_path']);
                  }
                  
                  // if no poster and we have production TMDB ID
@@ -326,13 +341,13 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                      $production_type = $nomination['production_type'] ?? 'movie';
                      
                      if (strtolower($production_type) === 'tv') {
-                         $details = getTvShowDetailsTmdb($nomination['production_tmdb_id'], $api_key);
+                         $details = $tmdbService->getTvShowDetails($nomination['production_tmdb_id']);
                      } else {
-                         $details = getMovieDetailsTmdb($nomination['production_tmdb_id'], $api_key);
+                         $details = $tmdbService->getMovieDetails($nomination['production_tmdb_id']);
                      }
                      
                      if (is_array($details) && !empty($details['poster_path'])) {
-                         $poster_image = getPosterImageUrl($details['poster_path']);
+                         $poster_image = $tmdbService->getPosterImageUrl($details['poster_path']);
                      }
                  }
                  
@@ -341,14 +356,14 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
                      $search_title = $nomination['production_title'] ?? $nomination['show'] ?? null;
                      if ($search_title) {
                          // try movie search first
-                         $movie_search = searchMovieTmdb($search_title, $api_key);
+                         $movie_search = $tmdbService->searchMovie($search_title);
                          if ($movie_search && !empty($movie_search['poster_path'])) {
-                             $poster_image = getPosterImageUrl($movie_search['poster_path']);
+                             $poster_image = $tmdbService->getPosterImageUrl($movie_search['poster_path']);
                          } else {
                              // try TV search
-                             $tv_search = searchTvShowTmdb($search_title, $api_key);
+                             $tv_search = $tmdbService->searchTvShow($search_title);
                              if ($tv_search && !empty($tv_search['poster_path'])) {
-                                 $poster_image = getPosterImageUrl($tv_search['poster_path']);
+                                 $poster_image = $tmdbService->getPosterImageUrl($tv_search['poster_path']);
                              }
                          }
                      }
@@ -422,6 +437,6 @@ $categories = $db->query($query)->fetchAll(PDO::FETCH_COLUMN);
     </div>
     <?php endif; ?>
   </div>
-  <?php include '../../src/includes/footer.php'; ?>
+  <?php include '../../src/Views/Components/Footer.php'; ?>
 </body>
 </html>

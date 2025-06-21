@@ -1,4 +1,14 @@
 <?php
+/**
+ * Renders a stats section with chart visualization and data table
+ *
+ * @param string $title Section title shown to users
+ * @param string $description Help text explaining what the stats show
+ * @param string $chartId Unique ID for the chart canvas element
+ * @param string $exportType Identifier used for export file naming
+ * @param array $tableData The actual data to display in table format
+ * @param array $columns Column headers for the data table
+ */
 function renderStatsSection($title, $description, $chartId, $exportType, $tableData, $columns) {
     ?>
     <div class="stats-section">
@@ -8,19 +18,23 @@ function renderStatsSection($title, $description, $chartId, $exportType, $tableD
                 <p class="section-description"><?php echo htmlspecialchars($description); ?></p>
             </div>
             <div class="export-wrapper">
+                <!-- Export button triggers dropdown with format options -->
                 <button class="export-button">
                     <i class="fas fa-download"></i>
                     Export
                 </button>
                 <div class="export-dropdown">
+                    <!-- CSV export - good for spreadsheets and data analysis -->
                     <a href="/pages/stats.php?export=<?php echo $exportType; ?>&format=csv" class="export-option" download>
                         <i class="fas fa-file-csv"></i>
                         CSV
                     </a>
+                    <!-- WebP export - compressed image format good for web -->
                     <a href="/pages/stats.php?export=<?php echo $exportType; ?>&format=webp" class="export-option" download>
                         <i class="fas fa-image"></i>
                         WebP
                     </a>
+                    <!-- SVG export - vector format good for scaling/resizing -->
                     <a href="/pages/stats.php?export=<?php echo $exportType; ?>&format=svg" class="export-option" download>
                         <i class="fas fa-bezier-curve"></i>
                         SVG
@@ -29,9 +43,11 @@ function renderStatsSection($title, $description, $chartId, $exportType, $tableD
             </div>
         </div>
         <div class="chart-and-table">
+            <!-- Chart visualization using Chart.js - renders interactive graphs -->
             <div class="chart-wrapper">
                 <canvas id="<?php echo $chartId; ?>"></canvas>
             </div>
+            <!-- Collapsible table shows raw data behind the chart -->
             <div class="table-wrapper collapsed">
                 <table class="stats-table">
                     <thead>
@@ -64,7 +80,6 @@ function renderStatsSection($title, $description, $chartId, $exportType, $tableD
             <div class="show-more-container">
                 <button class="show-more-btn">
                     Show More
-                    <i class="fas fa-chevron-down"></i>
                 </button>
             </div>
         </div>
@@ -72,6 +87,14 @@ function renderStatsSection($title, $description, $chartId, $exportType, $tableD
     <?php
 }
 
+/**
+ * Renders a ranked list of performers with images and stats
+ *
+ * @param string $title Section title shown to users
+ * @param string $description Help text explaining the performer ranking
+ * @param string $exportType Identifier used for export file naming (optional)
+ * @param array $performers Array of performer data with images, names, wins/nominations
+ */
 function renderPerformersList($title, $description, $exportType, $performers) {
     ?>
     <div class="performers-section">

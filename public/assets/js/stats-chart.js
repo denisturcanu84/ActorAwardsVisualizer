@@ -1,35 +1,39 @@
-// Get the chart canvases
+// This script powers the two charts on the stats page.
+// It pulls data from the HTML tables and uses Chart.js to make 'em pretty.
+
+// Grab the canvas elements for our charts.
 const awardsChartCtx = document.getElementById('awardsChart').getContext('2d');
 const categoriesChartCtx = document.getElementById('categoriesChart').getContext('2d');
 
-// Get the data from the tables
+// Scrape the data from the stats tables on the page.
+// First, the yearly stats. The filter just makes sure we're only getting rows with years.
 const yearlyData = Array.from(document.querySelectorAll('.stats-table tbody tr')).filter(row => {
-    // Only get rows from the yearly stats table (check if first cell is a year)
     return !isNaN(parseInt(row.cells[0].textContent));
 }).map(row => ({
     year: row.cells[0].textContent,
-    awards: parseInt(row.cells[1].textContent), // Total Wins (column 1)
-    nominations: parseInt(row.cells[2].textContent) // Total Nominations (column 2)
+    awards: parseInt(row.cells[1].textContent),
+    nominations: parseInt(row.cells[2].textContent)
 }));
 
+// And do the same for the category stats.
 const categoryData = Array.from(document.querySelectorAll('.stats-table tbody tr')).filter(row => {
-    // Only get rows from the category stats table (check if first cell is not a year)
     return isNaN(parseInt(row.cells[0].textContent));
 }).map(row => ({
     category: row.cells[0].textContent,
-    awards: parseInt(row.cells[1].textContent), // Total Wins (column 1, should be smaller)
-    nominations: parseInt(row.cells[2].textContent) // Total Nominations (column 2, should be larger)
+    awards: parseInt(row.cells[1].textContent),
+    nominations: parseInt(row.cells[2].textContent)
 }));
 
-// Create the awards by year chart
+// --- Chart 1: Yearly Awards & Nominations (Line Chart) ---
+// This one shows the trend of wins vs. nominations over the years.
 new Chart(awardsChartCtx, {
     type: 'line',
     data: {
-        labels: yearlyData.map(d => d.year), // No reverse - show 1990 to 2020
+        labels: yearlyData.map(d => d.year), // Show 1990 to 2020 chronologically
         datasets: [
             {
                 label: 'Wins',
-                data: yearlyData.map(d => d.awards), // No reverse
+                data: yearlyData.map(d => d.awards),
                 borderColor: '#4A90E2',
                 backgroundColor: 'rgba(74, 144, 226, 0.1)',
                 borderWidth: 3,
@@ -43,7 +47,7 @@ new Chart(awardsChartCtx, {
             },
             {
                 label: 'Total Nominations',
-                data: yearlyData.map(d => d.nominations), // No reverse
+                data: yearlyData.map(d => d.nominations),
                 borderColor: '#82C4E8',
                 backgroundColor: 'rgba(130, 196, 232, 0.1)',
                 borderWidth: 3,
@@ -101,8 +105,8 @@ new Chart(awardsChartCtx, {
                     },
                     padding: -66,
                     maxTicksLimit: 31,
+                    // This just makes sure all the year labels fit without looking like a mess.
                     callback: function(value, index, values) {
-                        // Show every year but smaller font if many data points
                         return this.getLabelForValue(value);
                     }
                 },
@@ -129,10 +133,12 @@ new Chart(awardsChartCtx, {
     }
 });
 
-// Filter category data to only include categories with 5+ nominations
+// The category chart can get pretty crowded, so I'm filtering out any category with less than 5 nominations.
+// This keeps it readable.
 const filteredCategoryData = categoryData.filter(d => d.nominations >= 5);
 
-// Create the category distribution chart
+// --- Chart 2: Wins vs. Nominations by Category (Bar Chart) ---
+// This one compares the wins and nominations for the top categories.
 new Chart(categoriesChartCtx, {
     type: 'bar',
     data: {
@@ -189,6 +195,8 @@ new Chart(categoriesChartCtx, {
                 }
             },
             x: {
+                // Hiding the x-axis labels for the category chart because they can get very long and cluttered.
+                // The tooltip on hover is enough to see the category name.
                 display: false,
                 ticks: {
                     display: false
@@ -206,4 +214,4 @@ new Chart(categoriesChartCtx, {
             intersect: false
         }
     }
-}); 
+});

@@ -1,10 +1,10 @@
 <?php
 require_once __DIR__ . '/../src/bootstrap.php';
 
-// Clear all session variables
+// clears all session variables to prevent data leakage
 $_SESSION = array();
 
-// Destroy the session cookie
+// if session cookies are used, delete the session cookie
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 42000,
@@ -13,10 +13,9 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-// Destroy the session
+// completely destroy the session data
 session_destroy();
 
-// Redirect to home page
+// redirect to the home page
 header('Location: /');
 exit;
-?>

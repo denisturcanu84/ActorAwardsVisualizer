@@ -1,106 +1,123 @@
 <?php
+/**
+ * Displays an actor\'s profile, including biography, awards, movies, and news.
+ */
 require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
 
-// Require user to be logged in
+// Make sure the user is logged in.
 AuthenticationMiddleware::requireLogin();
 
-// Legacy includes for existing functionality
-require_once __DIR__ . '/../../src/includes/db.php';
-require_once __DIR__ . '/../../src/includes/tmdb.php';
-require_once __DIR__ . '/../../src/includes/functions.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
 
-$api_key = TMDB_API_KEY;
+use ActorAwards\Services\DatabaseService;
+use ActorAwards\Services\TmdbService;
+use ActorAwards\Repositories\ActorRepository;
+use ActorAwards\Utils\Helpers;
+use ActorAwards\Services\NewsService;
 
-// verificam ce actor a fost cautat
+// Initialize services and repositories
+$db = DatabaseService::getConnection();
+$tmdbService = new TmdbService(TMDB_API_KEY);
+$actorRepository = new ActorRepository($db);
+
+// An actor must be specified by name or TMDB ID.
 if (!isset($_GET['name']) && !isset($_GET['tmdb_id'])) {
     die('Actor not specified.');
 }
 
 $actor_name = isset($_GET['name']) ? trim($_GET['name']) : '';
 $tmdb_id_param = isset($_GET['tmdb_id']) ? intval($_GET['tmdb_id']) : 0;
-$db = getDbConnection();
 
-$actor_db = findActorInDatabase($db, $tmdb_id_param, $actor_name);
+// Try to find the actor in our local database first.
+$actor_db = $actorRepository->findActor($tmdb_id_param, $actor_name);
 
 if ($actor_db) {
-    // folosim datele din baza de date
+    // Use cached data from the database.
     $tmdb_id = $actor_db['tmdb_id'];
     $actor_name = $actor_db['full_name'];
     $profile_path = $actor_db['profile_path'];
     $bio = $actor_db['bio'];
     $popularity = $actor_db['popularity'];
     
-    // actualizam datele in baza de date daca sunt vechi
-    if (isOutdated($actor_db['last_updated'], '7 days')) {
-        $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
+    // If the cached data is over a week old, refresh it from the TMDB API.
+    if (Helpers::isOutdated($actor_db['last_updated'], '7 days')) {
+        $tmdb_data = $tmdbService->getActorDetails($tmdb_id);
         if ($tmdb_data) {
             $profile_path = $tmdb_data['profile_path'] ?? $profile_path;
             $bio = $tmdb_data['biography'] ?? $bio;
             $popularity = $tmdb_data['popularity'] ?? $popularity;
             
-            $update = $db->prepare("UPDATE actors SET bio=?, profile_path=?, popularity=?, last_updated=CURRENT_TIMESTAMP WHERE tmdb_id=?");
-            $update->execute([$bio, $profile_path, $popularity, $tmdb_id]);
+            // Update the local cache.
+            $actorRepository->upsert([
+                'popularity' => $popularity
+            ]);
         }
     }
 } else {
-    // daca actorul nu este in baza de date, incercam sa il cautam cu TMDB API
+    // If the actor isn\'t in our DB, fetch their data from the TMDB API.
     try {
+        // Fetch by TMDB ID if provided, otherwise search by name.
         if ($tmdb_id_param > 0) {
             $tmdb_id = $tmdb_id_param;
-            $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
+            $tmdb_data = $tmdbService->getActorDetails($tmdb_id);
         } else {
-            $actor = searchActorTmdb($actor_name, $api_key);
+            $actor = $tmdbService->searchActor($actor_name);
             if (!$actor) {
-                die('Actor not found in TMDB database.');
+                header("Location: /searchActor/not-found");
+                exit;
             }
             $tmdb_id = $actor['id'];
-            $tmdb_data = getActorDetailsTmdb($tmdb_id, $api_key);
+            $tmdb_data = $tmdbService->getActorDetails($tmdb_id);
         }
         
         if (!$tmdb_data) {
             die('Could not retrieve actor details from TMDB.');
         }
         
-        // verificam daca actorul exista deja in baza de date dupa ID-ul TMDB
-        $actor_db = findActorInDatabase($db, $tmdb_id);
+        // Check if the actor (by TMDB ID) is already in our database.
+        // This can happen if they were added with a different name variation.
+        $actor_db = $actorRepository->findByTmdbId($tmdb_id);
         if ($actor_db) {
+            // Redirect to the canonical URL to avoid duplicate content.
             header("Location: /actor_profile?tmdb_id=" . $tmdb_id);
             exit;
         }
         
-        // salvam datele actorului in baza de date
+        // Save the new actor\'s data to our database.
         $actor_name = $tmdb_data['name'] ?? '';
         $profile_path = $tmdb_data['profile_path'] ?? '';
         $bio = $tmdb_data['biography'] ?? '';
         $popularity = $tmdb_data['popularity'] ?? '';
         
-        $insert = $db->prepare("INSERT INTO actors (full_name, tmdb_id, bio, profile_path, popularity, last_updated) 
-                                VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
-        $insert->execute([$actor_name, $tmdb_id, $bio, $profile_path, $popularity]);
+        $actorRepository->upsert([
+            'tmdb_id' => $tmdb_id,
+            'full_name' => $actor_name,
+            'bio' => $bio,
+            'profile_path' => $profile_path,
+            'popularity' => $popularity
+        ]);
     } catch (PDOException $e) {
-        // daca apare o eroare la interogarea TMDB, incercam sa gasim actorul in baza de date
-        $actor_db = findActorInDatabase($db, $tmdb_id);
+        // If the TMDB API fails, fall back to the local database just in case.
+        $actor_db = $actorRepository->findByTmdbId($tmdb_id);
         if ($actor_db) {
-            $actor_name = $actor_db['full_name'];
-            $profile_path = $actor_db['profile_path'];
-            $bio = $actor_db['bio'];
             $popularity = $actor_db['popularity'];
         } else {
-            die('Error processing actor: ' . $e->getMessage());
+            // If we have no data at all, we can\'t proceed.
+            die('Could not retrieve actor information.');
         }
     }
 }
 
-// pregatim datele pentru afisare
+// Prepare data for the view.
 $tmdb_link = "https://www.themoviedb.org/person/$tmdb_id";
-$profile_path = getProfileImageUrl($profile_path);
+$profile_path = $tmdbService->getProfileImageUrl($profile_path);
 
-// informatii aditionale
-$awards = getActorAwards($db, $actor_name);
-$movies = getActorMovies($tmdb_id, $api_key, 4);
-$news = getActorNews($actor_name);
+// Gather additional data for the profile page.
+$awards = $actorRepository->getAwards($actor_name);
+$movies = $tmdbService->getActorMovies($tmdb_id, 4); // Get up to 4 popular movies.
+$news = NewsService::getActorNews($actor_name);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -114,7 +131,7 @@ $news = getActorNews($actor_name);
     <link rel="stylesheet" href="/assets/css/footer.css">
 </head>
 <body>
-    <?php include '../../src/includes/navbar.php'; ?>
+    <?php include '../../src/Views/Components/Navbar.php'; ?>
     <div class="page-wrapper" style="padding-top: 60px;">
         <div class="container">
             <div class="main-content">
@@ -140,8 +157,11 @@ $news = getActorNews($actor_name);
                                 <?php endif; ?>
                             </div>
                         </div>
+                        <!-- Awards Display Logic -->
                         <div class="awards-section">
                             <h2>Screen Actors Guild Awards</h2>
+                            <!-- Awards are pulled from local database -->
+                            <!-- Each award shows year, category, and show (if applicable) -->
                             <?php if (count($awards)): ?>
                                 <ul class="awards-list">
                                     <?php foreach ($awards as $a): ?>
@@ -159,8 +179,11 @@ $news = getActorNews($actor_name);
                             <?php endif; ?>
                         </div>
                         
+                        <!-- Movie Credits Display -->
                         <div class="movies-section">
                             <h2>Popular Movies</h2>
+                            <!-- Movies pulled from TMDB API -->
+                            <!-- Shows poster, title, year and character name -->
                             <?php if (count($movies)): ?>
                                 <ul class="movies-list">
                                     <?php foreach ($movies as $movie): ?>
@@ -218,6 +241,6 @@ $news = getActorNews($actor_name);
         </div>
     </div>
 
-    <?php include '../../src/includes/footer.php'; ?>
+    <?php include '../../src/Views/Components/Footer.php'; ?>
 </body>
 </html>
