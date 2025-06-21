@@ -116,7 +116,7 @@ $profile_path = $tmdbService->getProfileImageUrl($profile_path);
 
 // Gather additional data for the profile page.
 $awards = $actorRepository->getAwards($actor_name);
-$movies = $tmdbService->getActorMovies($tmdb_id, 4); // Get up to 4 popular movies.
+$movies = $tmdbService->getActorMovies($tmdb_id, 6); // Get up to 6 popular movies.
 $news = NewsService::getActorNews($actor_name);
 ?>
 <!DOCTYPE html>

@@ -24,8 +24,8 @@ class NewsService
                     'pubDate' => (string)$item->pubDate
                 ];
                 
-                // Limit to 8 articles
-                if (count($news) >= 8) {
+                // Limit to 10 articles
+                if (count($news) >= 10) {
                     break;
                 }
             }
