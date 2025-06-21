@@ -9,6 +9,7 @@ RewriteRule ^login/?$ pages/login.php [L]
 RewriteRule ^logout/?$ pages/logout.php [L]
 RewriteRule ^admin/?$ admin.php [L]
 RewriteRule ^reset-password/?$ pages/reset_password.php [L]
+RewriteRule ^about/?$ pages/README.html [L]
 
 # Route for editing a user
 RewriteRule ^admin/user/edit/([0-9]+)/?$ admin/edit_user.php?id=$1 [L,QSA]
