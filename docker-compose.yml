@@ -1,21 +1,6 @@
 services:
   app:
-    build: 
-      context: .
-      args:
-        TMDB_API_KEY: ${TMDB_API_KEY}
-        TMDB_API_BASE_URL: ${TMDB_API_BASE_URL}
-        DATABASE_PATH: ${DATABASE_PATH}
-        CSV_PATH: ${CSV_PATH}
-        SMTP_HOST: ${SMTP_HOST}
-        SMTP_PORT: ${SMTP_PORT}
-        SMTP_USERNAME: ${SMTP_USERNAME}
-        SMTP_PASSWORD: ${SMTP_PASSWORD}
-        SMTP_ENCRYPTION: ${SMTP_ENCRYPTION}
-        SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL}
-        SMTP_FROM_NAME: ${SMTP_FROM_NAME}
-        APP_NAME: ${APP_NAME}
-        APP_URL: ${APP_URL}
+    build: .
     ports:
       - "30112:80"
     env_file:
@@ -29,9 +14,9 @@ services:
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
-      SMTP_ENCRYPTION: ${SMTP_ENCRYPTION}
       SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME}
+      SMTP_ENCRYPTION: ${SMTP_ENCRYPTION}
       APP_NAME: ${APP_NAME}
       APP_URL: ${APP_URL}
     volumes:
