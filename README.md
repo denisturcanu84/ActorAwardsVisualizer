@@ -156,5 +156,3 @@ A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML,
 - Charts: [Chart.js](https://www.chartjs.org/)
 
 ---
-
-If you need this in Scholarly HTML or another format, let me know!
