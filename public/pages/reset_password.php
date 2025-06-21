@@ -12,7 +12,7 @@
  * - secure token generation
  * - made sure to not reveal if email exists in the system
  */
-require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Services\DatabaseService;
 use ActorAwards\Services\UserService;
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // attempt password reset with token
                 if ($userService->resetPassword($reset_token, $new_password)) {
-                    $success = 'Password reset successfully! You can now <a href="login.php">log in</a> with your new password.';
+                    $success = 'Password reset successfully! You can now <a href="/login">log in</a> with your new password.';
                     $step = 'complete'; // mark reset as complete
                 } else {
                     $error = 'Invalid or expired reset token.';
@@ -107,7 +107,7 @@ $csrf_token = Helpers::generateCsrfToken();
     <link rel="stylesheet" href="/assets/css/resetpass.css">
 </head>
 <body>
-    <?php include __DIR__ . '/../src/Views/Components/Navbar.php'; ?>
+    <?php include __DIR__ . '/../../src/Views/Components/Navbar.php'; ?>
 
     <div class="auth-container">
         <div class="auth-header">
@@ -160,10 +160,10 @@ $csrf_token = Helpers::generateCsrfToken();
         <?php endif; ?>
         
         <div class="back-link">
-            <a href="login.php">← Back to Login</a>
+            <a href="/login">← Back to Login</a>
         </div>
     </div>
 
-    <?php include __DIR__ . '/../src/Views/Components/Footer.php'; ?>
+    <?php include __DIR__ . '/../../src/Views/Components/Footer.php'; ?>
 </body>
 </html>

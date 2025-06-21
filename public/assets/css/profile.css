@@ -1,0 +1,87 @@
+/* Profile Page Specific Styles */
+
+.profile-container {
+    max-width: 800px;
+    margin: var(--spacing) auto;
+    padding: 0 1.5rem;
+}
+
+.profile-card {
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    margin-bottom: var(--spacing);
+}
+
+.profile-card h2 {
+    font-size: var(--h2-size);
+    margin: 0 0 1.5rem 0;
+    color: var(--text-color);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.info-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    height: 100%;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.message {
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.message.error {
+    background-color: rgba(248, 215, 218, 0.95);
+    color: #721c24;
+    border: 1px solid rgba(245, 198, 203, 0.95);
+}
+
+@media (min-width: 600px) {
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

@@ -247,15 +247,15 @@ function return_bytes($val) {
                         <tbody>
                             <?php foreach ($users as $user): ?>
                             <tr id="user-row-<?php echo $user['id']; ?>">
-                                <td>
+                                <td data-label="Username">
                                     <span class="user-display" id="username-display-<?php echo $user['id']; ?>"><?php echo htmlspecialchars($user['username']); ?></span>
                                     <input type="text" class="user-edit-input" id="username-input-<?php echo $user['id']; ?>" value="<?php echo htmlspecialchars($user['username']); ?>" style="display: none;">
                                 </td>
-                                <td>
+                                <td data-label="Email">
                                     <span class="user-display" id="email-display-<?php echo $user['id']; ?>"><?php echo htmlspecialchars($user['email']); ?></span>
                                     <input type="email" class="user-edit-input" id="email-input-<?php echo $user['id']; ?>" value="<?php echo htmlspecialchars($user['email']); ?>" style="display: none;">
                                 </td>
-                                <td>
+                                <td data-label="Role">
                                     <span class="user-display" id="role-display-<?php echo $user['id']; ?>">
                                         <span class="role-badge <?php echo $user['role']; ?>"><?php echo ucfirst($user['role']); ?></span>
                                     </span>
@@ -264,8 +264,8 @@ function return_bytes($val) {
                                         <option value="admin" <?php echo $user['role'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
                                     </select>
                                 </td>
-                                <td><?php echo date('M j, Y', strtotime($user['created_at'])); ?></td>
-                                <td class="user-actions">
+                                <td data-label="Created"><?php echo date('M j, Y', strtotime($user['created_at'])); ?></td>
+                                <td class="user-actions" data-label="Actions">
                                     <a href="/admin/user/edit/<?php echo $user['id']; ?>/" class="btn btn-edit">Edit</a>
                                     <?php if ($user['role'] !== 'admin'): ?>
                                         <form method="POST" action="/admin.php" style="display: inline-block;">

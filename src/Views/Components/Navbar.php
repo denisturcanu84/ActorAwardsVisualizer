@@ -6,7 +6,7 @@
          3. User actions (right side) -->
     <div class="navbar-container">
         <a href="/" class="navbar-brand">
-            <i class="fas fa-film"></i> Actor Awards Visualizer
+            </i> Actor Awards Visualizer
         </a>
         
         <!-- Mobile menu toggle button - appears on small screens -->
@@ -31,8 +31,9 @@
                 <!-- Check if user is logged in using session variable -->
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <div class="user-info">
-                        <i class="fas fa-user-circle"></i>
-                        <span class="username">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                        <a href="/profile.php" class="user-profile-link">
+                            <i class="fas fa-user-circle"></i>
+                        </a>
                     </div>
                     <div class="user-actions">
                         <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']): ?>
@@ -51,16 +52,4 @@
 </nav>
 
 <!-- JavaScript for mobile menu toggle functionality -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const navbarToggle = document.getElementById('navbar-toggle');
-    const navbarMenu = document.getElementById('navbar-menu');
-
-    if (navbarToggle && navbarMenu) {
-        navbarToggle.addEventListener('click', () => {
-            navbarToggle.classList.toggle('active');
-            navbarMenu.classList.toggle('active');
-        });
-    }
-});
-</script>
+<script src="/assets/js/navbar.js" defer></script>

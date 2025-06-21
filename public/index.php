@@ -68,19 +68,19 @@ require_once __DIR__ . '/../src/bootstrap.php'; // loads all required dependenci
                 <h2>Quick Overview</h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-number">5,900+</div>
+                        <div class="stat-number">5,700+</div>
                         <div class="stat-label">Total Nominations</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">450+</div>
+                        <div class="stat-number">600+</div>
                         <div class="stat-label">Unique Actors</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">25</div>
+                        <div class="stat-number">45+</div>
                         <div class="stat-label">Award Categories</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">40+</div>
+                        <div class="stat-number">60+</div>
                         <div class="stat-label">Years of Data</div>
                     </div>
                 </div>

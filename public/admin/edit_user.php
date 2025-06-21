@@ -109,7 +109,7 @@ if (!$user) {
             <h2>User Details</h2>
             <div class="admin-section-content">
                 <div class="user-form-container">
-                    <form method="post" action="/user/edit/<?php echo $user['id']; ?>" class="user-form">
+                    <form method="post" action="/admin/user/edit/<?php echo $user['id']; ?>" class="user-form">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         <div class="form-row">
                             <label for="username">Username</label>

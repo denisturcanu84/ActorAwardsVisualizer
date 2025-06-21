@@ -8,7 +8,7 @@
  * - password hashing
  * - input validation
  */
-require_once __DIR__ . '/../src/bootstrap.php';
+require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Services\DatabaseService;
 use ActorAwards\Services\UserService;
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Login failed. Please try again.';
             }
         }
-    //handles registration form submission
+    // handles registration form submission
     } elseif ($action === 'register') {
         $username = trim($_POST['username'] ?? '');
         $email = trim($_POST['email'] ?? '');
@@ -241,7 +241,7 @@ $csrf_token = Helpers::generateCsrfToken();
     </style>
 </head>
 <body>
-    <?php include __DIR__ . '/../src/Views/Components/Navbar.php'; ?>
+    <?php include __DIR__ . '/../../src/Views/Components/Navbar.php'; ?>
 
     
     <div class="auth-container">
@@ -320,7 +320,7 @@ $csrf_token = Helpers::generateCsrfToken();
         </div>
     </div>
 
-    <?php include __DIR__ . '/../src/Views/Components/Footer.php'; ?>
+    <?php include __DIR__ . '/../../src/Views/Components/Footer.php'; ?>
 
     <!-- this script handles switching between login and registration forms without reloading the page -->
     <script>

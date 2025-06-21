@@ -124,8 +124,8 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    flex-shrink: 0;
-    min-width: fit-content;
+    flex-shrink: 1;
+    min-width: 0;
     margin-left: 1rem;
 }
 
@@ -137,8 +137,8 @@
     color: #ffffff;
     font-size: 0.9rem;
     padding: 0.5rem;
-    max-width: 200px;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    min-width: 0;
 }
 
 .user-info i {
@@ -150,7 +150,14 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 150px;
+}
+
+.user-profile-link {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .user-actions {
@@ -191,6 +198,18 @@
     background: rgba(255, 193, 7, 0.3);
     border-color: rgba(255, 193, 7, 0.5);
     color: #ffffff;
+}
+
+@media (max-width: 1400px) and (min-width: 1071px) {
+    .nav-link span, .username {
+        display: none;
+    }
+    .navbar-nav {
+        gap: 0.5rem;
+    }
+    .nav-link {
+        padding: 0.5rem 0.75rem;
+    }
 }
 
 /* Mobile styles */
@@ -239,7 +258,11 @@
     .nav-link:last-child {
         border-bottom: none;
     }
-    
+
+    .nav-link span {
+        display: inline-block;
+    }
+
     .navbar-user {
         margin-top: 1rem;
         padding-top: 1rem;
@@ -262,8 +285,9 @@
         text-overflow: clip;
         white-space: normal;
         word-break: break-word;
+        display: inline-block;
     }
-    
+
     .user-actions {
         gap: 1rem;
         flex-direction: column;
@@ -282,10 +306,9 @@
 /* Large screen optimizations */
 @media (min-width: 1071px) {
     .navbar-container {
-        max-width: 1400px;
         padding: 0 2rem;
     }
-    
+
     .navbar-nav {
         gap: 2rem;
     }
@@ -300,22 +323,6 @@
     
     .username {
         max-width: 200px;
-    }
-}
-
-/* Extra wide screen support */
-@media (min-width: 1600px) {
-    .navbar-container {
-        max-width: none;
-        padding: 0 3rem;
-    }
-    
-    .user-info {
-        max-width: 300px;
-    }
-    
-    .username {
-        max-width: 250px;
     }
 }
 
