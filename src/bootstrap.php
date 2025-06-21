@@ -20,6 +20,7 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/Services/NewsService.php';
     require_once __DIR__ . '/Services/LoggingService.php';
     require_once __DIR__ . '/Repositories/ActorRepository.php';
+    require_once __DIR__ . '/Repositories/ProductionRepository.php';
     require_once __DIR__ . '/Middleware/AuthenticationMiddleware.php';
     require_once __DIR__ . '/Utils/Helpers.php';
     require_once __DIR__ . '/Exports/ExportHandler.php';

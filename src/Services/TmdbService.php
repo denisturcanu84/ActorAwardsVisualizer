@@ -231,4 +231,15 @@ class TmdbService
         // As a fallback (or if no year was given), search without the year.
         return $this->searchMovie($title) ?? $this->searchTvShow($title);
     }
+
+    public function getProductionDetails(int $tmdbId, string $productionType): array
+    {
+        if (strtolower($productionType) === 'movie') {
+            return $this->getMovieDetails($tmdbId);
+        } elseif (strtolower($productionType) === 'tv') {
+            return $this->getTvShowDetails($tmdbId);
+        }
+        
+        return []; // return empty array for unknown production types
+    }
 }
