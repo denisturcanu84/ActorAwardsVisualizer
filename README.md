@@ -149,12 +149,6 @@ A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML,
 
 ---
 
-## 📚 Further Documentation
-
-- See `documentation/documentation.md` for a detailed breakdown of requirements, user stories, and system architecture.
-
----
-
 ## 🖼️ Attribution
 
 - Actor images and data: [TMDB API](https://www.themoviedb.org/documentation/api)
