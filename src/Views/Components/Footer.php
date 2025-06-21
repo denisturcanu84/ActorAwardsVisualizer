@@ -1,7 +1,10 @@
-<!-- Main footer component - appears at bottom of every page -->
 <footer class="footer">
-        <div class="footer-content">
-            <!-- Container for all footer content including copyright and TMDB attribution -->
+        <div class="footer-content" style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Left side: About button -->
+            <div class="footer-left">
+                <a href="../../../README.html" class="footer-about-btn">About</a>
+            </div>
+            <!-- Center/right: Attribution and TMDB -->
             <div class="footer-attribution">
                 <p>&copy; 2025 Actor Awards Visualizer.</p>
                 <!-- TMDB attribution section - required by their API terms of service -->

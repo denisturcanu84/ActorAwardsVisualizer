@@ -81,6 +81,32 @@ body {
     color: var(--footer-link-hover);
 }
 
+.footer-left {
+    display: flex;
+    align-items: center;
+}
+
+.footer-about-btn {
+    display: inline-block;
+    background: #fff;
+    color: var(--footer-bg);
+    padding: 0.4em 1.1em;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95em;
+    text-decoration: none;
+    margin-right: 1.5em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    border: none;
+}
+
+.footer-about-btn:hover {
+    background: var(--footer-link);
+    color: var(--footer-bg);
+    transform: translateY(-2px);
+}
+
 @media (max-width: 480px) {
     .footer {
         padding: var(--spacing) 0;
@@ -98,5 +124,22 @@ body {
     
     .tmdb-logo {
         height: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5em;
+    }
+    .footer-left {
+        justify-content: flex-start;
+        margin-bottom: 0.5em;
+    }
+    .footer-about-btn {
+        margin-right: 0;
+        width: 100%;
+        text-align: left;
     }
 }
