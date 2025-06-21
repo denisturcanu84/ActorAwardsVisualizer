@@ -21,6 +21,7 @@ ARG SMTP_HOST
 ARG SMTP_PORT
 ARG SMTP_USERNAME
 ARG SMTP_PASSWORD
+ARG SMTP_ENCRYPTION
 ARG SMTP_FROM_EMAIL
 ARG SMTP_FROM_NAME
 ARG APP_NAME
@@ -40,6 +41,7 @@ RUN composer install --no-dev --optimize-autoloader \
         echo "SMTP_PORT=${SMTP_PORT}"; \
         echo "SMTP_USERNAME=${SMTP_USERNAME}"; \
         echo "SMTP_PASSWORD=${SMTP_PASSWORD}"; \
+        echo "SMTP_ENCRYPTION=${SMTP_ENCRYPTION}"; \
         echo "SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL}"; \
         if echo "${SMTP_FROM_NAME}" | grep -q " " && ! echo "${SMTP_FROM_NAME}" | grep -q "^\".*\"$"; then \
             echo "SMTP_FROM_NAME=\"${SMTP_FROM_NAME}\""; \
