@@ -5,10 +5,10 @@ ErrorDocument 404 /pages/404.html
 ErrorDocument 403 /pages/404.html
 
 # Specific routes for main pages
-RewriteRule ^login/?$ login.php [L]
-RewriteRule ^logout/?$ logout.php [L]
+RewriteRule ^login/?$ pages/login.php [L]
+RewriteRule ^logout/?$ pages/logout.php [L]
 RewriteRule ^admin/?$ admin.php [L]
-RewriteRule ^reset-password/?$ reset_password.php [L]
+RewriteRule ^reset-password/?$ pages/reset_password.php [L]
 
 # Route for editing a user
 RewriteRule ^admin/user/edit/([0-9]+)/?$ admin/edit_user.php?id=$1 [L,QSA]
