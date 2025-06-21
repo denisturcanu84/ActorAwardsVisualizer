@@ -28,7 +28,6 @@ A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML,
 - **phenx/php-svg-lib** – SVG export (open source)
 - **phpmailer/phpmailer** – email sending (open source)
 - **rosell-dk/webp-convert** – WebP export (open source)
-- **phpunit/phpunit** – testing (open source)
 - **PDO SQLite** – database (open source, built-in)
 - **Chart.js** – for statistics visualization (open source, via CDN)
 - **Font Awesome** – for icons (open source, via CDN)
@@ -119,7 +118,6 @@ A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML,
 - **Frontend**: HTML5, CSS3 (custom and modular), JavaScript (for charts and interactivity).
 - **APIs**: TMDB for actor and production data.
 - **Containerization**: Dockerfile and docker-compose for easy deployment.
-- **Testing**: PHPUnit for backend tests.
 
 ---
 
