@@ -7,7 +7,7 @@ ErrorDocument 403 /pages/404.html
 # Specific routes for main pages
 RewriteRule ^login/?$ pages/login.php [L]
 RewriteRule ^logout/?$ pages/logout.php [L]
-RewriteRule ^admin/?$ admin.php [L]
+RewriteRule ^admin/?$ /admin/admin.php [L]
 RewriteRule ^reset-password/?$ pages/reset_password.php [L]
 RewriteRule ^about/?$ pages/README.html [L]
 
