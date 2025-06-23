@@ -10,7 +10,8 @@ A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML,
 |------------------|-----------------|-----------------------------------------------------------------------------------------------------------------|
 | PageSpeed        | Mobile          | [Vezi raportul](https://pagespeed.web.dev/analysis/https-webproject-turcanu-live/rvfq9q1r5u?form_factor=mobile)   |
 | PageSpeed        | Desktop         | [Vezi raportul](https://pagespeed.web.dev/analysis/https-webproject-turcanu-live/rvfq9q1r5u?form_factor=desktop) |
-| Validare CSS     | W3C CSS         | [Vezi validarea](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fwebproject.turcanu.live&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en) |
+| CSS Validation    | W3C CSS         | [Vezi validarea](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fwebproject.turcanu.live&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en) |
+| Website Scanner  | pentest-tools   | [Vezi testul](https://pentest-tools.com/website-vulnerability-scanning/website-scanner/scans/tIyyJgbcWVUwMj0j?view_report=true) |
 
 
 ## 📜 License
