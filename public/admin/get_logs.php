@@ -6,7 +6,7 @@
  * Performs admin authentication checks before providing log data in JSON format.
  * Only shows the last 50 entries from each log file for security and performance.
  */
-require_once __DIR__ . '/../bootstrap.php';
+require_once '../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
 

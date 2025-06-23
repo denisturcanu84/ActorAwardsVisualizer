@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
 use ActorAwards\Services\DatabaseService;
@@ -35,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'download_db':
             $loggingService->logAccess('Database download requested');
-            require_once __DIR__ . '/../../src/Admin/export_db.php';
+            require_once __DIR__ . '/admin/export_db.php';
             exit;
             
         case 'backup_media':
             $loggingService->logAccess('Media backup requested');
-            require_once __DIR__ . '/../../src/Admin/backup_media.php';
+            require_once __DIR__ . '/admin/backup_media.php';
             exit;
             
         case 'create_user':
@@ -111,14 +111,14 @@ $memory_used_percent = round(($memory_usage / $memory_limit) * 100, 2);
 
 // Get recent errors from error log
 $error_log = [];
-$error_log_path = __DIR__ . '/../../logs/error.log';
+$error_log_path = __DIR__ . '/../logs/error.log';
 if (file_exists($error_log_path) && is_readable($error_log_path)) {
     $error_log = array_slice(file($error_log_path), -50);
     $error_log = array_map('trim', $error_log);
 } else {
     // Create logs directory if it doesn't exist
-    if (!file_exists(__DIR__ . '/../../logs')) {
-        mkdir(__DIR__ . '/../../logs', 0755, true);
+    if (!file_exists(__DIR__ . '/../logs')) {
+        mkdir(__DIR__ . '/../logs', 0755, true);
     }
     // Create empty error log file
     file_put_contents($error_log_path, '');
@@ -127,7 +127,7 @@ if (file_exists($error_log_path) && is_readable($error_log_path)) {
 
 // Get access log summary
 $access_log = [];
-$access_log_path = __DIR__ . '/../../logs/access.log';
+$access_log_path = __DIR__ . '/../logs/access.log';
 if (file_exists($access_log_path) && is_readable($access_log_path)) {
     $access_log = array_slice(file($access_log_path), -50);
     $access_log = array_map('trim', $access_log);
@@ -169,7 +169,7 @@ function return_bytes($val) {
     <link rel="stylesheet" href="/assets/css/footer.css">
 </head>
 <body>
-    <?php include __DIR__ . "/../../src/Views/Components/Navbar.php"; ?>
+    <?php include __DIR__ . "/../src/Views/Components/Navbar.php"; ?>
 
     <!-- Admin Header - Full Width -->
     <div class="admin-header">
@@ -363,7 +363,7 @@ function return_bytes($val) {
         </section>
     </div>
 
-    <?php include __DIR__ . '/../../src/Views/Components/Footer.php'; ?>
+    <?php include __DIR__ . '/../src/Views/Components/Footer.php'; ?>
 
 </body>
 </html>
