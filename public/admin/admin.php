@@ -35,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($action) {
         case 'download_db':
             $loggingService->logAccess('Database download requested');
-            require_once __DIR__ . '/../../Admin/export_db.php';
+            require_once __DIR__ . '/../../src/Admin/export_db.php';
             exit;
             
         case 'backup_media':
             $loggingService->logAccess('Media backup requested');
-            require_once __DIR__ . '/../../Admin/backup_media.php';
+            require_once __DIR__ . '/../../src/Admin/backup_media.php';
             exit;
             
         case 'create_user':
