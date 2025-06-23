@@ -7,12 +7,9 @@ use Exception;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// handles exporting data in different formats (CSV, WebP, SVG)
 class ExportHandler {
     private $db;
-    
-    // Sets up the handler with a database connection
-    public function __construct($database) {
+        public function __construct($database) {
         $this->db = $database;
     }
     
@@ -459,7 +456,6 @@ Available Image Formats:
     // Creates an SVG chart from the data
     private function exportSVG($data, $filename, $exportType) {
         // Make sure nothing else is trying to output
-        // Clear any output buffer
         while (ob_get_level()) {
             ob_end_clean();
         }
@@ -562,7 +558,6 @@ Available Image Formats:
             $svg .= '<text x="' . $labelX . '" y="' . $labelY . '" font-family="Arial, sans-serif" font-size="10" fill="#666666" text-anchor="middle">' . htmlspecialchars($label) . '</text>';
         }
         
-        // Legend
         $legendY = $padding + 40;
         $svg .= '<rect x="' . ($width - 200) . '" y="' . $legendY . '" width="20" height="15" fill="#4a90e2"/>';
         $svg .= '<text x="' . ($width - 175) . '" y="' . ($legendY + 12) . '" font-family="Arial, sans-serif" font-size="12" fill="#000000">Nominations</text>';
@@ -571,7 +566,7 @@ Available Image Formats:
         $svg .= '<text x="' . ($width - 175) . '" y="' . ($legendY + 37) . '" font-family="Arial, sans-serif" font-size="12" fill="#000000">Wins</text>';
         
         // Axis labels
-        $svg .= '<text x="' . ($width/2) . '" y="' . ($height - 10) . '" font-family="Arial, sans-serif" font-size="14" fill="#000000" text-anchor="middle">Categories/Years</text>';
+        $svg .= '<text x="'.($width/2).'" y="'.($height - 10).'" font-family="Arial, sans-serif" font-size="14" fill="#000000" text-anchor="middle">Categories/Years</text>';
         $svg .= '<text x="20" y="' . ($height/2) . '" font-family="Arial, sans-serif" font-size="14" fill="#000000" text-anchor="middle" transform="rotate(-90, 20, ' . ($height/2) . ')">Count</text>';
         
         $svg .= '</svg>';

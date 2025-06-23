@@ -2,30 +2,20 @@
 require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
-
-// Require login
 AuthenticationMiddleware::requireLogin();
 
 use ActorAwards\Services\DatabaseService;
 use ActorAwards\Services\TmdbService;
 use ActorAwards\Utils\Helpers;
 
-// debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// Initialize services.
 $db = DatabaseService::getConnection();
 $tmdbService = new TmdbService(TMDB_API_KEY);
 
-// Get filter values from request.
 $selectedYear = $_GET['year'] ?? $_POST['year'] ?? '';
 $selectedCategory = $_GET['category'] ?? $_POST['category'] ?? '';
 $selectedResult = $_GET['result'] ?? $_POST['result'] ?? '';
 $searchQuery = $_GET['search'] ?? $_POST['search'] ?? '';
 
-// Convert 'Won'/'Nominated' to DB boolean 'True'/'False'.
 $resultBoolean = null;
 if ($selectedResult === 'Won') {
     $resultBoolean = 'True';
@@ -33,7 +23,6 @@ if ($selectedResult === 'Won') {
     $resultBoolean = 'False';
 }
 
-// Pagination.
 $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 
 // Redirect POST to GET for bookmarkable URLs.
@@ -53,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Build the main query for nominations.
 $query = "SELECT a.*,
                  a.full_name,
                  ac.profile_path,
@@ -91,10 +79,8 @@ if ($searchQuery) {
     $params[] = "%{$searchQuery}%";
 }
 
-// --- Pagination ---
 $itemsPerPage = 10;
 
-// Count total results for pagination.
 $countSql = "SELECT COUNT(*)
              FROM awards a
              LEFT JOIN productions p ON a.tmdb_show_id = p.tmdb_id
@@ -175,7 +161,6 @@ $posterBaseUrl = $tmdbService->getPosterBaseUrl();
 <body>
   <?php include '../../src/Views/Components/Navbar.php'; ?>
   
-  <!-- page header -->
   <div class="page-header">
     <div class="container_header">
       <h1>Award Nominations</h1>
@@ -190,7 +175,6 @@ $posterBaseUrl = $tmdbService->getPosterBaseUrl();
   <div class="container">
     <div class="main-grid">
       <div class="side-panel">
-        <!-- filters section -->
         <div class="filters-section">
          <form class="filters-form" method="POST">
            <div class="filters-grid">
@@ -242,12 +226,10 @@ $posterBaseUrl = $tmdbService->getPosterBaseUrl();
       </div>
       
       <div class="content-panel">
-        <!-- results info -->
         <div class="results-info">
           <p>Showing <?php echo count($nominations); ?> of <?php echo $totalItems; ?> nominations</p>
         </div>
 
-        <!-- nominations list -->
         <div class="nominations-list">
          <?php if (empty($nominations)): ?>
              <div class="no-results">
@@ -261,7 +243,6 @@ $posterBaseUrl = $tmdbService->getPosterBaseUrl();
                    <?php
                    $actor_image = null;
                    
-                   // first try database
                    if (!empty($nomination['profile_path'])) {
                        $actor_image = $tmdbService->getProfileImageUrl($nomination['profile_path']);
                    }

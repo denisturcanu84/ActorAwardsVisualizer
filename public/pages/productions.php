@@ -6,10 +6,7 @@ use ActorAwards\Services\DatabaseService;
 use ActorAwards\Services\TmdbService;
 use ActorAwards\Repositories\ProductionRepository;
 
-// Make sure the user is logged in.
 AuthenticationMiddleware::requireLogin();
-
-// Set up our services.
 $db = DatabaseService::getConnection();
 $tmdbService = new TmdbService(TMDB_API_KEY);
 // The repo needs the TMDB service to grab missing images.
@@ -29,11 +26,9 @@ if ($selectedResult === 'Won') {
     $resultBoolean = 'False';
 }
 
-// Pagination.
 $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $itemsPerPage = 10;
 
-// Redirect POST to GET for bookmarkable URLs.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirect_params = [];
     if (!empty($_POST['year'])) { $redirect_params['year'] = $_POST['year']; }
@@ -58,14 +53,11 @@ $filters = [
     'search' => $searchQuery
 ];
 
-// Count total results for pagination.
 $totalItems = $productionRepository->countFilteredProductions($filters);
 $totalPages = ceil($totalItems / $itemsPerPage);
 $offset = ($currentPage - 1) * $itemsPerPage;
 
-// Get productions for the current page.
 $productions = $productionRepository->getFilteredProductions($filters, $itemsPerPage, $offset);
-
 $years = $productionRepository->getUniqueAwardYears();
 $categories = $productionRepository->getUniqueAwardCategories();
 $posterBaseUrl = $tmdbService->getPosterBaseUrl();

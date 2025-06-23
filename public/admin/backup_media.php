@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Media Backup Script
  *
  * Handles creation of ZIP archives containing media assets for backup purposes.
@@ -12,13 +12,10 @@ require_once __DIR__ . '/../../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
 
-// Verify admin privileges before allowing backup operation
-// Uses AuthenticationMiddleware to check user role and session
 AuthenticationMiddleware::requireAdmin();
 
-// Configure download headers for ZIP file
-// - Sets MIME type to application/zip
-// - Creates filename with timestamp for unique identification
+
+// -Creates filename with timestamp for unique identification
 header('Content-Type: application/zip');
 header('Content-Disposition: attachment; filename="media_backup_' . date('Y-m-d_H-i-s') . '.zip"');
 
@@ -33,8 +30,6 @@ if ($zip->open($tempFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) 
     exit('Could not create ZIP file');
 }
 
-// List of directories to include in backup
-// Currently backs up:
 // - public/assets/images (static media)
 // - public/assets/uploads (user uploads)
 $directories = [
@@ -46,7 +41,6 @@ $directories = [
 // $filesAdded tracks successful additions for empty backup detection
 $filesAdded = 0;
 foreach ($directories as $dir) {
-    // Only process directory if it exists
     if (file_exists($dir)) {
         // Create recursive iterator to scan all files in directory tree
         $iterator = new RecursiveIteratorIterator(
@@ -55,20 +49,17 @@ foreach ($directories as $dir) {
         );
 
         foreach ($iterator as $file) {
-            // Skip directories, only process files
             if (!$file->isDir()) {
                 $filePath = $file->getRealPath();
-                // Store files with relative paths inside ZIP
                 $relativePath = substr($filePath, strlen(__DIR__ . '/../../'));
                 $zip->addFile($filePath, $relativePath);
-                $filesAdded++; // Increment counter for each added file
+                $filesAdded++;
             }
         }
     }
 }
 
 // Handle empty backup case by adding informational file
-// Ensures ZIP is valid even when no media files exist
 if ($filesAdded === 0) {
     $zip->addFromString('README.txt', 'No media files found to backup at ' . date('Y-m-d H:i:s'));
 }
@@ -82,7 +73,6 @@ if (file_exists($tempFile)) {
     // Clean up temporary file after download
     unlink($tempFile);
 } else {
-    // Handle ZIP creation failure
     header('HTTP/1.1 500 Internal Server Error');
     exit('Backup file not found');
 }

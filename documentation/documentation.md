@@ -1,103 +1,148 @@
-Actor Awards Visualizer 
+# 🎬 ActorAwardsVisualizer
 
- 
+A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL. The project leverages open-source libraries and APIs, and all code is under a free license (MIT). All content respects Creative Commons terms.
 
-Limbaje: HTML, CSS, PHP, SQL 
+---
 
-API: TMDB (The movies database) 
+## 📜 License
 
-Librarii: 
+- **MIT License** – All source code is under the MIT license, ensuring it is free and open for modification and redistribution.
+- **Content** – All data and content provided by the application respect Creative Commons terms.
+- **Third-party assets** – Actor images and information are fetched from the [TMDB API](https://www.themoviedb.org/documentation/api), with proper attribution in the footer.
 
--libraries OPEN SOURCE pt CVS ,etc export 
+---
 
-Pagini: 
+## 📦 Dependencies
 
-1. Pagina principală (index.html) 
+- **vlucas/phpdotenv** – for environment variables
+- **TMDB API** – for actor images and info
+- **intervention/image** – image processing (open source)
+- **phenx/php-svg-lib** – SVG export (open source)
+- **phpmailer/phpmailer** – email sending (open source)
+- **rosell-dk/webp-convert** – WebP export (open source)
+- **PDO SQLite** – database (open source, built-in)
+- **Chart.js** – for statistics visualization (open source, via CDN)
+- **Font Awesome** – for icons (open source, via CDN)
 
-Scop: Prezentarea aplicației și oferirea unui punct de plecare. 
+---
 
-Conținut: 
+## 👥 Team Members
 
-Introducere despre proiect. 
+- Turcanu Denis Rafael
+- Meraru Ioan-Lucian
 
-Navigare către celelalte secțiuni (nominalizari, actori, producții, statistici). 
+---
 
- 
+## 📝 Main Features & Functionalities
 
-2. Pagina cu nominalizări (nominations.html) 
+### User-Facing Pages
 
-Scop: Vizualizarea actorilor nominalizați pe ani și categorii. 
+1. **Home Page**
+   - Introduction to the project and navigation to all main sections.
+   - Quick stats: total nominations, unique actors, award categories, years of data.
 
-Conținut: 
+2. **Nominations**
+   - Browse and filter nominations by year, category, actor, or production.
+   - Links to actor and production profiles.
 
-Filtrare după an, categorie, actor, producție. 
+3. **Actor Profile**
+   - Detailed biography and award history for each actor (from TMDB and other sources).
+   - List of SAG nominations and wins.
+   - Actor-specific statistics (e.g., consecutive nominations).
+   - News about the actor from external sources.
 
-Linkuri către profilul actorului / producției. 
+4. **Production Profile**
+   - Details about movies/TV shows (from TMDB).
+   - List of involved actors and associated SAG nominations.
 
-Shape 
+5. **Statistics**
+   - At least three types of visualizations/statistics:
+     - Distribution of nominations by genre.
+     - Most nominated actors.
+     - Evolution of nominations over the years.
+   - Export statistics as CSV, WebP, or SVG.
 
-3. Pagina actorului (actor.html) 
+6. **Admin Dashboard**
+   - User management (create, edit, delete users, assign roles).
+   - System health and logs (disk/memory usage, error/access logs).
+   - Database and media backup/export.
 
-Scop: Detalii despre un actor (din TMDb și alte surse). 
+7. **Authentication**
+   - Secure login and registration (CSRF protection, password hashing, input validation).
+   - Password reset with secure token and email delivery.
+   - Role-based access (admin/user).
 
-Conținut: 
+8. **Settings (from Navbar)**
+   - Light/Dark mode (planned).
+   - Login/Logout.
 
-Biografie. 
+9. **Error/Fallback Page (404)**
+   - Friendly error page for missing or incorrect routes.
 
-Listă de nominalizări și câștiguri SAG. 
+---
 
-Vizualizări specifice actorului (ex: număr de nominalizări în ani consecutivi). 
+## 🖥️ User Interaction & UX
 
-Știri legate de actor (din surse externe configurabile). 
+- **Navigation**: Responsive navbar with links to all main sections. User actions (login/logout/admin) are context-aware.
+- **Forms**: All forms (login, registration, password reset, admin user management) have validation, CSRF protection, and clear feedback.
+- **Filtering**: Nominations and productions can be filtered by multiple criteria.
+- **Statistics**: Interactive charts (Chart.js) with export options.
+- **Accessibility**: Focus states, keyboard navigation, and ARIA roles where appropriate.
+- **Mobile Support**: All pages are fully responsive, with layouts adapting for mobile and tablet screens.
 
- 
+---
 
-4. Pagina producției (production.html) 
+## 🎨 Design Motivation
 
-Scop: Detalii despre producția cinematografică. 
+- **Modern, Clean UI**: Uses a palette of blue and white, with gradients for headers and cards, and rounded corners for a friendly look.
+- **Consistency**: Common CSS variables and components ensure a unified look across all pages.
+- **Responsiveness**: Grid and flex layouts adapt to all screen sizes.
+- **Accessibility**: High-contrast colors, focus states, and semantic HTML.
+- **Attribution**: TMDB logo and link are always visible in the footer, as required by their API terms.
 
-Conținut: 
+**Design inspiration**: The interface is inspired by modern dashboard and analytics tools, focusing on clarity, ease of navigation, and data visualization. The use of cards, grids, and clear section headers helps users quickly find and interpret information.
 
-Informații din TMDb. 
+---
 
-Actori implicați. 
+## 🏗️ Technical Stack
 
-Nominalizări SAG asociate. 
+- **Backend**: PHP 8.1+, SQLite, Composer for dependency management.
+- **Frontend**: HTML5, CSS3 (custom and modular), JavaScript (for charts and interactivity).
+- **APIs**: TMDB for actor and production data.
+- **Containerization**: Dockerfile and docker-compose for easy deployment.
 
- 
+---
 
-5. Pagina de statistici și vizualizări (stats.html) 
+## 🛡️ Security
 
-Scop: Generarea și afișarea celor minim 3 tipuri de vizualizări/statistici. 
+- All user input is validated and sanitized.
+- Passwords are hashed using secure algorithms.
+- CSRF tokens are used for all forms.
+- Sessions are securely managed.
+- Admin actions are protected by role-based access control.
 
-Exemple: 
+---
 
-Distribuția nominalizărilor pe genuri cinematografice. 
+## 📤 Export & Backup
 
-Actori cu cele mai multe nominalizări. 
+- **Statistics**: Exportable as CSV, WebP, or SVG.
+- **Database**: Downloadable from the admin dashboard.
+- **Media**: Backup script for all uploaded/static media.
 
-Evoluția numărului de nominalizări pe ani. 
+---
 
-Funcționalități: 
+## 📝 Requirements & Standards
 
-Export în CSV, WebP, SVG. 
+- All code and dependencies are under free/open licenses.
+- All content respects Creative Commons terms.
+- The project follows the IEEE System Requirements Specification Template for documenting requirements (see documentation/documentation.md for details).
 
- 
+---
 
-6. Pagina de eroare / fallback (404.html) 
+## 🖼️ Attribution
 
- (opțional) 
+- Actor images and data: [TMDB API](https://www.themoviedb.org/documentation/api)
+- Icons: [Font Awesome](https://fontawesome.com/)
+- Charts: [Chart.js](https://www.chartjs.org/)
 
-Pentru rutele greșite sau lipsă de conținut. 
-
- 
-
-7. Settings (se deschide in pop-up din navbar) 
-
-Light/Dark mode 
-
-Logout/Sign in(cand apesi te duce in pagina (sau pop-up) de Sign up/Sign in) 
-
- 
-
- 
+---

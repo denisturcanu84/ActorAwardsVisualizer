@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Admin Log Viewer Script
  *
  * Retrieves and displays Apache server logs (error and access) for admin monitoring.

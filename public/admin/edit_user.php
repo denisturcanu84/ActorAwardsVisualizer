@@ -53,7 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $db->prepare("UPDATE users SET username = ?, email = ?, role = ? WHERE id = ?");
             if ($stmt->execute([$username, $email, $role, $userId])) {
                 $loggingService->logAccess("Admin updated user ID: $userId");
-                // redirects back to the admin page with a success message
                 $_SESSION['admin_message'] = "User updated successfully.";
                 $_SESSION['admin_message_type'] = 'success';
                 header("Location: " . ADMIN_DASHBOARD_URL);

@@ -5,7 +5,6 @@ require_once '../src/bootstrap.php';
 use ActorAwards\Middleware\AuthenticationMiddleware;
 use ActorAwards\Services\DatabaseService;
 
-// Security: Verify user has admin privileges before proceeding
 AuthenticationMiddleware::requireAdmin();
 
 // Set response type to JSON for API endpoint
