@@ -1,6 +1,6 @@
 <?php
 // Load application bootstrap file containing autoloader and config
-require_once '../src/bootstrap.php';
+require_once __DIR__ . '/../src/bootstrap.php';
 
 use ActorAwards\Middleware\AuthenticationMiddleware;
 use ActorAwards\Services\DatabaseService;
