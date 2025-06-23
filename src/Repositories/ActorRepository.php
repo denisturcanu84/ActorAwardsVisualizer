@@ -4,11 +4,7 @@ namespace ActorAwards\Repositories;
 
 use PDO;
 
-/**
- * Repository class for actor data operations
- *
- * This follows the Repository pattern which acts like a middleman between the app and database
- */
+
 class ActorRepository
 {
     private PDO $db;
@@ -18,10 +14,7 @@ class ActorRepository
         $this->db = $database;
     }
     
-    /**
-     * Finds an actor by their TMDB ID
-     * Returns either the actor data or null if not found.
-     */
+
     public function findByTmdbId(int $tmdbId): ?array
     {
         $stmt = $this->db->prepare("SELECT * FROM actors WHERE tmdb_id = ?");

@@ -4,7 +4,6 @@ namespace ActorAwards\Services;
 
 /**
  * Handles all interactions with The Movie Database (TMDB) API
- *
  * This service class manages API requests to TMDB for actor/movie data
  * and handles image URL construction.
  */
@@ -25,11 +24,8 @@ class TmdbService
     
     /**
      * Search for an actor by name using TMDB's /search/person endpoint
-     *
      * @param string $name Actor's name to search for
      * @return array|null First matching actor result or null if not found
-     *
-     * Example response contains: id, name, popularity, profile_path, known_for (movies)
      */
     public function searchActor(string $name): ?array
     {
@@ -37,17 +33,13 @@ class TmdbService
         $url = $this->baseUrl . '/search/person' . self::API_KEY_PARAM . $this->apiKey . self::QUERY_PARAM . urlencode($name);
         $json = @file_get_contents($url); // @ suppresses warnings if request fails
         $data = $json ? json_decode($json, true) : [];
-        return $data['results'][0] ?? null; // Return first result or null
+        return $data['results'][0] ?? null;
     }
     
     /**
      * Gets detailed info about an actor using TMDB's /person/{id} endpoint
-     *
      * @param int $tmdbId TMDB's unique actor ID
      * @return array Actor details or empty array if request fails
-     *
-     * Returns comprehensive info including biography, birthday, deathday,
-     * place of birth, and filmography count.
      */
     public function getActorDetails(int $tmdbId): array
     {
@@ -240,6 +232,6 @@ class TmdbService
             return $this->getTvShowDetails($tmdbId);
         }
         
-        return []; // return empty array for unknown production types
+        return [];
     }
 }
