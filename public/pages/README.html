@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" prefix="schema: http://schema.org/">
+<head>
+  <meta charset="UTF-8">
+  <title>ActorAwardsVisualizer – Scholarly HTML Report</title>
+  <meta name="license" content="MIT">
+  <meta name="author" content="Turcanu Denis Rafael, Meraru Ioan-Lucian">
+  <meta name="description" content="A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL.">
+  <link rel="license" href="https://opensource.org/licenses/MIT">
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "ActorAwardsVisualizer",
+    "description": "A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL.",
+    "license": "https://opensource.org/licenses/MIT",
+    "codeRepository": "https://github.com/denisturcanu84/ActorAwardsVisualizer",
+    "programmingLanguage": ["PHP", "HTML", "CSS", "SQL"],
+    "author": [
+      {"@type": "Person", "name": "Turcanu Denis Rafael"},
+      {"@type": "Person", "name": "Meraru Ioan-Lucian"}
+    ]
+  }
+  </script>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2em; background: #f9f9f9; color: #222; }
+    h1, h2, h3 { color: #4A90E2; }
+    section { margin-bottom: 2em; }
+    dl { background: #fff; padding: 1em; border-radius: 8px; }
+    dt { font-weight: bold; margin-top: 1em; }
+    dd { margin-left: 1em; margin-bottom: 1em; }
+    code { background: #eee; padding: 2px 4px; border-radius: 4px; }
+    .attribution { font-size: 0.95em; color: #555; }
+  </style>
+</head>
+<body>
+<article typeof="schema:SoftwareSourceCode">
+  <header>
+    <h1>🎬 ActorAwardsVisualizer</h1>
+    <p>A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL. The project leverages open-source libraries and APIs, and all code is under a free license (MIT). All content respects Creative Commons terms.</p>
+    <p>🔗 <strong>Source Code:</strong> <a href="https://github.com/denisturcanu84/ActorAwardsVisualizer">View on GitHub</a></p>
+  </header>
+
+  <section id="license">
+    <h2>📜 License</h2>
+    <dl>
+      <dt>MIT License</dt>
+      <dd>All source code is under the <a href="https://opensource.org/licenses/MIT">MIT license</a>, ensuring it is free and open for modification and redistribution.</dd>
+      <dt>Content</dt>
+      <dd>All data and content provided by the application respect Creative Commons terms.</dd>
+      <dt>Third-party assets</dt>
+      <dd>Actor images and information are fetched from the <a href="https://www.themoviedb.org/documentation/api">TMDB API</a>, with proper attribution in the footer.</dd>
+    </dl>
+  </section>
+
+  <section id="dependencies">
+    <h2>📦 Dependencies</h2>
+    <ul>
+      <li><b>vlucas/phpdotenv</b> – for environment variables</li>
+      <li><b>TMDB API</b> – for actor images and info</li>
+      <li><b>intervention/image</b> – image processing (open source)</li>
+      <li><b>phenx/php-svg-lib</b> – SVG export (open source)</li>
+      <li><b>phpmailer/phpmailer</b> – email sending (open source)</li>
+      <li><b>rosell-dk/webp-convert</b> – WebP export (open source)</li>
+      <li><b>PDO SQLite</b> – database (open source, built-in)</li>
+      <li><b>Chart.js</b> – for statistics visualization (open source, via CDN)</li>
+      <li><b>Font Awesome</b> – for icons (open source, via CDN)</li>
+    </ul>
+  </section>
+
+  <section id="team">
+    <h2>👥 Team Members</h2>
+    <ul>
+      <li>Turcanu Denis Rafael</li>
+      <li>Meraru Ioan-Lucian</li>
+    </ul>
+  </section>
+
+  <section id="features">
+    <h2>📝 Main Features &amp; Functionalities</h2>
+    <h3>User-Facing Pages</h3>
+    <ol>
+      <li><b>Home Page</b>
+        <ul>
+          <li>Introduction to the project and navigation to all main sections.</li>
+          <li>Quick stats: total nominations, unique actors, award categories, years of data.</li>
+        </ul>
+      </li>
+      <li><b>Nominations</b>
+        <ul>
+          <li>Browse and filter nominations by year, category, actor, or production.</li>
+          <li>Links to actor and production profiles.</li>
+        </ul>
+      </li>
+      <li><b>Actor Profile</b>
+        <ul>
+          <li>Detailed biography and award history for each actor (from TMDB and other sources).</li>
+          <li>List of SAG nominations and wins.</li>
+          <li>Actor-specific statistics (e.g., consecutive nominations).</li>
+          <li>News about the actor from external sources.</li>
+        </ul>
+      </li>
+      <li><b>Production Profile</b>
+        <ul>
+          <li>Details about movies/TV shows (from TMDB).</li>
+          <li>List of involved actors and associated SAG nominations.</li>
+        </ul>
+      </li>
+      <li><b>Statistics</b>
+        <ul>
+          <li>At least three types of visualizations/statistics:
+            <ul>
+              <li>Distribution of nominations by genre.</li>
+              <li>Most nominated actors.</li>
+              <li>Evolution of nominations over the years.</li>
+            </ul>
+          </li>
+          <li>Export statistics as CSV, WebP, or SVG.</li>
+        </ul>
+      </li>
+      <li><b>Admin Dashboard</b>
+        <ul>
+          <li>User management (create, edit, delete users, assign roles).</li>
+          <li>System health and logs (disk/memory usage, error/access logs).</li>
+          <li>Database and media backup/export.</li>
+        </ul>
+      </li>
+      <li><b>Authentication</b>
+        <ul>
+          <li>Secure login and registration (CSRF protection, password hashing, input validation).</li>
+          <li>Password reset with secure token and email delivery.</li>
+          <li>Role-based access (admin/user).</li>
+        </ul>
+      </li>
+      <li><b>Settings (from Navbar)</b>
+        <ul>
+          <li>Light/Dark mode (planned).</li>
+          <li>Login/Logout.</li>
+        </ul>
+      </li>
+      <li><b>Error/Fallback Page (404)</b>
+        <ul>
+          <li>Friendly error page for missing or incorrect routes.</li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <section id="ux">
+    <h2>🖥️ User Interaction &amp; UX</h2>
+    <ul>
+      <li><b>Navigation</b>: Responsive navbar with links to all main sections. User actions (login/logout/admin) are context-aware.</li>
+      <li><b>Forms</b>: All forms (login, registration, password reset, admin user management) have validation, CSRF protection, and clear feedback.</li>
+      <li><b>Filtering</b>: Nominations and productions can be filtered by multiple criteria.</li>
+      <li><b>Statistics</b>: Interactive charts (Chart.js) with export options.</li>
+      <li><b>Accessibility</b>: Focus states, keyboard navigation, and ARIA roles where appropriate.</li>
+      <li><b>Mobile Support</b>: All pages are fully responsive, with layouts adapting for mobile and tablet screens.</li>
+    </ul>
+  </section>
+
+  <section id="design">
+    <h2>🎨 Design Motivation</h2>
+    <ul>
+      <li><b>Modern, Clean UI</b>: Uses a palette of blue and white, with gradients for headers and cards, and rounded corners for a friendly look.</li>
+      <li><b>Consistency</b>: Common CSS variables and components ensure a unified look across all pages.</li>
+      <li><b>Responsiveness</b>: Grid and flex layouts adapt to all screen sizes.</li>
+      <li><b>Accessibility</b>: High-contrast colors, focus states, and semantic HTML.</li>
+      <li><b>Attribution</b>: TMDB logo and link are always visible in the footer, as required by their API terms.</li>
+    </ul>
+    <p><b>Design inspiration:</b> The interface is inspired by modern dashboard and analytics tools, focusing on clarity, ease of navigation, and data visualization. The use of cards, grids, and clear section headers helps users quickly find and interpret information.</p>
+  </section>
+
+  <section id="stack">
+    <h2>🏗️ Technical Stack</h2>
+    <ul>
+      <li><b>Backend</b>: PHP 8.1+, SQLite, Composer for dependency management.</li>
+      <li><b>Frontend</b>: HTML5, CSS3 (custom and modular), JavaScript (for charts and interactivity).</li>
+      <li><b>APIs</b>: TMDB for actor and production data.</li>
+      <li><b>Containerization</b>: Dockerfile and docker-compose for easy deployment.</li>
+    </ul>
+  </section>
+
+  <section id="security">
+    <h2>🛡️ Security</h2>
+    <ul>
+      <li>All user input is validated and sanitized.</li>
+      <li>Passwords are hashed using secure algorithms.</li>
+      <li>CSRF tokens are used for all forms.</li>
+      <li>Sessions are securely managed.</li>
+      <li>Admin actions are protected by role-based access control.</li>
+    </ul>
+  </section>
+
+  <section id="export">
+    <h2>📤 Export &amp; Backup</h2>
+    <ul>
+      <li><b>Statistics</b>: Exportable as CSV, WebP, or SVG.</li>
+      <li><b>Database</b>: Downloadable from the admin dashboard.</li>
+      <li><b>Media</b>: Backup script for all uploaded/static media.</li>
+    </ul>
+  </section>
+
+  <section id="requirements">
+    <h2>📝 Requirements &amp; Standards</h2>
+    <ul>
+      <li>All code and dependencies are under free/open licenses.</li>
+      <li>All content respects Creative Commons terms.</li>
+      <li>The project follows the IEEE System Requirements Specification Template for documenting requirements (see <code>documentation/documentation.md</code> for details).</li>
+    </ul>
+  </section>
+
+  <section id="attribution">
+    <h2>🖼️ Attribution</h2>
+    <ul>
+      <li>Actor images and data: <a href="https://www.themoviedb.org/documentation/api">TMDB API</a></li>
+      <li>Icons: <a href="https://fontawesome.com/">Font Awesome</a></li>
+      <li>Charts: <a href="https://www.chartjs.org/">Chart.js</a></li>
+    </ul>
+    <p class="attribution">All trademarks and copyrights are property of their respective owners.</p>
+  </section>
+</article>
+</body>
+</html>

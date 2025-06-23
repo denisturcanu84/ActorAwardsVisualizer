@@ -1,0 +1,249 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background: var(--background);
+    font-size: var(--p-size);
+    overflow-x: hidden;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+/* Awards-specific styles */
+.filters-section {
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 2rem;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: var(--p-size);
+    color: var(--text-color);
+    background-color: var(--card-background);
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.filter-button,
+.reset-button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: var(--p-size);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.filter-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.filter-button:hover {
+    background-color: var(--primary-hover);
+}
+
+.reset-button {
+    background-color: #f8f9fa;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.reset-button:hover {
+    background-color: #e9ecef;
+}
+
+/* Statistics Section */
+.statistics-section {
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.stats-card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+}
+
+.stats-card h2 {
+    color: var(--text-color);
+    font-size: var(--h2-size);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.stats-table {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.stats-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stats-table th,
+.stats-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.stats-table th {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Cards List */
+.nominations-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.nomination-card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.nomination-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.15);
+}
+
+.nomination-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.nomination-image {
+    width: 100%;
+}
+
+.nomination-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nomination-details h3 {
+    color: var(--text-color);
+    font-size: var(--h2-size);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.nomination-info {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.nomination-info p {
+    color: var(--text-color);
+    font-size: var(--p-size);
+}
+
+.no-image {
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color);
+    font-size: var(--p-size);
+}
+
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-color);
+    font-size: var(--p-size);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 0 10px;
+    }
+    
+    .filters-section {
+        padding: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .nomination-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .nomination-image {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+} 

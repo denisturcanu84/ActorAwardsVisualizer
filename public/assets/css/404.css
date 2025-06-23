@@ -1,0 +1,82 @@
+/* 404-specific styles */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+    color: white;
+    padding: 60px 0 40px;
+    margin-top: 0;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 15px 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    color: white;
+}
+
+.page-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0 auto;
+    opacity: 0.95;
+    max-width: 600px;
+    color: rgba(255,255,255,0.95);
+}
+
+.container {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 18px;
+    padding: 48px 36px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    text-align: center;
+}
+
+h1 {
+    font-size: 4em;
+    margin: 0 0 12px 0;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+p {
+    font-size: 1.3em;
+    margin-bottom: 24px;
+}
+
+a {
+    color: #fff;
+    background: #4A90E2;
+    padding: 12px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    transition: background 0.2s;
+}
+
+a:hover {
+    background: #357ABD;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 40px 0 30px;
+    }
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .page-description {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+    
+    .container {
+        margin: 20px;
+        padding: 30px 20px;
+    }
+}

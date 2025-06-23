@@ -1,0 +1,36 @@
+RewriteEngine On
+RewriteBase /
+
+ErrorDocument 404 /pages/404.html
+ErrorDocument 403 /pages/404.html
+
+# Specific routes for main pages
+RewriteRule ^login/?$ pages/login.php [L]
+RewriteRule ^logout/?$ pages/logout.php [L]
+RewriteRule ^admin/?$ /admin/admin.php [L]
+RewriteRule ^reset-password/?$ pages/reset_password.php [L]
+RewriteRule ^about/?$ pages/README.html [L]
+
+# Route for editing a user
+RewriteRule ^admin/user/edit/([0-9]+)/?$ admin/edit_user.php?id=$1 [L,QSA]
+
+# Special routes for pages directory
+RewriteRule ^actor_profile/?$ pages/actor_profile.php [L]
+RewriteRule ^searchActor/?$ pages/searchActor.php [L]
+
+# Generic rule for pages directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^/]+)/?$ pages/$1.php [L]
+
+# Redirect /pages/ URLs to clean URLs
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/+pages/([^/]+)\.php[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Redirect .php URLs to clean URLs
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/+([^/]+)\.php[\s?] [NC]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ /%1 [R=301,L]
+
+# Clean URL for actor not found page
+RewriteRule ^searchActor/not-found/?$ /pages/actor_not_found.html [L]
