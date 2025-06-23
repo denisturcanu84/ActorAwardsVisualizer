@@ -4,6 +4,15 @@ A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML,
 
 ---
 
+## Quality Checks
+
+| Test type      | DeviceType/Tool | Link                                                                                                            |
+|------------------|-----------------|-----------------------------------------------------------------------------------------------------------------|
+| PageSpeed        | Mobile          | [Vezi raportul](https://pagespeed.web.dev/analysis/https-webproject-turcanu-live/rvfq9q1r5u?form_factor=mobile)   |
+| PageSpeed        | Desktop         | [Vezi raportul](https://pagespeed.web.dev/analysis/https-webproject-turcanu-live/rvfq9q1r5u?form_factor=desktop) |
+| Validare CSS     | W3C CSS         | [Vezi validarea](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fwebproject.turcanu.live&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en) |
+
+
 ## 📜 License
 
 - **MIT License** – All source code is under the MIT license, ensuring it is free and open for modification and redistribution.
@@ -108,7 +117,7 @@ A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML,
 
 - **Backend**: PHP 8.1+, SQLite, Composer for dependency management.
 - **Frontend**: HTML5, CSS3 (custom and modular), JavaScript (for charts and interactivity).
-- **APIs**: TMDB for actor and production data.
+- **APIs**: TMDB for actor and production data, Google News RSS for news feed on actors profiles.
 - **Containerization**: Dockerfile and docker-compose for easy deployment.
 
 ---
