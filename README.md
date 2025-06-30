@@ -1,158 +1,248 @@
-# 🎬 ActorAwardsVisualizer
+![PHP Version](https://img.shields.io/badge/PHP-8.1+-8892BF.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Docker](https://img.shields.io/badge/Docker-enabled-blue.svg)
+![Chart.js](https://img.shields.io/badge/Chart.js-^4.0-green.svg)
+![SQLite](https://img.shields.io/badge/SQLite-003B57.svg?logo=sqlite&logoColor=white)
+![Performance](https://img.shields.io/badge/Lighthouse-Tested-brightgreen.svg)
 
-A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL. The project leverages open-source libraries and APIs, and all code is under a free license (MIT). All content respects Creative Commons terms.
+# ActorAwardsVisualizer
 
----
-
-## Quality Checks
-
-| Test type      | DeviceType/Tool | Link                                                                                                            |
-|------------------|-----------------|-----------------------------------------------------------------------------------------------------------------|
-| PageSpeed        | Mobile          | [Vezi raportul](https://pagespeed.web.dev/analysis/https-webproject-turcanu-live/rvfq9q1r5u?form_factor=mobile)   |
-| PageSpeed        | Desktop         | [Vezi raportul](https://pagespeed.web.dev/analysis/https-webproject-turcanu-live/rvfq9q1r5u?form_factor=desktop) |
-| CSS Validation    | W3C CSS         | [Vezi validarea](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fwebproject.turcanu.live&profile=css3svg&usermedium=all&warning=1&vextwarning=&lang=en) |
-| Website Scanner  | pentest-tools   | [Vezi testul](https://pentest-tools.com/website-vulnerability-scanning/website-scanner/scans/tIyyJgbcWVUwMj0j?view_report=true) |
-
-
-## 📜 License
-
-- **MIT License** – All source code is under the MIT license, ensuring it is free and open for modification and redistribution.
-- **Content** – All data and content provided by the application respect Creative Commons terms.
-- **Third-party assets** – Actor images and information are fetched from the [TMDB API](https://www.themoviedb.org/documentation/api), with proper attribution in the footer.
+**A PHP web app for exploring Screen Actors Guild Award winners**  
+Browse nominations, productions, actor profiles, and interactive stats. Powered by TMDB, Chart.js, and SQLite.
 
 ---
 
-## 📦 Dependencies
+## Table of Contents
 
-- **vlucas/phpdotenv** – for environment variables
-- **TMDB API** – for actor images and info
-- **intervention/image** – image processing (open source)
-- **phenx/php-svg-lib** – SVG export (open source)
-- **phpmailer/phpmailer** – email sending (open source)
-- **rosell-dk/webp-convert** – WebP export (open source)
-- **PDO SQLite** – database (open source, built-in)
-- **Chart.js** – for statistics visualization (open source, via CDN)
-- **Font Awesome** – for icons (open source, via CDN)
-
----
-
-## 👥 Team Members
-
-- Turcanu Denis Rafael
-- Meraru Ioan-Lucian
+1. [Demo](#demo)
+2. [Features](#features)
+3. [Tech Stack](#tech-stack)
+4. [Getting Started](#getting-started)
+   - [Prerequisites](#prerequisites)
+   - [Installation](#installation)
+   - [Configuration](#configuration)
+   - [Database Setup](#database-setup)
+   - [Running Locally](#running-locally)
+5. [Project Structure](#project-structure)
+6. [Quality & Testing](#quality--testing)
+7. [License](#license)
+8. [Authors](#authors)
+9. [Acknowledgments](#acknowledgments)
 
 ---
 
-## 📝 Main Features & Functionalities
+## Demo
 
-### User-Facing Pages
+![Home Dashboard Screenshot](./documentation/screenshots/index.png)  
+*More screenshots inside /documentation/screenshots*
 
-1. **Home Page**
-   - Introduction to the project and navigation to all main sections.
-   - Quick stats: total nominations, unique actors, award categories, years of data.
-
-2. **Nominations**
-   - Browse and filter nominations by year, category, actor, or production.
-   - Links to actor and production profiles.
-
-3. **Actor Profile**
-   - Detailed biography and award history for each actor (from TMDB and other sources).
-   - List of SAG nominations and wins.
-   - Actor-specific statistics (e.g., consecutive nominations).
-   - News about the actor from external sources.
-
-4. **Production Profile**
-   - Details about movies/TV shows (from TMDB).
-   - List of involved actors and associated SAG nominations.
-
-5. **Statistics**
-   - At least three types of visualizations/statistics:
-     - Distribution of nominations by genre.
-     - Most nominated actors.
-     - Evolution of nominations over the years.
-   - Export statistics as CSV, WebP, or SVG.
-
-6. **Admin Dashboard**
-   - User management (create, edit, delete users, assign roles).
-   - System health and logs (disk/memory usage, error/access logs).
-   - Database and media backup/export.
-
-7. **Authentication**
-   - Secure login and registration (CSRF protection, password hashing, input validation).
-   - Password reset with secure token and email delivery.
-   - Role-based access (admin/user).
-
-8. **Settings (from Navbar)**
-   - Light/Dark mode (planned).
-   - Login/Logout.
-
-9. **Error/Fallback Page (404)**
-   - Friendly error page for missing or incorrect routes.
+> **Live Preview:** https://webproject.turcanu.live/
 
 ---
 
-## 🖥️ User Interaction & UX
+## Features
 
-- **Navigation**: Responsive navbar with links to all main sections. User actions (login/logout/admin) are context-aware.
-- **Forms**: All forms (login, registration, password reset, admin user management) have validation, CSRF protection, and clear feedback.
-- **Filtering**: Nominations and productions can be filtered by multiple criteria.
-- **Statistics**: Interactive charts (Chart.js) with export options.
-- **Accessibility**: Focus states, keyboard navigation, and ARIA roles where appropriate.
-- **Mobile Support**: All pages are fully responsive, with layouts adapting for mobile and tablet screens.
-
----
-
-## 🎨 Design Motivation
-
-- **Modern, Clean UI**: Uses a palette of blue and white, with gradients for headers and cards, and rounded corners for a friendly look.
-- **Consistency**: Common CSS variables and components ensure a unified look across all pages.
-- **Responsiveness**: Grid and flex layouts adapt to all screen sizes.
-- **Accessibility**: High-contrast colors, focus states, and semantic HTML.
-- **Attribution**: TMDB logo and link are always visible in the footer, as required by their API terms.
-
-**Design inspiration**: The interface is inspired by modern dashboard and analytics tools, focusing on clarity, ease of navigation, and data visualization. The use of cards, grids, and clear section headers helps users quickly find and interpret information.
-
----
-
-## 🏗️ Technical Stack
-
-- **Backend**: PHP 8.1+, SQLite, Composer for dependency management.
-- **Frontend**: HTML5, CSS3 (custom and modular), JavaScript (for charts and interactivity).
-- **APIs**: TMDB for actor and production data, Google News RSS for news feed on actors profiles.
-- **Containerization**: Dockerfile and docker-compose for easy deployment.
+- **Home Dashboard**: Quick overview of total: nominations, unique actors, categories, years of data.
+- **Nominations Browser**: Filter by year, category, actor, or production.
+- **Actor Profiles**: Bio, SAG history, news via Google News RSS.
+- **Production Browser**: Filter by year, category, results (win/nominated) or production title.
+- **Statistics charts**:
+  - Nominations by category
+  - Top nominated actors with images
+  - Yearly nomination trends
+  - Top productions with posters  
+  Exportable as CSV, SVG or WebP.
+- **Admin Panel**:
+  - User management with role-based access control
+  - System health monitoring (disk, memory usage)
+  - Database and media backup tools
+  - System logs monitoring (error & access logs)
+- **Authentication & Security**:
+  - User registration, login, password reset via email
+  - CSRF protection on all forms
+  - Password hashing with PHP's built-in functions
+  - Role-based access control (user/admin)
+  - Session management with secure cookies
 
 ---
 
-## 🛡️ Security
+## Tech Stack
 
-- All user input is validated and sanitized.
-- Passwords are hashed using secure algorithms.
-- CSRF tokens are used for all forms.
-- Sessions are securely managed.
-- Admin actions are protected by role-based access control.
-
----
-
-## 📤 Export & Backup
-
-- **Statistics**: Exportable as CSV, WebP, or SVG.
-- **Database**: Downloadable from the admin dashboard.
-- **Media**: Backup script for all uploaded/static media.
+- **Backend**: PHP 8.1+, SQLite (PDO), Composer
+- **Frontend**: HTML5, CSS3, JavaScript
+  - Chart.js (via CDN)
+  - Font Awesome (via CDN)
+- **APIs & Libraries**:
+  - TMDB API (actor/production data)
+  - `vlucas/phpdotenv` (env vars)
+  - `intervention/image` (image processing)
+  - `phenx/php-svg-lib` & `rosell-dk/webp-convert` (SVG/WebP export)
+  - `phpmailer/phpmailer` (email)
+- **Deployment**: Docker & docker-compose
 
 ---
 
-## 📝 Requirements & Standards
+## Getting Started
 
-- All code and dependencies are under free/open licenses.
-- All content respects Creative Commons terms.
-- The project follows the IEEE System Requirements Specification Template for documenting requirements (see documentation/documentation.md for details).
+### Prerequisites
+
+- PHP 8.1 or higher
+- Composer
+- Docker (optional, for containerized setup)
+
+### Installation
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/denisturcanu84/ActorAwardsVisualizer.git
+   cd ActorAwardsVisualizer
+   ```
+
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
+
+3. **Set up environment**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Then edit `.env` to add your TMDB API key and database path.
+
+### Configuration
+
+Edit your `.env` file with the following settings:
+
+```dotenv
+# TMDB API Configuration
+TMDB_API_KEY=your_api_key_here
+TMDB_API_BASE_URL=https://api.themoviedb.org/3
+
+# Database Configuration
+DATABASE_PATH=database/app.db
+CSV_PATH=csv/screen_actor_guild_awards.csv
+
+# Email Configuration (for password reset)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your_email@gmail.com
+SMTP_PASSWORD="your_app_password"
+SMTP_ENCRYPTION=tls
+SMTP_FROM_EMAIL=your_email@gmail.com
+SMTP_FROM_NAME="Actor Awards Visualizer"
+
+# Application Settings
+APP_NAME="Actor Awards Visualizer"
+APP_URL=http://localhost:8000
+```
+
+### Database Setup
+
+The application uses SQLite with a pre-populated database containing SAG Awards data until 2020.
+
+**Database Structure:**
+- `awards` - Main table with nominations/wins data
+- `actors` - Actor profiles from TMDB API
+- `productions` - Movies/TV shows information
+- `users` - User authentication and roles
+- `actor_statistics` - Cached statistics for performance
+- `password_resets` - Password reset tokens
+
+**Initial Setup:**
+1. The database file `database/app.db` is included in the repository
+2. Contains ~5,700 SAG Award nominations from 1995-2020
+3. Actors and productions are populated automatically via TMDB API when accessed
+4. Database schema is available in `database/schema.sql`
+
+**Admin User:**
+- Default admin credentials are created on first run
+
+### Running Locally
+
+```bash
+php -S localhost:8000 -t public
+```
+
+Open [http://localhost:8000](http://localhost:8000) in your browser.
+
+**With Docker:**
+
+```bash
+docker-compose up --build
+```
+
+Then visit [http://localhost:30112](http://localhost:30112).
 
 ---
 
-## 🖼️ Attribution
+## Project Structure
 
-- Actor images and data: [TMDB API](https://www.themoviedb.org/documentation/api)
-- Icons: [Font Awesome](https://fontawesome.com/)
-- Charts: [Chart.js](https://www.chartjs.org/)
+```
+ActorAwardsVisualizer/
+├── composer.json              # PHP dependencies & autoloader
+├── docker-compose.yml         # Docker Container setup
+├── Dockerfile                 # Docker Container build instructions
+├── .env.example               
+├── csv/                       # SAG Awards data CSV
+│   └── screen_actor_guild_awards.csv
+├── database/                  # SQLite DB
+│   └── app.db
+├── diagrams/                  # System architecture diagrams
+├── documentation/             # Performance tests & screenshots
+├── public/                    # Web-accessible files
+│   ├── index.php
+│   ├── assets/               # CSS, JS, images
+│   ├── pages/
+│   └── admin/
+├── src/                       # Backend source code
+│   ├── bootstrap.php
+│   ├── Services/
+│   ├── Repositories/
+│   ├── Middleware/
+│   ├── Utils/
+│   ├── Views/
+│   ├── Exports/
+│   └── Admin/
+└── vendor/                    # Composer dependencies
+```
 
 ---
+
+## Quality & Testing
+
+### Performance Testing
+
+Lighthouse reports in `documentation/LightHouse Tests/` (desktop & mobile PDFs).
+
+### Screenshots
+
+See `documentation/screenshots/` for all interface images.
+
+### Validation & Security
+
+| Check              | Tool          | Link                                                                                                      |
+|--------------------|---------------|-----------------------------------------------------------------------------------------------------------|
+| CSS validation     | W3C CSS       | [Validator](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fwebproject.turcanu.live)      |
+| Vulnerability scan | Pentest-Tools | [Report](https://pentest-tools.com/website-vulnerability-scanning/website-scanner/scans/tIyyJgbcWVUwMj0j) |
+
+---
+
+## License
+
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+
+---
+
+## Authors
+
+- **Denis Rafael Turcanu**
+- **Ioan-Lucian Meraru**
+
+---
+
+##  Acknowledgments
+
+- [TMDB API](https://www.themoviedb.org/documentation/api)
+- [Chart.js](https://www.chartjs.org/)
+- [Font Awesome](https://fontawesome.com/)

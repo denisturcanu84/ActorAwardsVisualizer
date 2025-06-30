@@ -2,219 +2,237 @@
 <html lang="en" prefix="schema: http://schema.org/">
 <head>
   <meta charset="UTF-8">
-  <title>ActorAwardsVisualizer – Scholarly HTML Report</title>
+  <title>ActorAwardsVisualizer – Project Documentation</title>
   <meta name="license" content="MIT">
-  <meta name="author" content="Turcanu Denis Rafael, Meraru Ioan-Lucian">
-  <meta name="description" content="A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL.">
+  <meta name="author" content="Denis Rafael Turcanu, Ioan-Lucian Meraru">
+  <meta name="description" content="A PHP web app for exploring Screen Actors Guild Award winners. Browse nominations, productions, actor profiles, and interactive stats. Powered by TMDB, Chart.js, and SQLite.">
   <link rel="license" href="https://opensource.org/licenses/MIT">
   <script type="application/ld+json">
   {
     "@context": "http://schema.org",
     "@type": "SoftwareSourceCode",
     "name": "ActorAwardsVisualizer",
-    "description": "A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL.",
+    "description": "A PHP web app for exploring Screen Actors Guild Award winners. Browse nominations, productions, actor profiles, and interactive stats. Powered by TMDB, Chart.js, and SQLite.",
     "license": "https://opensource.org/licenses/MIT",
     "codeRepository": "https://github.com/denisturcanu84/ActorAwardsVisualizer",
-    "programmingLanguage": ["PHP", "HTML", "CSS", "SQL"],
+    "programmingLanguage": ["PHP", "HTML", "CSS", "JavaScript", "SQL"],
     "author": [
-      {"@type": "Person", "name": "Turcanu Denis Rafael"},
-      {"@type": "Person", "name": "Meraru Ioan-Lucian"}
+      {"@type": "Person", "name": "Denis Rafael Turcanu"},
+      {"@type": "Person", "name": "Ioan-Lucian Meraru"}
     ]
   }
   </script>
   <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2em; background: #f9f9f9; color: #222; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2em; background: #f9f9f9; color: #222; line-height: 1.6; }
     h1, h2, h3 { color: #4A90E2; }
-    section { margin-bottom: 2em; }
-    dl { background: #fff; padding: 1em; border-radius: 8px; }
-    dt { font-weight: bold; margin-top: 1em; }
+    h1 { border-bottom: 3px solid #4A90E2; padding-bottom: 0.5em; }
+    section { margin-bottom: 2em; background: #fff; padding: 1.5em; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    dl { margin: 0; }
+    dt { font-weight: bold; margin-top: 1em; color: #2c3e50; }
     dd { margin-left: 1em; margin-bottom: 1em; }
-    code { background: #eee; padding: 2px 4px; border-radius: 4px; }
-    .attribution { font-size: 0.95em; color: #555; }
+    code { background: #f4f4f4; padding: 3px 6px; border-radius: 4px; font-family: 'Courier New', monospace; }
+    pre { background: #f4f4f4; padding: 1em; border-radius: 4px; overflow-x: auto; }
+    ul, ol { padding-left: 1.5em; }
+    li { margin-bottom: 0.5em; }
+    .badge { background: #4A90E2; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; }
+    .attribution { font-size: 0.9em; color: #555; }
+    table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    a { color: #4A90E2; text-decoration: none; }
+    a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
 <article typeof="schema:SoftwareSourceCode">
   <header>
-    <h1>🎬 ActorAwardsVisualizer</h1>
-    <p>A web app for exploring Screen Actors Guild Award winners, built with PHP, HTML, CSS, and SQL. The project leverages open-source libraries and APIs, and all code is under a free license (MIT). All content respects Creative Commons terms.</p>
-    <p>🔗 <strong>Source Code:</strong> <a href="https://github.com/denisturcanu84/ActorAwardsVisualizer">View on GitHub</a></p>
+    <h1>ActorAwardsVisualizer</h1>
+    <p><strong>A PHP web app for exploring Screen Actors Guild Award winners</strong><br>
+    Browse nominations, productions, actor profiles, and interactive stats. Powered by TMDB, Chart.js, and SQLite.</p>
+    <p><strong>Live Preview:</strong> <a href="https://webproject.turcanu.live/">https://webproject.turcanu.live/</a><br>
+    <strong>Source Code:</strong> <a href="https://github.com/denisturcanu84/ActorAwardsVisualizer">View on GitHub</a></p>
+    
+    <div style="margin: 1em 0;">
+      <span class="badge">PHP 8.1+</span>
+      <span class="badge">MIT License</span>
+      <span class="badge">Docker</span>
+      <span class="badge">Chart.js</span>
+      <span class="badge">SQLite</span>
+      <span class="badge">Lighthouse Tested</span>
+    </div>
   </header>
 
-  <section id="license">
-    <h2>📜 License</h2>
+  <section id="features">
+    <h2>Features</h2>
+    <ul>
+      <li><strong>Home Dashboard</strong>: Quick overview of total: nominations, unique actors, categories, years of data.</li>
+      <li><strong>Nominations Browser</strong>: Filter by year, category, actor, or production.</li>
+      <li><strong>Actor Profiles</strong>: Bio, SAG history, news via Google News RSS.</li>
+      <li><strong>Production Browser</strong>: Filter by year, category, results (win/nominated) or production title.</li>
+      <li><strong>Statistics charts</strong>:
+        <ul>
+          <li>Nominations by category</li>
+          <li>Top nominated actors with images</li>
+          <li>Yearly nomination trends</li>
+          <li>Top productions with posters</li>
+        </ul>
+        Exportable as CSV, SVG or WebP.
+      </li>
+      <li><strong>Admin Panel</strong>:
+        <ul>
+          <li>User management with role-based access control</li>
+          <li>System health monitoring (disk, memory usage)</li>
+          <li>Database and media backup tools</li>
+          <li>System logs monitoring (error & access logs)</li>
+        </ul>
+      </li>
+      <li><strong>Authentication & Security</strong>:
+        <ul>
+          <li>User registration, login, password reset via email</li>
+          <li>CSRF protection on all forms</li>
+          <li>Password hashing with PHP's built-in functions</li>
+          <li>Role-based access control (user/admin)</li>
+          <li>Session management with secure cookies</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section id="tech-stack">
+    <h2>Tech Stack</h2>
     <dl>
-      <dt>MIT License</dt>
-      <dd>All source code is under the <a href="https://opensource.org/licenses/MIT">MIT license</a>, ensuring it is free and open for modification and redistribution.</dd>
-      <dt>Content</dt>
-      <dd>All data and content provided by the application respect Creative Commons terms.</dd>
-      <dt>Third-party assets</dt>
-      <dd>Actor images and information are fetched from the <a href="https://www.themoviedb.org/documentation/api">TMDB API</a>, with proper attribution in the footer.</dd>
+      <dt>Backend</dt>
+      <dd>PHP 8.1+, SQLite (PDO), Composer</dd>
+      
+      <dt>Frontend</dt>
+      <dd>HTML5, CSS3, JavaScript
+        <ul>
+          <li>Chart.js (via CDN)</li>
+          <li>Font Awesome (via CDN)</li>
+        </ul>
+      </dd>
+      
+      <dt>APIs & Libraries</dt>
+      <dd>
+        <ul>
+          <li>TMDB API (actor/production data)</li>
+          <li><code>vlucas/phpdotenv</code> (env vars)</li>
+          <li><code>intervention/image</code> (image processing)</li>
+          <li><code>phenx/php-svg-lib</code> & <code>rosell-dk/webp-convert</code> (SVG/WebP export)</li>
+          <li><code>phpmailer/phpmailer</code> (email)</li>
+        </ul>
+      </dd>
+      
+      <dt>Deployment</dt>
+      <dd>Docker & docker-compose</dd>
     </dl>
   </section>
 
-  <section id="dependencies">
-    <h2>📦 Dependencies</h2>
+  <section id="database">
+    <h2>Database Setup</h2>
+    <p>The application uses SQLite with a pre-populated database containing SAG Awards data until 2020.</p>
+    
+    <h3>Database Structure</h3>
     <ul>
-      <li><b>vlucas/phpdotenv</b> – for environment variables</li>
-      <li><b>TMDB API</b> – for actor images and info</li>
-      <li><b>intervention/image</b> – image processing (open source)</li>
-      <li><b>phenx/php-svg-lib</b> – SVG export (open source)</li>
-      <li><b>phpmailer/phpmailer</b> – email sending (open source)</li>
-      <li><b>rosell-dk/webp-convert</b> – WebP export (open source)</li>
-      <li><b>PDO SQLite</b> – database (open source, built-in)</li>
-      <li><b>Chart.js</b> – for statistics visualization (open source, via CDN)</li>
-      <li><b>Font Awesome</b> – for icons (open source, via CDN)</li>
+      <li><code>awards</code> - Main table with nominations/wins data</li>
+      <li><code>actors</code> - Actor profiles from TMDB API</li>
+      <li><code>productions</code> - Movies/TV shows information</li>
+      <li><code>users</code> - User authentication and roles</li>
+      <li><code>actor_statistics</code> - Cached statistics for performance</li>
+      <li><code>password_resets</code> - Password reset tokens</li>
+    </ul>
+    
+    <h3>Initial Setup</h3>
+    <ul>
+      <li>The database file <code>database/app.db</code> is included in the repository</li>
+      <li>Contains ~5,700 SAG Award nominations from 1995-2020</li>
+      <li>Actors and productions are populated automatically via TMDB API when accessed</li>
+      <li>Database schema is available in <code>database/schema.sql</code></li>
     </ul>
   </section>
 
-  <section id="team">
-    <h2>👥 Team Members</h2>
+  <section id="installation">
+    <h2>Getting Started</h2>
+    
+    <h3>Prerequisites</h3>
     <ul>
-      <li>Turcanu Denis Rafael</li>
-      <li>Meraru Ioan-Lucian</li>
+      <li>PHP 8.1 or higher</li>
+      <li>Composer</li>
+      <li>Docker (optional, for containerized setup)</li>
     </ul>
-  </section>
-
-  <section id="features">
-    <h2>📝 Main Features &amp; Functionalities</h2>
-    <h3>User-Facing Pages</h3>
+    
+    <h3>Installation</h3>
     <ol>
-      <li><b>Home Page</b>
-        <ul>
-          <li>Introduction to the project and navigation to all main sections.</li>
-          <li>Quick stats: total nominations, unique actors, award categories, years of data.</li>
-        </ul>
+      <li><strong>Clone the repo</strong>
+        <pre><code>git clone https://github.com/denisturcanu84/ActorAwardsVisualizer.git
+cd ActorAwardsVisualizer</code></pre>
       </li>
-      <li><b>Nominations</b>
-        <ul>
-          <li>Browse and filter nominations by year, category, actor, or production.</li>
-          <li>Links to actor and production profiles.</li>
-        </ul>
+      <li><strong>Install PHP dependencies</strong>
+        <pre><code>composer install</code></pre>
       </li>
-      <li><b>Actor Profile</b>
-        <ul>
-          <li>Detailed biography and award history for each actor (from TMDB and other sources).</li>
-          <li>List of SAG nominations and wins.</li>
-          <li>Actor-specific statistics (e.g., consecutive nominations).</li>
-          <li>News about the actor from external sources.</li>
-        </ul>
-      </li>
-      <li><b>Production Profile</b>
-        <ul>
-          <li>Details about movies/TV shows (from TMDB).</li>
-          <li>List of involved actors and associated SAG nominations.</li>
-        </ul>
-      </li>
-      <li><b>Statistics</b>
-        <ul>
-          <li>At least three types of visualizations/statistics:
-            <ul>
-              <li>Distribution of nominations by genre.</li>
-              <li>Most nominated actors.</li>
-              <li>Evolution of nominations over the years.</li>
-            </ul>
-          </li>
-          <li>Export statistics as CSV, WebP, or SVG.</li>
-        </ul>
-      </li>
-      <li><b>Admin Dashboard</b>
-        <ul>
-          <li>User management (create, edit, delete users, assign roles).</li>
-          <li>System health and logs (disk/memory usage, error/access logs).</li>
-          <li>Database and media backup/export.</li>
-        </ul>
-      </li>
-      <li><b>Authentication</b>
-        <ul>
-          <li>Secure login and registration (CSRF protection, password hashing, input validation).</li>
-          <li>Password reset with secure token and email delivery.</li>
-          <li>Role-based access (admin/user).</li>
-        </ul>
-      </li>
-      <li><b>Settings (from Navbar)</b>
-        <ul>
-          <li>Light/Dark mode (planned).</li>
-          <li>Login/Logout.</li>
-        </ul>
-      </li>
-      <li><b>Error/Fallback Page (404)</b>
-        <ul>
-          <li>Friendly error page for missing or incorrect routes.</li>
-        </ul>
+      <li><strong>Set up environment</strong>
+        <pre><code>cp .env.example .env</code></pre>
+        Then edit <code>.env</code> to add your TMDB API key and database path.
       </li>
     </ol>
+    
+    <h3>Running Locally</h3>
+    <pre><code>php -S localhost:8000 -t public</code></pre>
+    <p>Open <a href="http://localhost:8000">http://localhost:8000</a> in your browser.</p>
+    
+    <p><strong>With Docker:</strong></p>
+    <pre><code>docker-compose up --build</code></pre>
+    <p>Then visit <a href="http://localhost:30112">http://localhost:30112</a>.</p>
   </section>
 
-  <section id="ux">
-    <h2>🖥️ User Interaction &amp; UX</h2>
-    <ul>
-      <li><b>Navigation</b>: Responsive navbar with links to all main sections. User actions (login/logout/admin) are context-aware.</li>
-      <li><b>Forms</b>: All forms (login, registration, password reset, admin user management) have validation, CSRF protection, and clear feedback.</li>
-      <li><b>Filtering</b>: Nominations and productions can be filtered by multiple criteria.</li>
-      <li><b>Statistics</b>: Interactive charts (Chart.js) with export options.</li>
-      <li><b>Accessibility</b>: Focus states, keyboard navigation, and ARIA roles where appropriate.</li>
-      <li><b>Mobile Support</b>: All pages are fully responsive, with layouts adapting for mobile and tablet screens.</li>
-    </ul>
+  <section id="quality">
+    <h2>Quality & Testing</h2>
+    
+    <h3>Performance Testing</h3>
+    <p>Lighthouse reports in <code>documentation/LightHouse Tests/</code> (desktop & mobile PDFs).</p>
+    
+    <h3>Screenshots</h3>
+    <p>See <code>documentation/screenshots/</code> for all interface images.</p>
+    
+    <h3>Validation & Security</h3>
+    <table>
+      <tr>
+        <th>Check</th>
+        <th>Tool</th>
+        <th>Link</th>
+      </tr>
+      <tr>
+        <td>CSS validation</td>
+        <td>W3C CSS</td>
+        <td><a href="https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fwebproject.turcanu.live">Validator</a></td>
+      </tr>
+      <tr>
+        <td>Vulnerability scan</td>
+        <td>Pentest-Tools</td>
+        <td><a href="https://pentest-tools.com/website-vulnerability-scanning/website-scanner/scans/tIyyJgbcWVUwMj0j">Report</a></td>
+      </tr>
+    </table>
   </section>
 
-  <section id="design">
-    <h2>🎨 Design Motivation</h2>
-    <ul>
-      <li><b>Modern, Clean UI</b>: Uses a palette of blue and white, with gradients for headers and cards, and rounded corners for a friendly look.</li>
-      <li><b>Consistency</b>: Common CSS variables and components ensure a unified look across all pages.</li>
-      <li><b>Responsiveness</b>: Grid and flex layouts adapt to all screen sizes.</li>
-      <li><b>Accessibility</b>: High-contrast colors, focus states, and semantic HTML.</li>
-      <li><b>Attribution</b>: TMDB logo and link are always visible in the footer, as required by their API terms.</li>
-    </ul>
-    <p><b>Design inspiration:</b> The interface is inspired by modern dashboard and analytics tools, focusing on clarity, ease of navigation, and data visualization. The use of cards, grids, and clear section headers helps users quickly find and interpret information.</p>
+  <section id="license">
+    <h2>License</h2>
+    <p>This project is licensed under the <strong>MIT License</strong>. See <a href="https://opensource.org/licenses/MIT">LICENSE</a> for details.</p>
   </section>
 
-  <section id="stack">
-    <h2>🏗️ Technical Stack</h2>
+  <section id="authors">
+    <h2>Authors</h2>
     <ul>
-      <li><b>Backend</b>: PHP 8.1+, SQLite, Composer for dependency management.</li>
-      <li><b>Frontend</b>: HTML5, CSS3 (custom and modular), JavaScript (for charts and interactivity).</li>
-      <li><b>APIs</b>: TMDB for actor and production data.</li>
-      <li><b>Containerization</b>: Dockerfile and docker-compose for easy deployment.</li>
-    </ul>
-  </section>
-
-  <section id="security">
-    <h2>🛡️ Security</h2>
-    <ul>
-      <li>All user input is validated and sanitized.</li>
-      <li>Passwords are hashed using secure algorithms.</li>
-      <li>CSRF tokens are used for all forms.</li>
-      <li>Sessions are securely managed.</li>
-      <li>Admin actions are protected by role-based access control.</li>
-    </ul>
-  </section>
-
-  <section id="export">
-    <h2>📤 Export &amp; Backup</h2>
-    <ul>
-      <li><b>Statistics</b>: Exportable as CSV, WebP, or SVG.</li>
-      <li><b>Database</b>: Downloadable from the admin dashboard.</li>
-      <li><b>Media</b>: Backup script for all uploaded/static media.</li>
-    </ul>
-  </section>
-
-  <section id="requirements">
-    <h2>📝 Requirements &amp; Standards</h2>
-    <ul>
-      <li>All code and dependencies are under free/open licenses.</li>
-      <li>All content respects Creative Commons terms.</li>
-      <li>The project follows the IEEE System Requirements Specification Template for documenting requirements (see <code>documentation/documentation.md</code> for details).</li>
+      <li><strong>Denis-Rafael Turcanu</strong>
+      <li><strong>Ioan-Lucian Meraru</strong>
     </ul>
   </section>
 
   <section id="attribution">
-    <h2>🖼️ Attribution</h2>
+    <h2>Acknowledgments</h2>
     <ul>
-      <li>Actor images and data: <a href="https://www.themoviedb.org/documentation/api">TMDB API</a></li>
-      <li>Icons: <a href="https://fontawesome.com/">Font Awesome</a></li>
-      <li>Charts: <a href="https://www.chartjs.org/">Chart.js</a></li>
+      <li><a href="https://www.themoviedb.org/documentation/api">TMDB API</a></li>
+      <li><a href="https://www.chartjs.org/">Chart.js</a></li>
+      <li><a href="https://fontawesome.com/">Font Awesome</a></li>
     </ul>
     <p class="attribution">All trademarks and copyrights are property of their respective owners.</p>
   </section>
