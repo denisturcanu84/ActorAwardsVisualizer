@@ -55,6 +55,10 @@ RUN composer install --no-dev --optimize-autoloader \
 
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 
-ENTRYPOINT ["apache2-foreground"]
+COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
 
 EXPOSE 80
