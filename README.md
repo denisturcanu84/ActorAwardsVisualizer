@@ -36,7 +36,7 @@ Browse nominations, productions, actor profiles, and interactive stats. Powered 
 ![Home Dashboard Screenshot](./documentation/screenshots/index.png)  
 *More screenshots inside /documentation/screenshots*
 
-> **Live Preview:** https://actorawards.turcanu.live/
+> **Live Preview:** https://actorawards.dev.denishub.com/
 
 ---
 
@@ -223,7 +223,7 @@ See `documentation/screenshots/` for all interface images.
 
 | Check              | Tool          | Link                                                                                                      |
 |--------------------|---------------|-----------------------------------------------------------------------------------------------------------|
-| CSS validation     | W3C CSS       | [Validator](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Factorawards.turcanu.live)      |
+| CSS validation     | W3C CSS       | [Validator](https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Factorawards.dev.denishub.com)      |
 | Vulnerability scan | Pentest-Tools | [Report](https://pentest-tools.com/website-vulnerability-scanning/website-scanner/scans/tIyyJgbcWVUwMj0j) |
 
 ---

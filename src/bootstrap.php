@@ -32,19 +32,31 @@ if (class_exists('Dotenv\Dotenv') && file_exists(__DIR__ . '/../.env')) {
     $dotenv->load();
 }
 
-define('TMDB_API_KEY', $_ENV['TMDB_API_KEY'] ?? '');
-define('TMDB_API_BASE_URL', $_ENV['TMDB_API_BASE_URL'] ?? 'https://api.themoviedb.org/3');
+// if the env function doesn't exist, define it
+if (!function_exists('env')) {
+    function env($key, $default = null)
+    {
+        $value = getenv($key);
+        if ($value !== false) {
+            return $value;
+        }
+        return $_ENV[$key] ?? $default;
+    }
+}
+
+define('TMDB_API_KEY', env('TMDB_API_KEY', ''));
+define('TMDB_API_BASE_URL', env('TMDB_API_BASE_URL', 'https://api.themoviedb.org/3'));
 define('ROOT_DIR', __DIR__ . '/..');
-define('DATABASE_PATH', ROOT_DIR . '/' . ($_ENV['DATABASE_PATH'] ?? 'database/app.db'));
-define('CSV_PATH', ROOT_DIR . '/' . ($_ENV['CSV_PATH'] ?? 'csv/screen_actor_guild_awards.csv'));
+define('DATABASE_PATH', ROOT_DIR . '/' . env('DATABASE_PATH', 'database/app.db'));
+define('CSV_PATH', ROOT_DIR . '/' . env('CSV_PATH', 'csv/screen_actor_guild_awards.csv'));
 
 // email smtp settings - defaults to Gmail's SMTP
-define('SMTP_HOST', $_ENV['SMTP_HOST'] ?? 'smtp.gmail.com');
-define('SMTP_PORT', $_ENV['SMTP_PORT'] ?? 587);
-define('SMTP_USERNAME', $_ENV['SMTP_USERNAME'] ?? '');
-define('SMTP_PASSWORD', $_ENV['SMTP_PASSWORD'] ?? '');
-define('SMTP_FROM_EMAIL', $_ENV['SMTP_FROM_EMAIL'] ?? '');
-define('SMTP_FROM_NAME', $_ENV['SMTP_FROM_NAME'] ?? 'Actor Awards Visualizer');
+define('SMTP_HOST', env('SMTP_HOST', 'smtp.gmail.com'));
+define('SMTP_PORT', env('SMTP_PORT', 587));
+define('SMTP_USERNAME', env('SMTP_USERNAME', ''));
+define('SMTP_PASSWORD', env('SMTP_PASSWORD', ''));
+define('SMTP_FROM_EMAIL', env('SMTP_FROM_EMAIL', ''));
+define('SMTP_FROM_NAME', env('SMTP_FROM_NAME', 'Actor Awards Visualizer'));
 
 // start a session to remember who's logged in
 // only starts if one isn't already running
